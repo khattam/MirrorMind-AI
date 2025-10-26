@@ -177,10 +177,12 @@ class Transcript(BaseModel):
 from models.custom_agent import CustomAgent, AgentCreationRequest, AgentUpdateRequest, AgentRating
 from services.agent_service import AgentService
 from services.enhancement_service import EnhancementService
+from services.metrics_service import MetricsService
 
 # Initialize services
 agent_service = AgentService()
 enhancement_service = EnhancementService()
+metrics_service = MetricsService()
 
 # -------------------- APP CONFIG --------------------
 app = FastAPI(title="MirrorMinds API")
@@ -402,7 +404,17 @@ def continue_round(t: Transcript):
 def judge(t: Transcript):
     judge_input = {"dilemma": t.dilemma.dict(), "transcript": [x.dict() for x in t.turns]}
     raw = call_ollama(JUDGE_SYS, json.dumps(judge_input), num_predict=280, temp=0.25)
-    return clamp_json(raw, {"scores":{}, "final_recommendation":"A","confidence":50,"verdict":"—"})
+    verdict = clamp_json(raw, {"scores":{}, "final_recommendation":"A","confidence":50,"verdict":"—"})
+    
+    # Record debate metrics in background
+    try:
+        transcript_dict = {"dilemma": t.dilemma.dict(), "turns": [x.dict() for x in t.turns]}
+        metrics_service.record_debate(transcript_dict, verdict)
+    except Exception as e:
+        print(f"Failed to record metrics: {e}")
+        # Don't fail the request if metrics recording fails
+    
+    return verdict
 
 # -------------------- INDIVIDUAL AGENT ENDPOINTS --------------------
 
@@ -624,3 +636,23 @@ def get_agent_display_name(agent_identifier: str) -> str:
         # Try to find custom agent
         agent = agent_service.get_agent(agent_identifier)
         return agent.name if agent else agent_identifier
+
+# -------------------- METRICS ENDPOINTS --------------------
+
+@app.get("/api/metrics")
+def get_all_debate_metrics():
+    """Get all recorded debate metrics"""
+    try:
+        metrics = metrics_service.get_all_metrics()
+        return {"metrics": metrics, "count": len(metrics)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get metrics: {str(e)}")
+
+@app.get("/api/metrics/summary")
+def get_metrics_summary():
+    """Get aggregate statistics across all debates"""
+    try:
+        summary = metrics_service.get_summary_stats()
+        return summary
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get summary: {str(e)}")
