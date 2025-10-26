@@ -404,6 +404,40 @@ def judge(t: Transcript):
     raw = call_ollama(JUDGE_SYS, json.dumps(judge_input), num_predict=280, temp=0.25)
     return clamp_json(raw, {"scores":{}, "final_recommendation":"A","confidence":50,"verdict":"—"})
 
+# -------------------- INDIVIDUAL AGENT ENDPOINTS --------------------
+
+@app.post("/agent/{agent_name}")
+def get_agent_response(agent_name: str, dilemma: Dilemma):
+    """Get response from any agent (default or custom)"""
+    try:
+        # Get the appropriate system prompt
+        sys_prompt = get_agent_system_prompt(agent_name)
+        
+        # Get display name for the response
+        display_name = get_agent_display_name(agent_name)
+        
+        # Generate response using the same logic as the opening round
+        base = mk_base(dilemma)
+        
+        raw = call_ollama(sys_prompt, base + "\n" + OPENING_INSTRUCT, num_predict=300, temp=0.65)
+        print(f"DEBUG {display_name} raw response: {raw[:300]}...")
+        
+        j = clamp_json(raw, {"stance": "A", "argument": f"[{display_name} failed to generate proper response]"})
+        print(f"DEBUG {display_name} parsed JSON: {j}")
+        
+        if j.get("argument") == "—" or "[failed to generate]" in j.get("argument", ""):
+            print(f"DEBUG {display_name} retrying...")
+            raw2 = call_ollama(sys_prompt, base + "\n" + OPENING_INSTRUCT, num_predict=250, temp=0.8)
+            j2 = clamp_json(raw2, j)
+            if j2.get("argument", "—") not in ["—", "-"]:
+                j = j2
+        
+        return AgentTurn(agent=display_name, stance=j.get("stance","A"), argument=j.get("argument","—")).dict()
+        
+    except Exception as e:
+        print(f"DEBUG {agent_name} exception: {str(e)}")
+        return AgentTurn(agent=agent_name, stance="A", argument=f"[{agent_name} error: {str(e)[:100]}]").dict()
+
 # -------------------- CUSTOM AGENT ENDPOINTS --------------------
 
 @app.post("/api/agents/create")

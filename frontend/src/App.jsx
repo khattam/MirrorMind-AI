@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DilemmaForm from './components/DilemmaForm';
 import DebateView from './components/DebateView';
 import VerdictView from './components/VerdictView';
 import Sidebar from './components/Sidebar';
 import AgentBuilderScreen from './components/AgentBuilder/AgentBuilderScreen';
+import KeyboardShortcuts from './components/KeyboardShortcuts';
 import './App.css';
 
 const API_URL = 'http://127.0.0.1:8000';
@@ -18,6 +19,44 @@ function App() {
   const [debateHistory, setDebateHistory] = useState([]);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
   const [historyViewTab, setHistoryViewTab] = useState('debate');
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Ignore if user is typing in an input/textarea
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      // Ctrl/Cmd + N: New debate
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        if (stage !== 'agent-builder') {
+          handleReset();
+        }
+      }
+
+      // Ctrl/Cmd + B: Open agent builder
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        if (stage !== 'agent-builder') {
+          openAgentBuilder();
+        }
+      }
+
+      // Escape: Close modals/agent builder
+      if (e.key === 'Escape') {
+        if (stage === 'agent-builder') {
+          closeAgentBuilder();
+        } else if (stage === 'history') {
+          setStage('form');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [stage]); // Re-run when stage changes
 
   const handleStartDebate = async (dilemmaData, selectedAgentIds = ['deon', 'conse', 'virtue']) => {
     setDilemma(dilemmaData);
@@ -285,6 +324,9 @@ function App() {
         </main>
         </div>
       )}
+      
+      {/* Keyboard shortcuts helper - always visible */}
+      {stage !== 'agent-builder' && <KeyboardShortcuts />}
     </div>
   );
 }
