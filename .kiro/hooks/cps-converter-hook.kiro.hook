@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "CPS Converter",
+  "description": "Watches for changes to cps-converter/input.rkt and automatically converts the Scheme code to Continuation-Passing Style (CPS) with continuation datatypes and apply-k, writing the result to cps-converter/output.rkt",
+  "version": "1",
+  "when": {
+    "type": "userTriggered",
+    "patterns": [
+      "C:\\MirrorMinds\\cps-converter\\input.rkt"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Read the Scheme code from C:\\MirrorMinds\\cps-converter\\input.rkt and convert it to Continuation-Passing Style (CPS). Use continuation datatypes and apply-k function. Write the code as a student would - straightforward and clear, without quirky Scheme tricks. No helpers etc, jsut the simplest possible conversion oaky? Write the converted CPS code to C:\\MirrorMinds\\cps-converter\\output.rkt"
+  }
+}

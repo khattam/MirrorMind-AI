@@ -5,12 +5,13 @@ import VerdictView from './components/VerdictView';
 import Sidebar from './components/Sidebar';
 import AgentBuilderScreen from './components/AgentBuilder/AgentBuilderScreen';
 import KeyboardShortcuts from './components/KeyboardShortcuts';
+import Dashboard from './components/Dashboard';
 import './App.css';
 
 const API_URL = 'http://127.0.0.1:8000';
 
 function App() {
-  const [stage, setStage] = useState('form'); // 'form', 'debate', 'verdict', 'agent-builder'
+  const [stage, setStage] = useState('form'); // 'form', 'debate', 'verdict', 'agent-builder', 'dashboard'
   const [dilemma, setDilemma] = useState(null);
   const [transcript, setTranscript] = useState(null);
   const [verdict, setVerdict] = useState(null);
@@ -19,6 +20,7 @@ function App() {
   const [debateHistory, setDebateHistory] = useState([]);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
   const [historyViewTab, setHistoryViewTab] = useState('debate');
+  const [showDashboard, setShowDashboard] = useState(false);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -44,12 +46,22 @@ function App() {
         }
       }
 
-      // Escape: Close modals/agent builder
+      // Ctrl/Cmd + D: Open dashboard
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        if (!showDashboard) {
+          openDashboard();
+        }
+      }
+
+      // Escape: Close modals/agent builder/dashboard
       if (e.key === 'Escape') {
         if (stage === 'agent-builder') {
           closeAgentBuilder();
         } else if (stage === 'history') {
           setStage('form');
+        } else if (showDashboard) {
+          closeDashboard();
         }
       }
     };
@@ -211,6 +223,14 @@ function App() {
     setStage('form');
   };
 
+  const openDashboard = () => {
+    setShowDashboard(true);
+  };
+
+  const closeDashboard = () => {
+    setShowDashboard(false);
+  };
+
   return (
     <div className="app">
       {stage !== 'agent-builder' && (
@@ -221,6 +241,7 @@ function App() {
           onViewHistory={viewHistoryItem}
           onDeleteHistory={deleteHistoryItem}
           onOpenAgentBuilder={openAgentBuilder}
+          onOpenDashboard={openDashboard}
         />
       )}
 
@@ -323,6 +344,11 @@ function App() {
           )}
         </main>
         </div>
+      )}
+      
+      {/* Dashboard Modal */}
+      {showDashboard && (
+        <Dashboard onClose={closeDashboard} />
       )}
       
       {/* Keyboard shortcuts helper - always visible */}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
 
-function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHistory, onOpenAgentBuilder }) {
+function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHistory, onOpenAgentBuilder, onOpenDashboard }) {
   const [activeTab, setActiveTab] = useState('history');
   const [expandedAgents, setExpandedAgents] = useState(new Set());
   const [customAgents, setCustomAgents] = useState([]);
@@ -127,6 +127,11 @@ function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHis
         <button className="create-agent-btn" onClick={onOpenAgentBuilder}>
           <span className="create-icon">✨</span>
           Create Custom Agent
+        </button>
+
+        <button className="dashboard-btn" onClick={onOpenDashboard}>
+          <span className="dashboard-icon">📊</span>
+          Analytics Dashboard
         </button>
 
         {activeTab === 'history' && (

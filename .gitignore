@@ -33,3 +33,6 @@ Thumbs.db
 # Environment Files
 .env.local
 .env.production
+
+# CPS Converter (personal tool, not part of project)
+cps-converter/

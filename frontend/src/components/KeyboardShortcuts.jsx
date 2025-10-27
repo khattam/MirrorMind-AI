@@ -7,6 +7,7 @@ function KeyboardShortcuts() {
   const shortcuts = [
     { keys: ['Ctrl', 'N'], mac: ['⌘', 'N'], description: 'New debate' },
     { keys: ['Ctrl', 'B'], mac: ['⌘', 'B'], description: 'Open agent builder' },
+    { keys: ['Ctrl', 'D'], mac: ['⌘', 'D'], description: 'Open dashboard' },
     { keys: ['Esc'], mac: ['Esc'], description: 'Close modals' },
   ];
 
