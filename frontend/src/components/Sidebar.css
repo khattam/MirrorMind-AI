@@ -478,3 +478,27 @@ Create Agent Button */
 .dashboard-icon {
   font-size: 16px;
 }
+/* Cli
+ckable Agent Cards */
+.agent-info-card.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.agent-info-card.clickable:hover {
+  background: rgba(102, 126, 234, 0.08);
+  border-color: rgba(102, 126, 234, 0.3);
+  transform: translateX(4px);
+}
+
+.view-icon {
+  font-size: 18px;
+  color: #667eea;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.agent-info-card.clickable:hover .view-icon {
+  transform: translateX(4px);
+  color: #8b9cff;
+}

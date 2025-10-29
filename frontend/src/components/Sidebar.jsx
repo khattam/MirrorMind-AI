@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
+import AgentDetailsModal from './AgentDetailsModal';
 
 function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHistory, onOpenAgentBuilder, onOpenDashboard }) {
   const [activeTab, setActiveTab] = useState('history');
   const [expandedAgents, setExpandedAgents] = useState(new Set());
   const [customAgents, setCustomAgents] = useState([]);
+  const [selectedAgent, setSelectedAgent] = useState(null);
 
   const API_URL = 'http://127.0.0.1:8000';
 
@@ -37,10 +39,6 @@ function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHis
 
   // Handle agent deletion
   const handleDeleteAgent = async (agentId, agentName) => {
-    if (!confirm(`Are you sure you want to delete "${agentName}"? This action cannot be undone.`)) {
-      return;
-    }
-
     try {
       const response = await fetch(`${API_URL}/api/agents/${agentId}`, {
         method: 'DELETE'
@@ -214,29 +212,12 @@ function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHis
               <div className="agents-subsection">
                 <h3 className="subsection-title">Custom Agents</h3>
                 {customAgents.map((agent) => (
-                  <div key={agent.id} className="agent-info-card custom-agent">
-                    <button 
-                      className="delete-agent-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteAgent(agent.id, agent.name);
-                      }}
-                      title="Delete Agent"
-                    >
-                      ×
-                    </button>
-                    <div 
-                      className="agent-info-header clickable"
-                      onClick={() => {
-                        const newExpanded = new Set(expandedAgents);
-                        if (newExpanded.has(agent.id)) {
-                          newExpanded.delete(agent.id);
-                        } else {
-                          newExpanded.add(agent.id);
-                        }
-                        setExpandedAgents(newExpanded);
-                      }}
-                    >
+                  <div 
+                    key={agent.id} 
+                    className="agent-info-card custom-agent clickable"
+                    onClick={() => setSelectedAgent(agent)}
+                  >
+                    <div className="agent-info-header">
                       <div className="agent-info-avatar" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
                         <span className="agent-info-icon">{agent.avatar}</span>
                       </div>
@@ -244,27 +225,8 @@ function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHis
                         <h4 className="agent-info-name">{agent.name}</h4>
                         <p className="agent-info-role">Custom Agent</p>
                       </div>
-                      <span className="expand-icon">{expandedAgents.has(agent.id) ? '−' : '+'}</span>
+                      <span className="view-icon">→</span>
                     </div>
-                    
-                    {expandedAgents.has(agent.id) && (
-                      <div className="agent-info-details">
-                        <p className="agent-info-description">{agent.description}</p>
-                        <div className="custom-agent-meta">
-                          <div className="meta-item">
-                            <strong>Created:</strong> {new Date(agent.created_at).toLocaleDateString()}
-                          </div>
-                          <div className="meta-item">
-                            <strong>Usage:</strong> {agent.usage_count} debates
-                          </div>
-                          {agent.average_rating > 0 && (
-                            <div className="meta-item">
-                              <strong>Rating:</strong> ⭐ {agent.average_rating.toFixed(1)} ({agent.rating_count} reviews)
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
@@ -274,6 +236,15 @@ function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHis
 
 
       </div>
+
+      {/* Agent Details Modal */}
+      {selectedAgent && (
+        <AgentDetailsModal
+          agent={selectedAgent}
+          onClose={() => setSelectedAgent(null)}
+          onDelete={handleDeleteAgent}
+        />
+      )}
     </aside>
   );
 }
