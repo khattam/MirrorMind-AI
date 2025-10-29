@@ -36,3 +36,15 @@ Thumbs.db
 
 # CPS Converter (personal tool, not part of project)
 cps-converter/
+*cps-converter*
+*cps*converter*
+
+# Racket Interpreter Files (personal study tool, not part of project)
+debateview/
+*.rkt
+*.scm
+*racket*
+
+# Kiro hooks for personal tools
+.kiro/hooks/*cps*
+.kiro/hooks/*racket*

@@ -1407,8 +1407,8 @@ ocessing State */
   text-align: center;
   margin-top: 14px;
 }
-/
-* Enhanced Result Section - Single Display */
+
+/* Enhanced Result Section - Single Display */
 .enhanced-result-section {
   margin-top: 20px;
 }
@@ -1570,6 +1570,7 @@ ocessing State */
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -1584,9 +1585,12 @@ ocessing State */
 }
 
 @keyframes bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -1665,6 +1669,7 @@ ocessing State */
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1676,6 +1681,7 @@ ocessing State */
     opacity: 0;
     transform: translateX(20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1738,10 +1744,13 @@ ocessing State */
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.6;
     transform: scale(1);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.1);
@@ -1817,9 +1826,12 @@ ocessing State */
 }
 
 @keyframes sparkle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1) rotate(0deg);
   }
+
   50% {
     transform: scale(1.2) rotate(180deg);
   }
@@ -1843,12 +1855,29 @@ ocessing State */
   animation: fadeSlideIn 0.4s ease backwards;
 }
 
-.improvement-badge:nth-child(1) { animation-delay: 0.1s; }
-.improvement-badge:nth-child(2) { animation-delay: 0.2s; }
-.improvement-badge:nth-child(3) { animation-delay: 0.3s; }
-.improvement-badge:nth-child(4) { animation-delay: 0.4s; }
-.improvement-badge:nth-child(5) { animation-delay: 0.5s; }
-.improvement-badge:nth-child(6) { animation-delay: 0.6s; }
+.improvement-badge:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.improvement-badge:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.improvement-badge:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.improvement-badge:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.improvement-badge:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.improvement-badge:nth-child(6) {
+  animation-delay: 0.6s;
+}
 
 .improvement-badge:hover {
   background: rgba(72, 187, 120, 0.12);
