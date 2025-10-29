@@ -81,12 +81,15 @@ function AgentBuilderScreen({ onClose, onAgentCreated }) {
     setErrors({}); // Clear previous errors
     
     try {
-      console.log('Enhancing description:', formData.description);
+      console.log('Enhancing description with agent name:', formData.name, formData.description);
       
       const response = await fetch(`${API_URL}/api/enhance`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: formData.description.trim() })
+        body: JSON.stringify({ 
+          description: formData.description.trim(),
+          agent_name: formData.name.trim()
+        })
       });
       
       if (!response.ok) {
@@ -345,78 +348,35 @@ function AgentBuilderScreen({ onClose, onAgentCreated }) {
                   <div className="processing-animation">
                     <div className="processing-spinner"></div>
                   </div>
-                  <h3>🧠 Refining Agent Persona...</h3>
-                  <div className="processing-steps">
-                    <div className="processing-step active">
-                      <div className="step-icon">🔍</div>
-                      <span>Analyzing personality traits</span>
-                    </div>
-                    <div className="processing-step active">
-                      <div className="step-icon">⚡</div>
-                      <span>Enhancing decision-making framework</span>
-                    </div>
-                    <div className="processing-step active">
-                      <div className="step-icon">✨</div>
-                      <span>Optimizing ethical reasoning</span>
-                    </div>
-                  </div>
-                  <p className="processing-subtitle">This usually takes 10-15 seconds...</p>
+                  <h3>Enhancing Agent Personality...</h3>
+                  <p className="processing-subtitle">This usually takes 10-15 seconds</p>
                 </div>
               ) : enhancement ? (
-                <div className="enhancement-results">
-                  <div className="analysis-scores">
-                    <h4>Quality Analysis</h4>
-                    <div className="scores-grid">
-                      {Object.entries(enhancement.analysis_scores).map(([key, score]) => (
-                        <div key={key} className="score-card">
-                          <div className="score-label">{key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                          <div className="score-visual">
-                            <div className="score-circle">
-                              <svg viewBox="0 0 36 36" className="circular-chart">
-                                <path
-                                  className="circle-bg"
-                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                />
-                                <path
-                                  className="circle"
-                                  strokeDasharray={`${(score / 10) * 100}, 100`}
-                                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                />
-                              </svg>
-                              <div className="score-text">{score.toFixed(1)}</div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                <div className="enhancement-results-clean">
+                  <div className="enhanced-result-card">
+                    <div className="enhanced-result-header">
+                      <div className="result-avatar">{formData.avatar}</div>
+                      <div className="result-info">
+                        <h3>{formData.name}</h3>
+                        <p>Enhanced Personality</p>
+                      </div>
+                    </div>
+                    
+                    <div className="enhanced-result-body">
+                      <h4>Personality & Values</h4>
+                      <p className="enhanced-text">{enhancement.enhanced_prompt}</p>
+                    </div>
+
+                    <div className="enhanced-result-footer">
+                      <button 
+                        className="regenerate-btn-clean"
+                        onClick={enhanceDescription}
+                        disabled={isProcessing}
+                      >
+                        Regenerate
+                      </button>
                     </div>
                   </div>
-
-                  <div className="comparison-section">
-                    <div className="comparison-grid">
-                      <div className="original-card">
-                        <h4>Your Original</h4>
-                        <div className="description-text">{formData.description}</div>
-                      </div>
-                      <div className="enhanced-card">
-                        <h4>AI Enhanced</h4>
-                        <div className="description-text enhanced">{enhancement.enhanced_prompt}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {enhancement.improvements_made.length > 0 && (
-                    <div className="improvements-section">
-                      <h4>✨ Improvements Made</h4>
-                      <div className="improvements-list">
-                        {enhancement.improvements_made.map((improvement, index) => (
-                          <div key={index} className="improvement-item">
-                            <div className="improvement-icon">✓</div>
-                            <div className="improvement-text">{improvement}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="error-state">
@@ -436,51 +396,61 @@ function AgentBuilderScreen({ onClose, onAgentCreated }) {
                 <p>Review your agent before creating it</p>
               </div>
 
-              <div className="preview-section">
-                <div className="agent-preview-card">
-                  <div className="preview-header">
-                    <div className="preview-avatar">{formData.avatar}</div>
-                    <div className="preview-info">
-                      <h3>{formData.name}</h3>
-                      <p>Custom Ethical Agent</p>
-                    </div>
+              {isProcessing ? (
+                <div className="processing-state">
+                  <div className="processing-animation">
+                    <div className="processing-spinner"></div>
                   </div>
-                  
-                  <div className="preview-description">
-                    <h4>Personality & Values</h4>
-                    <p>{enhancement ? enhancement.enhanced_prompt : formData.description}</p>
+                  <h3>Creating Agent...</h3>
+                  <p className="processing-subtitle">Setting up your custom ethical agent...</p>
+                </div>
+              ) : (
+                <div className="preview-section">
+                  <div className="agent-preview-card">
+                    <div className="preview-header">
+                      <div className="preview-avatar">{formData.avatar}</div>
+                      <div className="preview-info">
+                        <h3>{formData.name}</h3>
+                        <p>Custom Ethical Agent</p>
+                      </div>
+                    </div>
+                    
+                    <div className="preview-description">
+                      <h4>Personality & Values</h4>
+                      <p>{enhancement ? enhancement.enhanced_prompt : formData.description}</p>
+                    </div>
+
+                    {enhancement && (
+                      <div className="preview-stats">
+                        <div className="stat">
+                          <span className="stat-label">Quality Score</span>
+                          <span className="stat-value">
+                            {(Object.values(enhancement.analysis_scores).reduce((a, b) => a + b, 0) / Object.keys(enhancement.analysis_scores).length).toFixed(1)}/10
+                          </span>
+                        </div>
+                        <div className="stat">
+                          <span className="stat-label">Improvements</span>
+                          <span className="stat-value">{enhancement.improvements_made.length}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {enhancement && (
-                    <div className="preview-stats">
-                      <div className="stat">
-                        <span className="stat-label">Quality Score</span>
-                        <span className="stat-value">
-                          {(Object.values(enhancement.analysis_scores).reduce((a, b) => a + b, 0) / Object.keys(enhancement.analysis_scores).length).toFixed(1)}/10
-                        </span>
-                      </div>
-                      <div className="stat">
-                        <span className="stat-label">Improvements</span>
-                        <span className="stat-value">{enhancement.improvements_made.length}</span>
-                      </div>
-                    </div>
+                  <div className="creation-options">
+                    <button 
+                      className="create-btn primary"
+                      onClick={() => createAgent()}
+                      disabled={isProcessing}
+                    >
+                      Create Agent
+                    </button>
+                  </div>
+
+                  {errors.creation && (
+                    <div className="error-message">{errors.creation}</div>
                   )}
                 </div>
-
-                <div className="creation-options">
-                  <button 
-                    className="create-btn primary"
-                    onClick={() => createAgent()}
-                    disabled={isProcessing}
-                  >
-                    {isProcessing ? 'Creating Agent...' : 'Create Agent'}
-                  </button>
-                </div>
-
-                {errors.creation && (
-                  <div className="error-message">{errors.creation}</div>
-                )}
-              </div>
+              )}
             </div>
           )}
         </div>
