@@ -134,20 +134,22 @@ class PromptEnhancer:
     
     ENHANCER_SYSTEM_PROMPT = (
         "You are an expert at creating ethical AI agent personalities. Your job is to take a user's "
-        "description of an ethical agent and enhance it into a professional system prompt that will "
-        "work well for ethical debates. "
-        "\n\nGuidelines for enhancement:"
-        "\n- Keep the user's core intent and values"
-        "\n- Add clear reasoning framework (deontological, consequentialist, virtue ethics, or custom)"
-        "\n- Specify decision-making criteria and examples"
-        "\n- Define personality traits that affect argumentation style"
-        "\n- Ensure the agent can participate in structured debates"
-        "\n- Make it specific enough to be consistent across different scenarios"
-        "\n- End with 'Respond in compact JSON only.' for debate compatibility"
-        "\n\nReturn only the enhanced system prompt, nothing else."
+        "brief description of an ethical agent and expand it into a comprehensive, professional personality "
+        "description of exactly 4-5 well-structured sentences."
+        "\n\nGuidelines for expansion:"
+        "\n- Naturally incorporate the agent's name in the first sentence"
+        "\n- Expand the core beliefs and values with specific details"
+        "\n- Add a clear ethical reasoning framework (deontological, consequentialist, virtue ethics, or custom)"
+        "\n- Describe their decision-making approach and criteria"
+        "\n- Explain how they apply principles in ethical debates"
+        "\n- Acknowledge nuances or limitations in their perspective"
+        "\n- Stay faithful to the original intent - do NOT add arbitrary details"
+        "\n- Make it rich, detailed, and professional"
+        "\n\nIMPORTANT: Return ONLY the expanded personality description (4-5 sentences). Do NOT include "
+        "any JSON instructions, system prompt formatting, or meta-commentary. Just the personality text."
     )
     
-    def enhance_description(self, description: str) -> EnhancementRequest:
+    def enhance_description(self, description: str, agent_name: str = "Agent") -> EnhancementRequest:
         """Enhance a user description into a better system prompt"""
         analyzer = PromptAnalyzer()
         
@@ -155,12 +157,18 @@ class PromptEnhancer:
         scores = analyzer.analyze_description(description)
         suggestions = analyzer.generate_suggestions(description, scores)
         
-        # Generate enhancement prompt
+        # Generate enhancement prompt with agent name
         enhancement_prompt = (
-            f"Original user description: \"{description}\"\n\n"
-            f"Please enhance this into a professional system prompt for an ethical debate agent. "
-            f"The agent should maintain the user's core values while being more specific about "
-            f"reasoning style, decision-making criteria, and personality traits."
+            f"Agent Name: {agent_name}\n"
+            f"Brief Description: \"{description}\"\n\n"
+            f"Expand this into a comprehensive 4-5 sentence personality description that:\n"
+            f"1. Starts by naturally incorporating '{agent_name}' in the first sentence\n"
+            f"2. Elaborates on their core ethical beliefs and values\n"
+            f"3. Describes their reasoning framework and decision-making approach\n"
+            f"4. Explains how they apply their principles in ethical debates\n"
+            f"5. Acknowledges nuances or limitations in their perspective\n\n"
+            f"Stay faithful to the original description. Do not add arbitrary details.\n"
+            f"Return ONLY the expanded personality text (4-5 sentences), nothing else."
         )
         
         try:
@@ -168,19 +176,48 @@ class PromptEnhancer:
             enhanced_prompt = call_ollama(
                 self.ENHANCER_SYSTEM_PROMPT,
                 enhancement_prompt,
-                num_predict=400,
+                num_predict=500,
                 temp=0.7
             )
             
-            # Clean up the response
+            # Clean up the response - remove any JSON instructions or extra formatting
             enhanced_prompt = enhanced_prompt.strip()
+            enhanced_prompt = enhanced_prompt.replace("Respond in compact JSON only.", "").strip()
+            enhanced_prompt = enhanced_prompt.replace("```", "").strip()
             
-            # Ensure it ends with the required JSON instruction
-            if not enhanced_prompt.endswith("Respond in compact JSON only."):
-                enhanced_prompt += " Respond in compact JSON only."
+            # Check quality - if too short or doesn't mention agent name, retry with more explicit instructions
+            if len(enhanced_prompt.split()) < 50 or agent_name.lower() not in enhanced_prompt.lower():
+                print(f"Enhancement quality check failed, retrying... (length: {len(enhanced_prompt.split())}, has name: {agent_name.lower() in enhanced_prompt.lower()})")
+                
+                retry_prompt = (
+                    f"AGENT NAME: {agent_name}\n"
+                    f"USER'S DESCRIPTION: {description}\n\n"
+                    f"TASK: Write exactly 4-5 detailed sentences that describe this agent's personality.\n\n"
+                    f"REQUIREMENTS:\n"
+                    f"- First sentence MUST start with '{agent_name}' and describe their core belief\n"
+                    f"- Expand on their ethical values and reasoning framework\n"
+                    f"- Describe how they make decisions and evaluate dilemmas\n"
+                    f"- Explain their debate style and argumentation approach\n"
+                    f"- Acknowledge any nuances or limitations\n\n"
+                    f"EXAMPLE FORMAT:\n"
+                    f"'{agent_name} champions [core belief] as [description]. [Sentence about values]. "
+                    f"[Sentence about reasoning]. [Sentence about application]. [Sentence about nuances].'\n\n"
+                    f"Write ONLY the personality description, nothing else:"
+                )
+                
+                enhanced_prompt = call_ollama(
+                    self.ENHANCER_SYSTEM_PROMPT,
+                    retry_prompt,
+                    num_predict=500,
+                    temp=0.75
+                ).strip()
+                
+                # Clean again
+                enhanced_prompt = enhanced_prompt.replace("Respond in compact JSON only.", "").strip()
+                enhanced_prompt = enhanced_prompt.replace("```", "").strip()
             
             # Generate improvements list
-            improvements = self._identify_improvements(description, enhanced_prompt)
+            improvements = self._identify_improvements(description, enhanced_prompt, agent_name)
             
             return EnhancementRequest(
                 original_description=description,
@@ -191,51 +228,59 @@ class PromptEnhancer:
             )
             
         except Exception as e:
+            print(f"Enhancement error: {e}")
             # Fallback enhancement if AI fails
-            return self._fallback_enhancement(description, scores, suggestions)
+            return self._fallback_enhancement(description, agent_name, scores, suggestions)
     
-    def _identify_improvements(self, original: str, enhanced: str) -> List[str]:
+    def _identify_improvements(self, original: str, enhanced: str, agent_name: str) -> List[str]:
         """Identify what improvements were made"""
         improvements = []
         
         original_lower = original.lower()
         enhanced_lower = enhanced.lower()
         
+        # Check for agent name incorporation
+        if agent_name.lower() in enhanced_lower and agent_name.lower() not in original_lower:
+            improvements.append(f"Naturally incorporated agent name '{agent_name}' into description")
+        
+        # Check for expansion
+        original_words = len(original.split())
+        enhanced_words = len(enhanced.split())
+        if enhanced_words > original_words * 2:
+            improvements.append(f"Expanded from {original_words} to {enhanced_words} words with rich details")
+        
         # Check for added elements
-        if "reasoning" not in original_lower and any(word in enhanced_lower for word in ["reasoning", "framework", "approach"]):
-            improvements.append("Added clear reasoning framework")
+        if any(word in enhanced_lower for word in ["reasoning", "framework", "approach", "applies"]):
+            improvements.append("Added clear ethical reasoning framework")
         
-        if "decision" not in original_lower and "decision" in enhanced_lower:
-            improvements.append("Specified decision-making criteria")
+        if any(word in enhanced_lower for word in ["decision", "evaluate", "criteria", "considers"]):
+            improvements.append("Specified decision-making approach and criteria")
         
-        if len(enhanced.split()) > len(original.split()) * 1.5:
-            improvements.append("Expanded personality description and behavioral patterns")
+        if any(word in enhanced_lower for word in ["debate", "argument", "position", "perspective"]):
+            improvements.append("Described how agent applies principles in debates")
         
-        if "example" not in original_lower and "example" in enhanced_lower:
-            improvements.append("Added specific examples and applications")
+        if any(word in enhanced_lower for word in ["acknowledges", "limitation", "nuance", "however", "while"]):
+            improvements.append("Added nuanced perspective and limitations")
         
-        if any(word in enhanced_lower for word in ["deontological", "consequentialist", "virtue", "utilitarian"]):
-            improvements.append("Connected to established ethical framework")
+        if any(word in enhanced_lower for word in ["deontological", "consequentialist", "virtue", "utilitarian", "autonomy", "rights", "outcomes"]):
+            improvements.append("Connected to established ethical concepts")
         
-        if "json" in enhanced_lower:
-            improvements.append("Ensured compatibility with debate system format")
-        
-        return improvements if improvements else ["Enhanced clarity and specificity"]
+        return improvements if improvements else ["Enhanced clarity and depth"]
     
-    def _fallback_enhancement(self, description: str, scores: Dict[str, float], suggestions: List[str]) -> EnhancementRequest:
+    def _fallback_enhancement(self, description: str, agent_name: str, scores: Dict[str, float], suggestions: List[str]) -> EnhancementRequest:
         """Provide a basic enhancement if AI enhancement fails"""
-        # Create a simple enhanced version
+        # Create a simple enhanced version with agent name
         enhanced = (
-            f"You are an ethical agent based on the following principles: {description} "
-            f"When evaluating ethical dilemmas, you apply your core values consistently and "
-            f"provide clear reasoning for your positions. You engage respectfully with other "
-            f"perspectives while maintaining your ethical stance. Respond in compact JSON only."
+            f"{agent_name} is an ethical agent guided by the following principles: {description} "
+            f"When evaluating ethical dilemmas, {agent_name} applies these core values consistently "
+            f"and provides clear reasoning for positions taken. {agent_name} engages respectfully with "
+            f"other perspectives while maintaining a strong ethical stance based on these foundational beliefs."
         )
         
         improvements = [
-            "Added structured reasoning approach",
-            "Ensured debate system compatibility",
-            "Enhanced consistency guidelines"
+            f"Incorporated agent name '{agent_name}'",
+            "Expanded description with structured approach",
+            "Added consistency and reasoning guidelines"
         ]
         
         return EnhancementRequest(
@@ -254,9 +299,9 @@ class EnhancementService:
         self.analyzer = PromptAnalyzer()
         self.enhancer = PromptEnhancer()
     
-    def enhance_agent_description(self, description: str) -> EnhancementRequest:
+    def enhance_agent_description(self, description: str, agent_name: str = "Agent") -> EnhancementRequest:
         """Main method to enhance an agent description"""
-        return self.enhancer.enhance_description(description)
+        return self.enhancer.enhance_description(description, agent_name)
     
     def analyze_only(self, description: str) -> Dict:
         """Analyze description without enhancement"""

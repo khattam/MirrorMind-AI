@@ -456,8 +456,8 @@ def get_agent_response(agent_name: str, dilemma: Dilemma):
 def create_custom_agent(request: AgentCreationRequest):
     """Create a new custom agent with AI enhancement"""
     try:
-        # Enhance the description
-        enhancement = enhancement_service.enhance_agent_description(request.description)
+        # Enhance the description with agent name
+        enhancement = enhancement_service.enhance_agent_description(request.description, request.name)
         
         # Generate system prompt
         system_prompt = enhancement_service.generate_system_prompt(
@@ -520,13 +520,19 @@ def update_agent(agent_id: str, request: AgentUpdateRequest):
         enhanced_prompt = None
         system_prompt = None
         
+        # Get existing agent to get name if not provided
+        existing_agent = agent_service.get_agent(agent_id)
+        if not existing_agent:
+            raise HTTPException(status_code=404, detail="Agent not found")
+        
         # If description is being updated, re-enhance it
         if request.description is not None:
-            enhancement = enhancement_service.enhance_agent_description(request.description)
+            agent_name = request.name if request.name else existing_agent.name
+            enhancement = enhancement_service.enhance_agent_description(request.description, agent_name)
             enhanced_prompt = enhancement.enhanced_prompt
             system_prompt = enhancement_service.generate_system_prompt(
                 enhanced_prompt, 
-                request.name or "Agent"
+                agent_name
             )
         
         agent = agent_service.update_agent(agent_id, request, enhanced_prompt, system_prompt)
@@ -560,10 +566,15 @@ def enhance_description(request: dict):
     """Enhance an agent description"""
     try:
         description = request.get("description", "")
+        agent_name = request.get("agent_name", "Agent")
+        
         if not description or len(description) < 50:
             raise HTTPException(status_code=400, detail="Description must be at least 50 characters")
         
-        enhancement = enhancement_service.enhance_agent_description(description)
+        if not agent_name or not agent_name.strip():
+            agent_name = "Agent"
+        
+        enhancement = enhancement_service.enhance_agent_description(description, agent_name.strip())
         return enhancement.dict()
         
     except HTTPException:
@@ -579,8 +590,8 @@ def regenerate_agent_prompt(agent_id: str):
         if not agent:
             raise HTTPException(status_code=404, detail="Agent not found")
         
-        # Re-enhance the original description
-        enhancement = enhancement_service.enhance_agent_description(agent.description)
+        # Re-enhance the original description with agent name
+        enhancement = enhancement_service.enhance_agent_description(agent.description, agent.name)
         system_prompt = enhancement_service.generate_system_prompt(
             enhancement.enhanced_prompt, 
             agent.name
