@@ -1,4 +1,4 @@
-# 🧠 MirrorMinds: AI-Powered Ethical Debate Platform
+# MirrorMinds: AI-Powered Ethical Debate Platform
 
 <div align="center">
 
