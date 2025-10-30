@@ -26,17 +26,25 @@ function VerdictView({ verdict, onReset }) {
         {verdict.scores && Object.keys(verdict.scores).length > 0 && (
           <div className="verdict-section full-width">
             <h3>Ethical Scores</h3>
-            <div className="scores-grid">
+            <div className="scores-container">
               {Object.entries(verdict.scores).map(([option, scores]) => {
                 if (typeof scores === 'object') {
-                  return Object.entries(scores).map(([criterion, score]) => (
-                    <div key={`${option}-${criterion}`} className="score-item">
-                      <div className="score-label">
-                        {option}: {formatCriterion(criterion)}
+                  const optionLabel = option.replace('option_', '').toUpperCase();
+                  return (
+                    <div key={option} className="option-scores-row">
+                      <div className="option-label">Option {optionLabel}</div>
+                      <div className="scores-grid">
+                        {Object.entries(scores).map(([criterion, score]) => (
+                          <div key={`${option}-${criterion}`} className="score-item">
+                            <div className="score-label">
+                              {optionLabel}: {formatCriterion(criterion)}
+                            </div>
+                            <div className="score-value">{score}/2</div>
+                          </div>
+                        ))}
                       </div>
-                      <div className="score-value">{score}/2</div>
                     </div>
-                  ));
+                  );
                 }
                 return null;
               })}

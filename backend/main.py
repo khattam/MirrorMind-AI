@@ -7,30 +7,52 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import re
 
-# -------------------- OLLAMA CONFIG --------------------
+# -------------------- AI PROVIDER CONFIG --------------------
 import os
 from dotenv import load_dotenv
+from groq import Groq
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Use cloud API for cloud models, local for local models  
-MODEL = "qwen2.5:7b-instruct-q4_K_M"  # Back to local model for stability
+# Configuration
+AI_PROVIDER = os.getenv("AI_PROVIDER", "groq")  # "groq" or "ollama"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
+OLLAMA_MODEL = "qwen2.5:7b-instruct-q4_K_M"
+OLLAMA_API = "http://localhost:11434/api/generate"
 
-# Determine API endpoint based on model
-if MODEL.endswith("-cloud"):
-    OLLAMA_API = "https://ollama.com/api/generate"
-else:
-    OLLAMA_API = "http://localhost:11434/api/generate"
+# Initialize Groq client
+groq_client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 def call_ollama(system_prompt: str, user_prompt: str, num_predict: int = 400, temp: float = 0.7, top_p: float = 0.9, repeat_penalty: float = 1.1) -> str:
+    """Unified AI call function - supports both Groq and Ollama"""
+    
+    if AI_PROVIDER == "groq" and groq_client:
+        # Use Groq API
+        try:
+            chat_completion = groq_client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                model=GROQ_MODEL,
+                temperature=temp,
+                max_tokens=num_predict,
+                top_p=top_p,
+            )
+            return chat_completion.choices[0].message.content.strip()
+        except Exception as e:
+            print(f"Groq API error: {e}, falling back to Ollama")
+            # Fall back to Ollama if Groq fails
+    
+    # Use Ollama (local or fallback)
     payload = {
-        "model": MODEL,
+        "model": OLLAMA_MODEL,
         "prompt": f"<|system|>\n{system_prompt}\n<|user|>\n{user_prompt}\n",
         "options": {
             "temperature": temp,
-            "top_p": top_p,
             "top_p": top_p,
             "repeat_penalty": repeat_penalty,
             "num_predict": num_predict
@@ -38,13 +60,8 @@ def call_ollama(system_prompt: str, user_prompt: str, num_predict: int = 400, te
         "stream": False,
     }
     
-    # Add authentication headers for cloud models
-    headers = {
-        "Content-Type": "application/json"
-    }
-    
-    # Only add auth for cloud models
-    if MODEL.endswith("-cloud") and OLLAMA_API_KEY:
+    headers = {"Content-Type": "application/json"}
+    if OLLAMA_API_KEY:
         headers["Authorization"] = f"Bearer {OLLAMA_API_KEY}"
    
     r = requests.post(OLLAMA_API, json=payload, headers=headers, timeout=240)
@@ -59,8 +76,8 @@ def clamp_json(s: str, fallback: dict) -> dict:
     """
     Robust JSON extractor:
     1) prefer ```json ... ``` fenced blocks
-    2) else scan all {...} objects and return the first that has 'stance' and 'argument'
-    3) else return the first valid {...}
+    2) else try to parse entire text as JSON
+    3) else scan all {...} objects and return the first valid one
     4) else fallback with raw
     """
     try:
@@ -77,7 +94,7 @@ def clamp_json(s: str, fallback: dict) -> dict:
         # 2) Try to parse the entire text as JSON first
         try:
             j = json.loads(text)
-            if isinstance(j, dict) and "stance" in j and "argument" in j:
+            if isinstance(j, dict):
                 return j
         except json.JSONDecodeError:
             pass
@@ -153,9 +170,18 @@ VIRTUE_SYS = (
 
 JUDGE_SYS = (
     "You are the Judge, a neutral evaluator of ethical reasoning. Given the dilemma and all rounds of debate, "
-    "assign each agent scores from 0–2 for harm_minimization, rule_consistency, autonomy_respect, honesty, and fairness. "
-    "Then choose which option (A or B) best aligns with the overall ethical balance. "
-    "Return a JSON object: {\"scores\":{...},\"final_recommendation\":\"A|B\",\"confidence\":0-100,\"verdict\":\"...\"}"
+    "you must evaluate both options and provide a comprehensive verdict.\n\n"
+    "Your response MUST be valid JSON with this exact structure:\n"
+    "{\n"
+    '  "scores": {\n'
+    '    "option_a": {"harm_minimization": 0-2, "rule_consistency": 0-2, "autonomy_respect": 0-2, "honesty": 0-2, "fairness": 0-2},\n'
+    '    "option_b": {"harm_minimization": 0-2, "rule_consistency": 0-2, "autonomy_respect": 0-2, "honesty": 0-2, "fairness": 0-2}\n'
+    '  },\n'
+    '  "final_recommendation": "A or B",\n'
+    '  "confidence": 0-100,\n'
+    '  "verdict": "2-3 sentence explanation of your decision"\n'
+    "}\n\n"
+    "Return ONLY the JSON object, no other text."
 )
 
 # -------------------- MODELS --------------------
@@ -404,8 +430,10 @@ def continue_round(t: Transcript):
 @app.post("/judge")
 def judge(t: Transcript):
     judge_input = {"dilemma": t.dilemma.dict(), "transcript": [x.dict() for x in t.turns]}
-    raw = call_ollama(JUDGE_SYS, json.dumps(judge_input), num_predict=280, temp=0.25)
+    raw = call_ollama(JUDGE_SYS, json.dumps(judge_input), num_predict=600, temp=0.25)
+    print(f"DEBUG Judge raw response: {raw[:500]}...")
     verdict = clamp_json(raw, {"scores":{}, "final_recommendation":"A","confidence":50,"verdict":"—"})
+    print(f"DEBUG Judge parsed verdict: {verdict}")
     
     # Record debate metrics in background
     try:
