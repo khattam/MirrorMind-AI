@@ -31,6 +31,7 @@ def call_ollama(system_prompt: str, user_prompt: str, num_predict: int = 400, te
         "options": {
             "temperature": temp,
             "top_p": top_p,
+            "top_p": top_p,
             "repeat_penalty": repeat_penalty,
             "num_predict": num_predict
         },

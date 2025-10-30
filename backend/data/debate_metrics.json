@@ -1,1 +1,58 @@
-{"debates": []}
+{
+  "debates": [
+    {
+      "debate_id": "debate_20251030_095756",
+      "timestamp": "2025-10-30T09:57:56.106118",
+      "dilemma_title": "Use of AI ",
+      "total_turns": 6,
+      "total_words": 380,
+      "num_agents": 3,
+      "agents": [
+        "Virtue",
+        "Deon",
+        "Conse"
+      ],
+      "avg_words_per_turn": 63.33,
+      "avg_words_per_agent": {
+        "Virtue": 54.5,
+        "Deon": 56.5,
+        "Conse": 79.0
+      },
+      "agent_word_counts": {
+        "Deon": 113,
+        "Conse": 158,
+        "Virtue": 109
+      },
+      "agent_turn_counts": {
+        "Deon": 2,
+        "Conse": 2,
+        "Virtue": 2
+      },
+      "stance_changes": {
+        "Virtue": 0,
+        "Deon": 0,
+        "Conse": 0
+      },
+      "most_verbose_agent": "Conse",
+      "intensity_score": 63.33,
+      "final_recommendation": "B",
+      "confidence": 85,
+      "ethical_scores": {
+        "A": {
+          "harm_minimization": 1,
+          "rule_consistency": 2,
+          "autonomy_respect": 1,
+          "honesty": 0,
+          "fairness": 1
+        },
+        "B": {
+          "harm_minimization": 2,
+          "rule_consistency": 0,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 0
+        }
+      }
+    }
+  ]
+}
