@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌌 MIRRORMINDS 🌌
+# 🌌 MirrorMind 🌌
 
 ### ⚡ **WHERE AI AGENTS BATTLE IN PHILOSOPHICAL THUNDERDOMES** ⚡
 
@@ -9,18 +9,21 @@
   <img src="https://img.shields.io/badge/React-18.3+-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
   <img src="https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ai&logoColor=white" />
+  <img src="https://img.shields.io/badge/Groq-FF6600?style=for-the-badge&logo=ai&logoColor=white" />
   <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" />
 </p>
 
-
+<div align="center">
 
 ```diff
 + 🤖 AI Agents Debate Ethics in Real-Time
 + ✨ Build Custom Agents with GPT-4o Enhancement
 + 📊 Track Performance Across 5 Ethical Dimensions
 + 🎨 Sleek Dark UI with Smooth Animations
-+ 🔥 Powered by Ollama + OpenAI
++ 🔥 Powered by Ollama + Groq + OpenAI
 ```
+
+</div>
 
 **[⚡ Quick Start](#-installation-in-5-minutes)** • 
 **[🎮 Features](#-core-features)** • 
@@ -37,7 +40,7 @@
 <tr>
 <td width="60%">
 
-**MirrorMinds** is an AI-powered platform where philosophical agents engage in **structured ethical debates**. 
+**MirrorMind** is an AI-powered platform where philosophical agents engage in **structured ethical debates**. 
 
 Think of it as a **philosophical cage match** where:
 - 🥊 AI agents represent different moral frameworks
@@ -60,8 +63,13 @@ graph TD
     E --> F[📊 Ethical Scores]
     F --> G[🏆 Winner Declared]
     
-    style A fill:#1a1a1a,stroke:#00ff00,stroke-width:2px
-    style G fill:#1a1a1a,stroke:#ffd700,stroke-width:2px
+    style A fill:#000000,stroke:#00ff00,stroke-width:3px,color:#ffffff
+    style B fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style C fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style D fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style E fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style F fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style G fill:#000000,stroke:#ffd700,stroke-width:3px,color:#ffffff
 ```
 
 </td>
@@ -140,9 +148,7 @@ Emphasizes **character development** and **human flourishing**.
 <summary><h3>✨ Agent Builder: CREATE YOUR CHAMPION</h3></summary>
 
 
-This is the **KILLER
-This i
-s the **CROWN JEWEL** of MirrorMinds. Build your own custom ethical AI agent in 4 steps:
+This is the **CROWN JEWEL** of MirrorMind. Build your own custom ethical AI agent in 4 steps:
 
 ```mermaid
 graph LR
@@ -150,10 +156,10 @@ graph LR
     B --> C[✨ Step 3<br/>AI Enhancement]
     C --> D[👁️ Step 4<br/>Preview & Deploy]
     
-    style A fill:#1a1a1a,stroke:#00ff00,stroke-width:2px
-    style B fill:#1a1a1a,stroke:#00aaff,stroke-width:2px
-    style C fill:#1a1a1a,stroke:#ff00ff,stroke-width:2px
-    style D fill:#1a1a1a,stroke:#ffd700,stroke-width:2px
+    style A fill:#000000,stroke:#00ff00,stroke-width:3px,color:#ffffff
+    style B fill:#000000,stroke:#00aaff,stroke-width:3px,color:#ffffff
+    style C fill:#000000,stroke:#ff00ff,stroke-width:3px,color:#ffffff
+    style D fill:#000000,stroke:#ffd700,stroke-width:3px,color:#ffffff
 ```
 
 #### 🎨 **Step 1: Identity**
@@ -275,12 +281,6 @@ ethical care."
 </td>
 </tr>
 </table>
-
-**📊 Quality Scores:**
-- **Clarity:** 9.2/10 ⭐⭐⭐⭐⭐⭐⭐⭐⭐☆
-- **Completeness:** 8.8/10 ⭐⭐⭐⭐⭐⭐⭐⭐⭐☆
-- **Specificity:** 9.5/10 ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
-- **Consistency:** 9.0/10 ⭐⭐⭐⭐⭐⭐⭐⭐⭐☆
 
 </details>
 
@@ -667,7 +667,7 @@ graph TB
 
 ```mermaid
 gantt
-    title MirrorMinds Development Roadmap
+    title MirrorMind Development Roadmap
     dateFormat  YYYY-MM-DD
     section Phase 1
     Core Debate System           :done, 2025-01-01, 30d
@@ -903,7 +903,7 @@ pip install --upgrade fastapi uvicorn requests python-dotenv pydantic openai
 
 ```
 ╔═══════════════════════════════════════════════════════════════╗
-║                    🚀 MIRRORMINDS STATS 🚀                   ║
+║                    🚀 MIRRORMIND STATS �                     ║
 ╠═══════════════════════════════════════════════════════════════╣
 ║                                                               ║
 ║  ⭐ GitHub Stars:        [Growing Daily]                     ║
@@ -1017,7 +1017,7 @@ Build Tool
 ```
 MIT License
 
-Copyright (c) 2025 MirrorMinds
+Copyright (c) 2025 MirrorMind
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1049,14 +1049,14 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ║                                        - Socrates             ║
 ║                                                               ║
 ║  "But the examined life is way more fun with AI."             ║
-║                                        - MirrorMinds Team     ║
+║                                        - MirrorMind Team      ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
 ```
 
-MirrorMinds isn't just a project—it's an **experiment in AI ethics**, a **playground for philosophical exploration**, and a **testament to what happens when you combine modern AI with ancient wisdom**.
+MirrorMind isn't just a project—it's an **experiment in AI ethics**, a **playground for philosophical exploration**, and a **testament to what happens when you combine modern AI with ancient wisdom**.
 
-### ✨ What Makes MirrorMinds Special?
+### ✨ What Makes MirrorMind Special?
 
 - 🎭 **Watch AI agents debate** from different philosophical perspectives
 - ✨ **Build custom agents** with GPT-4o-powered enhancement
@@ -1101,6 +1101,6 @@ If you think this project is cool, **star the repo**! It helps others discover i
 
 ---
 
-**MirrorMinds** • *Where Philosophy Meets AI* • **2025**
+**MirrorMind** • *Where Philosophy Meets AI* • **2025**
 
 </div>
