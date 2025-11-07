@@ -2,8 +2,8 @@ name: Keep Backend Alive
 
 on:
   schedule:
-    # Ping every 10 minutes (Render free tier spins down after 15 minutes of inactivity)
-    - cron: '*/10 * * * *'
+    # Ping every 5 minutes (Render free tier spins down after 15 minutes of inactivity)
+    - cron: '*/5 * * * *'
   workflow_dispatch: # Allows manual trigger from GitHub Actions tab
 
 jobs:
