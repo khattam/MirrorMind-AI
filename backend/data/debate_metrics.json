@@ -53,6 +53,354 @@
           "fairness": 0
         }
       }
+    },
+    {
+      "debate_id": "debate_20251030_154957",
+      "timestamp": "2025-10-30T15:49:57.856676",
+      "dilemma_title": "Self-Driving Car Dilemma",
+      "total_turns": 6,
+      "total_words": 740,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Virtue",
+        "Deon"
+      ],
+      "avg_words_per_turn": 123.33,
+      "avg_words_per_agent": {
+        "Conse": 125.5,
+        "Virtue": 119.5,
+        "Deon": 125.0
+      },
+      "agent_word_counts": {
+        "Deon": 250,
+        "Conse": 251,
+        "Virtue": 239
+      },
+      "agent_turn_counts": {
+        "Deon": 2,
+        "Conse": 2,
+        "Virtue": 2
+      },
+      "stance_changes": {
+        "Conse": 0,
+        "Virtue": 0,
+        "Deon": 0
+      },
+      "most_verbose_agent": "Conse",
+      "intensity_score": 123.33,
+      "final_recommendation": "A",
+      "confidence": 50,
+      "ethical_scores": {}
+    },
+    {
+      "debate_id": "debate_20251030_155246",
+      "timestamp": "2025-10-30T15:52:46.199431",
+      "dilemma_title": "Self-Driving Car Dilemma",
+      "total_turns": 9,
+      "total_words": 997,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Virtue",
+        "Deon"
+      ],
+      "avg_words_per_turn": 110.78,
+      "avg_words_per_agent": {
+        "Conse": 109.33,
+        "Virtue": 114.33,
+        "Deon": 108.67
+      },
+      "agent_word_counts": {
+        "Deon": 326,
+        "Conse": 328,
+        "Virtue": 343
+      },
+      "agent_turn_counts": {
+        "Deon": 3,
+        "Conse": 3,
+        "Virtue": 3
+      },
+      "stance_changes": {
+        "Conse": 0,
+        "Virtue": 0,
+        "Deon": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 110.78,
+      "final_recommendation": "A",
+      "confidence": 50,
+      "ethical_scores": {}
+    },
+    {
+      "debate_id": "debate_20251030_155802",
+      "timestamp": "2025-10-30T15:58:02.607610",
+      "dilemma_title": "Whistleblower's Dilemma",
+      "total_turns": 6,
+      "total_words": 749,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Deon",
+        "Virtue"
+      ],
+      "avg_words_per_turn": 124.83,
+      "avg_words_per_agent": {
+        "Conse": 114.5,
+        "Deon": 123.0,
+        "Virtue": 137.0
+      },
+      "agent_word_counts": {
+        "Deon": 246,
+        "Conse": 229,
+        "Virtue": 274
+      },
+      "agent_turn_counts": {
+        "Deon": 2,
+        "Conse": 2,
+        "Virtue": 2
+      },
+      "stance_changes": {
+        "Conse": 0,
+        "Deon": 0,
+        "Virtue": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 124.83,
+      "final_recommendation": "A",
+      "confidence": 100,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 2,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 0,
+          "autonomy_respect": 0,
+          "honesty": 0,
+          "fairness": 0
+        }
+      }
+    },
+    {
+      "debate_id": "debate_20251030_160511",
+      "timestamp": "2025-10-30T16:05:11.731639",
+      "dilemma_title": "AI Therapist Confidentiality",
+      "total_turns": 12,
+      "total_words": 1237,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Deon",
+        "Virtue"
+      ],
+      "avg_words_per_turn": 103.08,
+      "avg_words_per_agent": {
+        "Conse": 98.75,
+        "Deon": 96.0,
+        "Virtue": 114.5
+      },
+      "agent_word_counts": {
+        "Deon": 384,
+        "Conse": 395,
+        "Virtue": 458
+      },
+      "agent_turn_counts": {
+        "Deon": 4,
+        "Conse": 4,
+        "Virtue": 4
+      },
+      "stance_changes": {
+        "Conse": 0,
+        "Deon": 0,
+        "Virtue": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 103.08,
+      "final_recommendation": "B",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 0,
+          "autonomy_respect": 0,
+          "honesty": 1,
+          "fairness": 1
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 2,
+          "fairness": 1
+        }
+      }
+    },
+    {
+      "debate_id": "debate_20251030_172004",
+      "timestamp": "2025-10-30T17:20:04.820153",
+      "dilemma_title": "Car Swerve",
+      "total_turns": 6,
+      "total_words": 768,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Deon",
+        "Virtue"
+      ],
+      "avg_words_per_turn": 128.0,
+      "avg_words_per_agent": {
+        "Conse": 134.0,
+        "Deon": 112.0,
+        "Virtue": 138.0
+      },
+      "agent_word_counts": {
+        "Deon": 224,
+        "Conse": 268,
+        "Virtue": 276
+      },
+      "agent_turn_counts": {
+        "Deon": 2,
+        "Conse": 2,
+        "Virtue": 2
+      },
+      "stance_changes": {
+        "Conse": 0,
+        "Deon": 0,
+        "Virtue": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 128.0,
+      "final_recommendation": "A",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 1,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 1,
+          "fairness": 0
+        }
+      }
+    },
+    {
+      "debate_id": "debate_20251031_150558",
+      "timestamp": "2025-10-31T15:05:58.555493",
+      "dilemma_title": "Breaking an NDA to Expose Wrongdoing",
+      "total_turns": 9,
+      "total_words": 923,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Deon",
+        "Virtue"
+      ],
+      "avg_words_per_turn": 102.56,
+      "avg_words_per_agent": {
+        "Conse": 91.33,
+        "Deon": 105.67,
+        "Virtue": 110.67
+      },
+      "agent_word_counts": {
+        "Deon": 317,
+        "Conse": 274,
+        "Virtue": 332
+      },
+      "agent_turn_counts": {
+        "Deon": 3,
+        "Conse": 3,
+        "Virtue": 3
+      },
+      "stance_changes": {
+        "Conse": 1,
+        "Deon": 0,
+        "Virtue": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 102.56,
+      "final_recommendation": "B",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 1,
+          "rule_consistency": 2,
+          "autonomy_respect": 1,
+          "honesty": 1,
+          "fairness": 1
+        },
+        "option_b": {
+          "harm_minimization": 2,
+          "rule_consistency": 0,
+          "autonomy_respect": 2,
+          "honesty": 2,
+          "fairness": 2
+        }
+      }
+    },
+    {
+      "debate_id": "debate_20251103_214553",
+      "timestamp": "2025-11-03T21:45:53.042642",
+      "dilemma_title": "Autonomous Vehicle Crash Decision",
+      "total_turns": 6,
+      "total_words": 783,
+      "num_agents": 3,
+      "agents": [
+        "Virtue",
+        "Conse",
+        "Deon"
+      ],
+      "avg_words_per_turn": 130.5,
+      "avg_words_per_agent": {
+        "Virtue": 138.5,
+        "Conse": 131.0,
+        "Deon": 122.0
+      },
+      "agent_word_counts": {
+        "Deon": 244,
+        "Conse": 262,
+        "Virtue": 277
+      },
+      "agent_turn_counts": {
+        "Deon": 2,
+        "Conse": 2,
+        "Virtue": 2
+      },
+      "stance_changes": {
+        "Virtue": 0,
+        "Conse": 0,
+        "Deon": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 130.5,
+      "final_recommendation": "A",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 0,
+          "autonomy_respect": 1,
+          "honesty": 1,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 1,
+          "fairness": 0
+        }
+      }
     }
   ]
 }

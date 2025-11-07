@@ -8,7 +8,7 @@ import KeyboardShortcuts from './components/KeyboardShortcuts';
 import Dashboard from './components/Dashboard';
 import './App.css';
 
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 function App() {
   const [stage, setStage] = useState('form'); // 'form', 'debate', 'verdict', 'agent-builder', 'dashboard'
@@ -21,6 +21,11 @@ function App() {
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
   const [historyViewTab, setHistoryViewTab] = useState('debate');
   const [showDashboard, setShowDashboard] = useState(false);
+
+  // Load debate history on mount
+  useEffect(() => {
+    loadDebateHistory();
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -182,20 +187,22 @@ function App() {
     }
   };
 
-  const handleReset = () => {
-    // Save current debate to history if it exists
-    if (transcript && verdict) {
-      const historyItem = {
-        id: Date.now(),
-        title: transcript.dilemma.title,
-        date: new Date().toLocaleDateString(),
-        transcript,
-        verdict,
-        recommendation: verdict.final_recommendation,
-        confidence: verdict.confidence
-      };
-      setDebateHistory(prev => [historyItem, ...prev]);
+  const loadDebateHistory = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/debates?limit=50`);
+      if (response.ok) {
+        const data = await response.json();
+        setDebateHistory(data.debates || []);
+      }
+    } catch (error) {
+      console.error('Failed to load debate history:', error);
     }
+  };
+
+  const handleReset = () => {
+    // Debate is already saved to backend in handleJudge
+    // Just reload history to get the latest
+    loadDebateHistory();
     
     setStage('form');
     setDilemma(null);
@@ -211,8 +218,20 @@ function App() {
     setStage('history');
   };
 
-  const deleteHistoryItem = (id) => {
-    setDebateHistory(prev => prev.filter(item => item.id !== id));
+  const deleteHistoryItem = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/api/debates/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        setDebateHistory(prev => prev.filter(item => item.id !== id));
+      } else {
+        console.error('Failed to delete debate');
+      }
+    } catch (error) {
+      console.error('Error deleting debate:', error);
+    }
   };
 
   const openAgentBuilder = () => {

@@ -205,11 +205,13 @@ from models.custom_agent import CustomAgent, AgentCreationRequest, AgentUpdateRe
 from services.agent_service import AgentService
 from services.enhancement_service import EnhancementService
 from services.metrics_service import MetricsService
+from services.debate_history_service import DebateHistoryService
 
 # Initialize services
 agent_service = AgentService()
 enhancement_service = EnhancementService()
 metrics_service = MetricsService()
+debate_history_service = DebateHistoryService()
 
 # -------------------- APP CONFIG --------------------
 app = FastAPI(title="MirrorMinds API")
@@ -442,6 +444,13 @@ def judge(t: Transcript):
     except Exception as e:
         print(f"Failed to record metrics: {e}")
         # Don't fail the request if metrics recording fails
+    
+    # Save debate to history
+    try:
+        debate_history_service.save_debate(transcript_dict, verdict)
+    except Exception as e:
+        print(f"Failed to save debate history: {e}")
+        # Don't fail the request if history saving fails
     
     return verdict
 
@@ -696,3 +705,49 @@ def get_metrics_summary():
         return summary
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get summary: {str(e)}")
+
+# -------------------- DEBATE HISTORY ENDPOINTS --------------------
+
+@app.get("/api/debates")
+def get_debate_history(limit: int = 50):
+    """Get all debate history"""
+    try:
+        debates = debate_history_service.get_all_debates(limit)
+        return {"debates": debates, "count": len(debates)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get debate history: {str(e)}")
+
+@app.get("/api/debates/{debate_id}")
+def get_debate(debate_id: str):
+    """Get a specific debate by ID"""
+    try:
+        debate = debate_history_service.get_debate_by_id(debate_id)
+        if not debate:
+            raise HTTPException(status_code=404, detail="Debate not found")
+        return {"debate": debate}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get debate: {str(e)}")
+
+@app.delete("/api/debates/{debate_id}")
+def delete_debate(debate_id: str):
+    """Delete a debate from history"""
+    try:
+        success = debate_history_service.delete_debate(debate_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Debate not found")
+        return {"message": "Debate deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete debate: {str(e)}")
+
+@app.get("/api/debates/stats")
+def get_debate_stats():
+    """Get statistics about debate history"""
+    try:
+        stats = debate_history_service.get_stats()
+        return stats
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
