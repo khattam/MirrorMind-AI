@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import DilemmaForm from './components/DilemmaForm';
 import DebateView from './components/DebateView';
 import VerdictView from './components/VerdictView';
@@ -372,6 +373,9 @@ function App() {
       
       {/* Keyboard shortcuts helper - always visible */}
       {stage !== 'agent-builder' && <KeyboardShortcuts />}
+      
+      {/* Vercel Analytics */}
+      <Analytics />
     </div>
   );
 }
