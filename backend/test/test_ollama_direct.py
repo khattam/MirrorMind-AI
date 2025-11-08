@@ -1,8 +1,13 @@
 import requests
 
 def test_ollama_api():
-    # Using the key directly for testing (don't commit this!)
-    api_key = "c0cce0b2eba946f3acdbb7102e357f13.FPXTVBEHtGQtvdvM5oehHt-R"
+    # Get API key from environment variable
+    import os
+    api_key = os.getenv("OLLAMA_API_KEY")
+    
+    if not api_key:
+        print("❌ OLLAMA_API_KEY environment variable not set")
+        return False
     
     print(f'API Key (first 20 chars): {api_key[:20]}...')
     
