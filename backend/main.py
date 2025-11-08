@@ -225,8 +225,15 @@ app.add_middleware(
 )
 
 @app.get("/")
+@app.head("/")
 def root():
     return {"message": "MirrorMinds backend is running!"}
+
+@app.get("/health")
+@app.head("/health")
+def health_check():
+    """Health check endpoint for monitoring services"""
+    return {"status": "healthy", "service": "MirrorMinds API"}
 
 # -------------------- HELPERS --------------------
 def mk_base(d: Dilemma) -> str:
