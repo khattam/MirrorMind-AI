@@ -132,40 +132,40 @@ No bias. No favorites. Just cold, hard ethical analysis.
 
 ### The Debate Flow
 
-```
-You submit dilemma
-    ↓
-Agents analyze and pick sides
-    ↓
-Round 1: Opening arguments (each agent makes their case)
-    ↓
-Round 2: Rebuttals (agents respond to each other)
-    ↓
-Judge evaluates everything
-    ↓
-Winner declared with detailed scores
-    ↓
-Saved to history for replay
+```mermaid
+graph TD
+    A[👤 You Submit Dilemma] --> B[🎭 Agents Analyze & Pick Sides]
+    B --> C[💬 Round 1: Opening Arguments]
+    C --> D[🔄 Round 2: Rebuttals]
+    D --> E[⚖️ Judge Evaluates Everything]
+    E --> F[🏆 Winner Declared with Scores]
+    F --> G[💾 Saved to History]
+    
+    style A fill:#1a1a2e,stroke:#00ff88,stroke-width:3px,color:#fff
+    style B fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
+    style C fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
+    style D fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
+    style E fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
+    style F fill:#1a1a2e,stroke:#ffd700,stroke-width:3px,color:#fff
+    style G fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
 ```
 
 ### The Enhancement Pipeline
 
-```
-Your 50-word description
-    ↓
-GPT-4o analyzes core concepts
-    ↓
-Expands with examples and citations
-    ↓
-Structures reasoning framework
-    ↓
-Adds philosophical terminology
-    ↓
-Quality scoring (4 dimensions)
-    ↓
-System prompt generation
-    ↓
-Debate-ready agent
+```mermaid
+graph LR
+    A[📝 Your Description<br/>50-1000 chars] --> B[🧠 GPT-4o Analysis]
+    B --> C[✨ Enhancement]
+    C --> D[📊 Quality Scoring]
+    D --> E[⚙️ System Prompt]
+    E --> F[🎭 Debate-Ready Agent]
+    
+    style A fill:#1a1a2e,stroke:#00ff88,stroke-width:3px,color:#fff
+    style B fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
+    style C fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
+    style D fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
+    style E fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
+    style F fill:#1a1a2e,stroke:#00ff88,stroke-width:3px,color:#fff
 ```
 
 ---
@@ -200,30 +200,47 @@ Debate-ready agent
 
 ### The Architecture
 
-```
-┌─────────────────────────────────────────┐
-│         React Frontend (Vite)           │
-│  • Debate visualization                 │
-│  • Agent builder UI                     │
-│  • Analytics dashboard                  │
-│  • History viewer                       │
-└──────────────────┬──────────────────────┘
-                   │ REST API
-┌──────────────────▼──────────────────────┐
-│       FastAPI Backend (Async)           │
-│  • Debate orchestration                 │
-│  • Agent management                     │
-│  • Metrics collection                   │
-│  • JSON storage                         │
-└──────────────────┬──────────────────────┘
-                   │
-        ┌──────────┴──────────┐
-        │                     │
-┌───────▼────────┐   ┌────────▼─────────┐
-│  Groq API      │   │  OpenAI API      │
-│  Llama 3.3 70B │   │  GPT-4o          │
-│  (Debates)     │   │  (Enhancement)   │
-└────────────────┘   └──────────────────┘
+```mermaid
+graph TB
+    subgraph Frontend["🎨 Frontend Layer"]
+        A[React + Vite]
+        B[Debate Visualization]
+        C[Agent Builder UI]
+        D[Analytics Dashboard]
+    end
+    
+    subgraph Backend["⚡ Backend Layer"]
+        E[FastAPI Server]
+        F[Debate Service]
+        G[Agent Service]
+        H[Metrics Service]
+    end
+    
+    subgraph AI["🤖 AI Layer"]
+        I[Groq API<br/>Llama 3.3 70B]
+        J[OpenAI API<br/>GPT-4o]
+    end
+    
+    subgraph Storage["💾 Storage Layer"]
+        K[JSON Files<br/>Agents & Metrics]
+    end
+    
+    A --> E
+    B --> E
+    C --> E
+    D --> E
+    E --> F
+    E --> G
+    E --> H
+    F --> I
+    G --> J
+    G --> K
+    H --> K
+    
+    style Frontend fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
+    style Backend fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
+    style AI fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
+    style Storage fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
 ```
 
 ### Why These Choices?
