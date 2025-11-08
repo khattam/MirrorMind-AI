@@ -1,4 +1,4 @@
-# [MirrorMind AI](https://mirror-mind-ai.vercel.app)
+# [MirrorMind AI](https://mirrormind-ai.vercel.app/)
 
 <div align="center">
 
