@@ -459,36 +459,9 @@ npm install
 
 ---
 
-## 📊 Stats
-
-- **Lines of Code:** ~5,000+
-- **React Components:** 15+
-- **API Endpoints:** 20+
-- **Default Agents:** 3
-- **Custom Agents:** Unlimited
-- **Ethical Dimensions:** 5
-- **Emoji Avatars:** 32
-- **Average Debate:** ~30 seconds
-- **Enhancement Time:** ~3 seconds
-- **Quality Scores:** 4 dimensions
-
----
-
 ## 📜 License
 
 MIT License - do whatever you want with this code.
-
----
-
-## 🙏 Thanks To
-
-- **Groq** for fast AI inference
-- **OpenAI** for GPT-4o magic
-- **FastAPI** for making Python web dev fun
-- **React** for making UIs not terrible
-- **Vite** for making builds not slow
-- **Coffee** for making this possible
-- **You** for reading this far
 
 ---
 
