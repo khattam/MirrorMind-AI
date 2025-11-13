@@ -1,423 +1,649 @@
-# MirrorMinds Class Diagram
+# MirrorMind AI - Complete Class Diagram
 
 ## System Architecture Overview
 
-This class diagram represents the MirrorMinds AI-Powered Ethical Debate Simulator, showing the key components and their relationships across the backend API and frontend application.
+```mermaid
+graph TB
+    subgraph Frontend["Frontend Layer (React)"]
+        App[App.jsx]
+        DilemmaForm[DilemmaForm]
+        DebateView[DebateView]
+        VerdictView[VerdictView]
+        Dashboard[Dashboard]
+        AgentBuilder[AgentBuilder]
+        AgentSelector[AgentSelector]
+        Sidebar[Sidebar]
+    end
+    
+    subgraph Backend["Backend Layer (FastAPI)"]
+        MainAPI[main.py - FastAPI App]
+        DebateEndpoints[Debate Endpoints]
+        AgentEndpoints[Agent Endpoints]
+        MetricsEndpoints[Metrics Endpoints]
+        HistoryEndpoints[History Endpoints]
+    end
+    
+    subgraph Services["Service Layer"]
+        AgentService[AgentService]
+        EnhancementService[EnhancementService]
+        MetricsService[MetricsService]
+        HistoryService[DebateHistoryService]
+    end
+    
+    subgraph Models["Data Models"]
+        CustomAgent[CustomAgent]
+        AgentRating[AgentRating]
+        Dilemma[Dilemma]
+        AgentTurn[AgentTurn]
+        Transcript[Transcript]
+    end
+    
+    subgraph AI["AI Integration"]
+        GroqAPI[Groq API - Llama 3.3 70B]
+        OpenAIAPI[OpenAI API - GPT-4o]
+    end
+    
+    subgraph Storage["Data Storage"]
+        AgentsJSON[custom_agents.json]
+        RatingsJSON[agent_ratings.json]
+        MetricsJSON[debate_metrics.json]
+        HistoryJSON[debate_history.json]
+    end
+    
+    App --> DilemmaForm
+    App --> DebateView
+    App --> VerdictView
+    App --> Dashboard
+    App --> AgentBuilder
+    App --> Sidebar
+    
+    DilemmaForm --> MainAPI
+    DebateView --> MainAPI
+    AgentBuilder --> MainAPI
+    Dashboard --> MainAPI
+    
+    MainAPI --> DebateEndpoints
+    MainAPI --> AgentEndpoints
+    MainAPI --> MetricsEndpoints
+    MainAPI --> HistoryEndpoints
+    
+    DebateEndpoints --> GroqAPI
+    AgentEndpoints --> AgentService
+    AgentEndpoints --> EnhancementService
+    MetricsEndpoints --> MetricsService
+    HistoryEndpoints --> HistoryService
+    
+    EnhancementService --> OpenAIAPI
+    
+    AgentService --> AgentsJSON
+    AgentService --> RatingsJSON
+    MetricsService --> MetricsJSON
+    HistoryService --> HistoryJSON
+    
+    style Frontend fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
+    style Backend fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
+    style Services fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
+    style Models fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
+    style AI fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
+    style Storage fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
+```
+
+---
+
+## Backend Class Diagram
 
 ```mermaid
 classDiagram
-    %% Backend Models
+    %% Models
+    class CustomAgent {
+        +String id
+        +String name
+        +String avatar
+        +String description
+        +String enhanced_prompt
+        +String system_prompt
+        +String created_by
+        +DateTime created_at
+        +Boolean is_public
+        +Integer usage_count
+        +Float average_rating
+        +Integer rating_count
+    }
+    
+    class AgentRating {
+        +String id
+        +String agent_id
+        +String debate_id
+        +String user_id
+        +Integer argument_quality
+        +Integer consistency
+        +Integer engagement
+        +Integer overall_satisfaction
+        +String comment
+        +DateTime created_at
+    }
+    
+    class EnhancementRequest {
+        +String original_description
+        +String enhanced_prompt
+        +List~String~ improvements_made
+        +Dict~String,Float~ analysis_scores
+        +List~String~ suggestions
+    }
+    
+    class AgentCreationRequest {
+        +String name
+        +String avatar
+        +String description
+    }
+    
+    class AgentUpdateRequest {
+        +Optional~String~ name
+        +Optional~String~ avatar
+        +Optional~String~ description
+    }
+    
     class Dilemma {
-        +string title
-        +string A
-        +string B
-        +string constraints
+        +String title
+        +String A
+        +String B
+        +String constraints
     }
-
+    
     class AgentTurn {
-        +string agent
-        +string stance
-        +string argument
+        +String agent
+        +Optional~String~ stance
+        +String argument
     }
-
+    
     class Transcript {
         +Dilemma dilemma
         +List~AgentTurn~ turns
     }
-
-    class Verdict {
-        +dict scores
-        +string final_recommendation
-        +int confidence
-        +string verdict
-    }
-
-    %% Custom Agent Models
-    class CustomAgent {
-        +string id
-        +string name
-        +string avatar
-        +string description
-        +string enhanced_prompt
-        +string system_prompt
-        +string created_by
-        +datetime created_at
-        +bool is_public
-        +int usage_count
-        +float average_rating
-        +int rating_count
-    }
-
-    class AgentRating {
-        +string id
-        +string agent_id
-        +string debate_id
-        +string user_id
-        +int argument_quality
-        +int consistency
-        +int engagement
-        +int overall_satisfaction
-        +string comment
-        +datetime created_at
-    }
-
-    class EnhancementRequest {
-        +string original_description
-        +string enhanced_prompt
-        +List~string~ improvements_made
-        +Dict~string,float~ analysis_scores
-        +List~string~ suggestions
-    }
-
-    class AgentCreationRequest {
-        +string name
-        +string avatar
-        +string description
-    }
-
-    %% Backend Services
-    class FastAPIApp {
-        +CORSMiddleware middleware
-        +post_openings(dilemma: Dilemma)
-        +post_agent(agent_name: string, dilemma: Dilemma)
-        +post_continue(transcript: Transcript)
-        +post_judge(transcript: Transcript)
-        +post_create_agent(request: AgentCreationRequest)
-        +get_agents(public_only: bool, search: string)
-        +post_enhance(description: string)
-        +put_agent(agent_id: string, request: AgentUpdateRequest)
-        +delete_agent(agent_id: string)
-    }
-
+    
+    %% Services
     class AgentService {
-        -string storage_path
-        +create_agent(request: AgentCreationRequest, enhanced_prompt: string, system_prompt: string) CustomAgent
-        +get_agent(agent_id: string) CustomAgent
-        +list_agents(public_only: bool, search: string, limit: int) List~CustomAgent~
-        +update_agent(agent_id: string, request: AgentUpdateRequest) CustomAgent
-        +delete_agent(agent_id: string) bool
-        +increment_usage(agent_id: string)
-        +add_rating(rating: AgentRating)
+        -Path storage_path
+        -Path agents_file
+        -Path ratings_file
+        +create_agent(request, enhanced_prompt, system_prompt) CustomAgent
+        +get_agent(agent_id) Optional~CustomAgent~
+        +list_agents(public_only, search, limit) List~CustomAgent~
+        +update_agent(agent_id, request, enhanced_prompt, system_prompt) Optional~CustomAgent~
+        +delete_agent(agent_id) Boolean
+        +increment_usage(agent_id) None
+        +add_rating(rating) None
+        +get_agent_ratings(agent_id) List~AgentRating~
+        +get_default_agents() List~Dict~
         +get_all_available_agents() List~Dict~
+        -_load_agents() Dict
+        -_save_agents(agents) None
+        -_load_ratings() Dict
+        -_save_ratings(ratings) None
+        -_check_duplicate_name(name) None
+        -_update_agent_rating(agent_id) None
     }
-
+    
     class EnhancementService {
         -PromptAnalyzer analyzer
         -PromptEnhancer enhancer
-        +enhance_agent_description(description: string) EnhancementRequest
-        +analyze_only(description: string) Dict
-        +generate_system_prompt(enhanced_prompt: string, agent_name: string) string
+        +enhance_agent_description(description, agent_name) EnhancementRequest
+        +analyze_only(description) Dict
+        +generate_system_prompt(enhanced_prompt, agent_name) String
+        -_preserve_agent_name(enhanced_prompt, original_name) String
     }
-
+    
     class PromptAnalyzer {
-        +analyze_description(description: string) Dict~string,float~
-        +generate_suggestions(description: string, scores: Dict) List~string~
-        -score_clarity(description: string) float
-        -score_completeness(description: string) float
-        -score_specificity(description: string) float
-        -score_consistency(description: string) float
+        +analyze_description(description) Dict~String,Float~
+        +generate_suggestions(description, scores) List~String~
+        -_score_clarity(description) Float
+        -_score_completeness(description) Float
+        -_score_specificity(description) Float
+        -_score_consistency(description) Float
     }
-
+    
     class PromptEnhancer {
-        +string ENHANCER_SYSTEM_PROMPT
-        +enhance_description(description: string) EnhancementRequest
-        -identify_improvements(original: string, enhanced: string) List~string~
-        -fallback_enhancement(description: string, scores: Dict, suggestions: List) EnhancementRequest
+        +String ENHANCER_SYSTEM_PROMPT
+        +enhance_description(description, agent_name) EnhancementRequest
+        -_identify_improvements(original, enhanced, agent_name) List~String~
+        -_fallback_enhancement(description, agent_name, scores, suggestions) EnhancementRequest
     }
-
-    class OllamaService {
-        -string MODEL
-        -string OLLAMA_API
-        -string OLLAMA_API_KEY
-        +call_ollama(system_prompt: string, user_prompt: string) string
+    
+    class MetricsService {
+        -String storage_path
+        +calculate_debate_metrics(transcript, verdict) Dict
+        +record_debate(transcript, verdict) Dict
+        +get_all_metrics() List~Dict~
+        +get_summary_stats() Dict
+        -_ensure_storage_exists() None
+        -_load_metrics() Dict
+        -_save_metrics(data) None
     }
-
-    class JSONParser {
-        +clamp_json(response: string, fallback: dict) dict
+    
+    class DebateHistoryService {
+        -Path storage_path
+        -Path history_file
+        +save_debate(transcript, verdict) Dict
+        +get_all_debates(limit) List~Dict~
+        +get_debate_by_id(debate_id) Optional~Dict~
+        +delete_debate(debate_id) Boolean
+        +clear_all_history() Boolean
+        +get_stats() Dict
+        -_load_history() List~Dict~
+        -_save_history(history) None
     }
-
-    %% AI Agents
-    class EthicalAgent {
-        <<abstract>>
-        +string name
-        +string system_prompt
-        +generate_opening(dilemma: Dilemma) AgentTurn
-        +generate_response(transcript: Transcript) AgentTurn
+    
+    %% Main API
+    class FastAPIApp {
+        +get_root() Dict
+        +get_health() Dict
+        +post_openings(dilemma) Dict
+        +post_agent_response(agent_name, dilemma) Dict
+        +post_continue(transcript) Dict
+        +post_judge(transcript) Dict
+        +post_create_agent(request) Dict
+        +get_list_agents(public_only, search, limit) Dict
+        +get_all_agents() Dict
+        +get_agent(agent_id) Dict
+        +put_update_agent(agent_id, request) Dict
+        +delete_agent(agent_id) Dict
+        +post_enhance(request) Dict
+        +post_regenerate_agent(agent_id) Dict
+        +get_metrics() Dict
+        +get_metrics_summary() Dict
+        +get_debates(limit) Dict
+        +get_debate(debate_id) Dict
+        +delete_debate(debate_id) Dict
+        +get_debate_stats() Dict
     }
-
-    class DeontologistAgent {
-        +string name = "Deon"
-        +string system_prompt = DEON_SYS
-        +generate_opening(dilemma: Dilemma) AgentTurn
-        +generate_response(transcript: Transcript) AgentTurn
-    }
-
-    class ConsequentialistAgent {
-        +string name = "Conse"
-        +string system_prompt = CONSE_SYS
-        +generate_opening(dilemma: Dilemma) AgentTurn
-        +generate_response(transcript: Transcript) AgentTurn
-    }
-
-    class VirtueEthicistAgent {
-        +string name = "Virtue"
-        +string system_prompt = VIRTUE_SYS
-        +generate_opening(dilemma: Dilemma) AgentTurn
-        +generate_response(transcript: Transcript) AgentTurn
-    }
-
-    class JudgeAgent {
-        +string name = "Judge"
-        +string system_prompt = JUDGE_SYS
-        +evaluate_debate(transcript: Transcript) Verdict
-    }
-
-    %% Frontend Components
-    class App {
-        -string stage
-        -Dilemma dilemma
-        -Transcript transcript
-        -Verdict verdict
-        -int roundCount
-        -string currentThinkingAgent
-        -Array debateHistory
-        +handleStartDebate(dilemmaData: object)
-        +handleContinue()
-        +handleJudge()
-        +handleReset()
-        +openAgentBuilder()
-        +closeAgentBuilder()
-    }
-
-    class DilemmaForm {
-        +onSubmit: function
-        +render() JSX
-        +handleSubmit(formData: object)
-    }
-
-    class DebateView {
-        +transcript: Transcript
-        +roundCount: number
-        +currentThinkingAgent: string
-        +onContinue: function
-        +onJudge: function
-        +render() JSX
-    }
-
-    class VerdictView {
-        +verdict: Verdict
-        +onReset: function
-        +render() JSX
-    }
-
-    class Sidebar {
-        +stage: string
-        +debateHistory: Array
-        +customAgents: Array
-        +onNewDebate: function
-        +onViewHistory: function
-        +onOpenAgentBuilder: function
-        +render() JSX
-    }
-
-    class AgentCard {
-        +agent: string
-        +turn: AgentTurn
-        +isThinking: boolean
-        +render() JSX
-    }
-
-    %% Agent Builder Components
-    class AgentBuilderScreen {
-        -int currentStep
-        -object formData
-        -EnhancementRequest enhancement
-        -bool isProcessing
-        -object errors
-        +onClose: function
-        +onAgentCreated: function
-        +handleInputChange(field: string, value: string)
-        +validateStep(step: int) bool
-        +nextStep()
-        +prevStep()
-        +enhanceDescription()
-        +createAgent(useEnhanced: bool)
-        +render() JSX
-    }
-
-    class AgentBuilderForm {
-        +onAgentCreated: function
-        +onClose: function
-        -object formData
-        -bool isAnalyzing
-        -EnhancementRequest enhancement
-        -object errors
-        +handleInputChange(field: string, value: string)
-        +validateForm() bool
-        +handleAnalyze()
-        +handleCreateAgent(useEnhanced: bool)
-        +render() JSX
-    }
-
-    %% API Service
-    class APIService {
-        -string API_URL
-        +startDebate(dilemma: Dilemma) Promise~Array~
-        +continueDebate(transcript: Transcript) Promise~Array~
-        +judgeDebate(transcript: Transcript) Promise~Verdict~
-    }
-
+    
     %% Relationships
-    FastAPIApp --> OllamaService : uses
-    FastAPIApp --> JSONParser : uses
-    FastAPIApp --> AgentService : uses
-    FastAPIApp --> EnhancementService : uses
-    FastAPIApp --> Dilemma : processes
-    FastAPIApp --> Transcript : processes
-    FastAPIApp --> AgentTurn : returns
-    FastAPIApp --> Verdict : returns
-    FastAPIApp --> CustomAgent : manages
-    FastAPIApp --> EnhancementRequest : returns
-
-    AgentService --> CustomAgent : creates/manages
-    AgentService --> AgentRating : stores
-    AgentService --> AgentCreationRequest : processes
-
+    AgentService --> CustomAgent : manages
+    AgentService --> AgentRating : manages
+    AgentService --> AgentCreationRequest : uses
+    AgentService --> AgentUpdateRequest : uses
+    
     EnhancementService --> PromptAnalyzer : uses
     EnhancementService --> PromptEnhancer : uses
     EnhancementService --> EnhancementRequest : creates
-
-    PromptEnhancer --> OllamaService : uses
-    PromptAnalyzer --> EnhancementRequest : analyzes
-
-    EthicalAgent <|-- DeontologistAgent : implements
-    EthicalAgent <|-- ConsequentialistAgent : implements
-    EthicalAgent <|-- VirtueEthicistAgent : implements
-    EthicalAgent <|-- JudgeAgent : implements
-
-    EthicalAgent --> OllamaService : uses
-    EthicalAgent --> JSONParser : uses
-
-    Transcript --> Dilemma : contains
-    Transcript --> AgentTurn : contains
-
-    App --> DilemmaForm : renders
-    App --> DebateView : renders
-    App --> VerdictView : renders
-    App --> Sidebar : renders
-    App --> AgentBuilderScreen : renders
-    App --> APIService : uses
-
-    DebateView --> AgentCard : renders
-    Sidebar --> AgentBuilderForm : contains
     
-    AgentBuilderScreen --> EnhancementRequest : displays
-    AgentBuilderForm --> EnhancementRequest : displays
+    PromptEnhancer --> EnhancementRequest : creates
     
-    APIService --> FastAPIApp : calls
-
-    %% Data Flow
-    DilemmaForm --> App : submits dilemma
-    App --> APIService : requests debate
-    APIService --> FastAPIApp : HTTP requests
-    FastAPIApp --> EthicalAgent : generates responses
-    EthicalAgent --> OllamaService : AI inference
-    OllamaService --> JSONParser : parses response
-
-    %% Agent Builder Flow
-    AgentBuilderScreen --> APIService : creates agents
-    APIService --> AgentService : agent CRUD
-    AgentService --> EnhancementService : enhances descriptions
-    EnhancementService --> CustomAgent : creates enhanced agents
+    MetricsService --> Transcript : analyzes
+    
+    DebateHistoryService --> Transcript : stores
+    
+    FastAPIApp --> AgentService : uses
+    FastAPIApp --> EnhancementService : uses
+    FastAPIApp --> MetricsService : uses
+    FastAPIApp --> DebateHistoryService : uses
+    FastAPIApp --> Dilemma : uses
+    FastAPIApp --> AgentTurn : uses
+    FastAPIApp --> Transcript : uses
+    
+    CustomAgent --> AgentRating : has many
 ```
 
-## Component Descriptions
+---
 
-### Backend Components
+## Frontend Component Diagram
 
-#### **Core Models (Pydantic)**
-- **Dilemma**: Represents an ethical scenario with two options and constraints
-- **AgentTurn**: Captures an agent's stance and argument in the debate
-- **Transcript**: Complete record of a debate session
-- **Verdict**: Final judgment with scores and recommendation
+```mermaid
+classDiagram
+    %% Main App
+    class App {
+        -String currentView
+        -Object dilemma
+        -Array turns
+        -Object verdict
+        -Boolean isDebating
+        -Boolean showSidebar
+        -Array customAgents
+        +handleDilemmaSubmit(dilemma)
+        +handleContinue()
+        +handleJudge()
+        +handleReset()
+        +loadCustomAgents()
+        +render()
+    }
+    
+    %% Components
+    class DilemmaForm {
+        -Object formData
+        -Boolean isSubmitting
+        +handleInputChange(field, value)
+        +handleSubmit()
+        +validateForm()
+        +render()
+    }
+    
+    class DebateView {
+        +Array turns
+        +Boolean isDebating
+        +Function onContinue
+        +Function onJudge
+        +renderTurn(turn)
+        +render()
+    }
+    
+    class VerdictView {
+        +Object verdict
+        +Object dilemma
+        +Function onReset
+        +renderScores()
+        +renderRecommendation()
+        +render()
+    }
+    
+    class Dashboard {
+        -Array metrics
+        -Object summaryStats
+        -Array debateHistory
+        -Boolean isLoading
+        +loadMetrics()
+        +loadDebateHistory()
+        +renderMetricsChart()
+        +renderDebateList()
+        +render()
+    }
+    
+    class AgentBuilder {
+        -Object formData
+        -Object enhancement
+        -Boolean isEnhancing
+        -Boolean showPreview
+        -Array savedAgents
+        +handleInputChange(field, value)
+        +handleEnhance()
+        +handleSave()
+        +handleRegenerate()
+        +loadSavedAgents()
+        +render()
+    }
+    
+    class AgentSelector {
+        +Array agents
+        +Array selectedAgents
+        +Function onSelectionChange
+        +renderAgentCard(agent)
+        +render()
+    }
+    
+    class AgentCard {
+        +Object agent
+        +Boolean isSelected
+        +Function onClick
+        +Function onDelete
+        +renderAvatar()
+        +renderStats()
+        +render()
+    }
+    
+    class AgentDetailsModal {
+        +Object agent
+        +Boolean isOpen
+        +Function onClose
+        +renderEnhancedPrompt()
+        +renderSystemPrompt()
+        +renderRatings()
+        +render()
+    }
+    
+    class Sidebar {
+        +String currentView
+        +Function onViewChange
+        +Boolean isOpen
+        +renderNavigation()
+        +render()
+    }
+    
+    class KeyboardShortcuts {
+        +Object shortcuts
+        +Boolean isVisible
+        +Function onClose
+        +renderShortcutList()
+        +render()
+    }
+    
+    %% Relationships
+    App --> DilemmaForm : contains
+    App --> DebateView : contains
+    App --> VerdictView : contains
+    App --> Dashboard : contains
+    App --> AgentBuilder : contains
+    App --> Sidebar : contains
+    App --> KeyboardShortcuts : contains
+    
+    AgentBuilder --> AgentSelector : uses
+    AgentSelector --> AgentCard : contains
+    AgentCard --> AgentDetailsModal : opens
+    
+    Dashboard --> DebateView : displays history
+```
 
-#### **Custom Agent Models**
-- **CustomAgent**: User-created ethical agents with enhanced prompts and metadata
-- **AgentRating**: Community feedback and performance metrics for agents
-- **EnhancementRequest**: AI analysis and improvement results for agent descriptions
-- **AgentCreationRequest**: Input model for creating new custom agents
+---
 
-#### **Services**
-- **FastAPIApp**: Main application with REST endpoints for debate and agent management
-- **AgentService**: CRUD operations and management for custom agents with JSON storage
-- **EnhancementService**: AI-powered analysis and improvement of agent descriptions
-- **PromptAnalyzer**: Quality scoring system for agent descriptions (clarity, completeness, etc.)
-- **PromptEnhancer**: AI-powered enhancement using Ollama integration with fallback mechanisms
-- **OllamaService**: Handles AI model communication (local/cloud Ollama)
-- **JSONParser**: Robust parsing of AI responses with fallback strategies
+## Data Flow Diagram
 
-#### **AI Agents**
-- **EthicalAgent**: Abstract base class defining agent interface
-- **DeontologistAgent**: Rule-based ethical reasoning (duties, rights)
-- **ConsequentialistAgent**: Outcome-based ethical reasoning (utility, welfare)
-- **VirtueEthicistAgent**: Character-based ethical reasoning (virtues, flourishing)
-- **JudgeAgent**: Neutral evaluator providing final verdict
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant FastAPI
+    participant AgentService
+    participant EnhancementService
+    participant GroqAPI
+    participant OpenAI
+    participant Storage
+    
+    %% Agent Creation Flow
+    User->>Frontend: Create Custom Agent
+    Frontend->>FastAPI: POST /api/agents/create
+    FastAPI->>EnhancementService: enhance_agent_description()
+    EnhancementService->>OpenAI: Enhance prompt with GPT-4o
+    OpenAI-->>EnhancementService: Enhanced prompt
+    EnhancementService->>EnhancementService: generate_system_prompt()
+    EnhancementService-->>FastAPI: EnhancementRequest
+    FastAPI->>AgentService: create_agent()
+    AgentService->>Storage: Save to custom_agents.json
+    Storage-->>AgentService: Success
+    AgentService-->>FastAPI: CustomAgent
+    FastAPI-->>Frontend: Agent + Enhancement
+    Frontend-->>User: Display created agent
+    
+    %% Debate Flow
+    User->>Frontend: Submit Dilemma
+    Frontend->>FastAPI: POST /openings
+    FastAPI->>GroqAPI: Generate opening arguments
+    GroqAPI-->>FastAPI: Agent responses
+    FastAPI-->>Frontend: Opening turns
+    Frontend-->>User: Display debate
+    
+    User->>Frontend: Continue Debate
+    Frontend->>FastAPI: POST /continue
+    FastAPI->>GroqAPI: Generate rebuttals
+    GroqAPI-->>FastAPI: Agent responses
+    FastAPI-->>Frontend: New turns
+    Frontend-->>User: Display updated debate
+    
+    User->>Frontend: Request Judgment
+    Frontend->>FastAPI: POST /judge
+    FastAPI->>GroqAPI: Evaluate debate
+    GroqAPI-->>FastAPI: Verdict
+    FastAPI->>MetricsService: record_debate()
+    MetricsService->>Storage: Save to debate_metrics.json
+    FastAPI->>HistoryService: save_debate()
+    HistoryService->>Storage: Save to debate_history.json
+    FastAPI-->>Frontend: Verdict
+    Frontend-->>User: Display verdict
+```
 
-### Frontend Components
+---
 
-#### **Main Application**
-- **App**: Root component managing application state and navigation
-- **APIService**: Handles HTTP communication with backend
+## Storage Schema
 
-#### **UI Components**
-- **DilemmaForm**: Input form for creating ethical scenarios
-- **DebateView**: Real-time display of agent arguments and responses
-- **VerdictView**: Final judgment display with scores and recommendation
-- **Sidebar**: Navigation, debate history, and agent library management
-- **AgentCard**: Individual agent display with thinking states
+### custom_agents.json
+```json
+{
+  "agent_id": {
+    "id": "uuid",
+    "name": "string",
+    "avatar": "emoji",
+    "description": "string",
+    "enhanced_prompt": "string",
+    "system_prompt": "string",
+    "created_by": "string",
+    "created_at": "datetime",
+    "is_public": "boolean",
+    "usage_count": "integer",
+    "average_rating": "float",
+    "rating_count": "integer"
+  }
+}
+```
 
-#### **Agent Builder Components**
-- **AgentBuilderScreen**: Full-screen, 4-step wizard for creating custom agents
-- **AgentBuilderForm**: Compact agent creation form (legacy, used in sidebar)
-- **Enhancement Panel**: AI analysis results with before/after comparison
-- **Agent Preview**: Final agent preview with quality metrics before creation
+### agent_ratings.json
+```json
+{
+  "rating_id": {
+    "id": "uuid",
+    "agent_id": "string",
+    "debate_id": "string",
+    "user_id": "string",
+    "argument_quality": "1-5",
+    "consistency": "1-5",
+    "engagement": "1-5",
+    "overall_satisfaction": "1-5",
+    "comment": "string",
+    "created_at": "datetime"
+  }
+}
+```
 
-## Key Design Patterns
+### debate_metrics.json
+```json
+{
+  "debates": [
+    {
+      "debate_id": "string",
+      "timestamp": "datetime",
+      "dilemma_title": "string",
+      "total_turns": "integer",
+      "total_words": "integer",
+      "num_agents": "integer",
+      "agents": ["array"],
+      "avg_words_per_turn": "float",
+      "avg_words_per_agent": "object",
+      "agent_word_counts": "object",
+      "agent_turn_counts": "object",
+      "stance_changes": "object",
+      "most_verbose_agent": "string",
+      "intensity_score": "float",
+      "final_recommendation": "A|B",
+      "confidence": "0-100",
+      "ethical_scores": "object"
+    }
+  ]
+}
+```
 
-### **Strategy Pattern**
-Each ethical agent implements the same interface but with different reasoning strategies (deontological, consequentialist, virtue ethics).
+### debate_history.json
+```json
+[
+  {
+    "id": "uuid",
+    "title": "string",
+    "date": "datetime",
+    "timestamp": "float",
+    "transcript": {
+      "dilemma": "object",
+      "turns": "array"
+    },
+    "verdict": "object",
+    "recommendation": "A|B",
+    "confidence": "0-100"
+  }
+]
+```
 
-### **Observer Pattern**
-Frontend components observe state changes and update UI accordingly (thinking states, new arguments).
+---
 
-### **Factory Pattern**
-Agent creation and management through the FastAPI endpoints and AgentService.
+## API Endpoints Summary
 
-### **Builder Pattern**
-AgentBuilderScreen implements a step-by-step construction process for complex agent creation.
+### Debate Endpoints
+- `GET /` - Health check
+- `GET /health` - Health check with status
+- `POST /openings` - Generate opening arguments
+- `POST /agent/{agent_name}` - Get single agent response
+- `POST /continue` - Continue debate with rebuttals
+- `POST /judge` - Get final verdict
 
-### **Service Layer Pattern**
-Clear separation between API endpoints (controllers) and business logic (services).
+### Agent Management Endpoints
+- `POST /api/agents/create` - Create custom agent
+- `GET /api/agents` - List all agents
+- `GET /api/agents/all` - Get all available agents (default + custom)
+- `GET /api/agents/{agent_id}` - Get specific agent
+- `PUT /api/agents/{agent_id}` - Update agent
+- `DELETE /api/agents/{agent_id}` - Delete agent
+- `POST /api/agents/{agent_id}/regenerate` - Regenerate agent prompt
 
-### **Model-View-Controller (MVC)**
-- **Model**: Pydantic models and data structures
-- **View**: React components for UI rendering
-- **Controller**: FastAPI endpoints and React event handlers
+### Enhancement Endpoints
+- `POST /api/enhance` - Enhance agent description
+
+### Metrics Endpoints
+- `GET /api/metrics` - Get all debate metrics
+- `GET /api/metrics/summary` - Get aggregate statistics
+
+### History Endpoints
+- `GET /api/debates` - Get debate history
+- `GET /api/debates/{debate_id}` - Get specific debate
+- `DELETE /api/debates/{debate_id}` - Delete debate
+- `GET /api/debates/stats` - Get debate statistics
+
+---
 
 ## Technology Stack
 
-- **Backend**: Python, FastAPI, Pydantic, Ollama
-- **Frontend**: React, Vite, Modern JavaScript
-- **AI**: Local/Cloud Ollama models (Qwen 2.5 7B)
-- **Communication**: REST API with JSON payloads
+### Frontend
+- **React 18.3+** - UI framework
+- **Vite** - Build tool
+- **Pure CSS** - Styling (no UI library)
+- **Fetch API** - HTTP requests
 
-## Scalability Considerations
+### Backend
+- **FastAPI** - Web framework
+- **Python 3.8+** - Programming language
+- **Pydantic** - Data validation
+- **JSON** - Data storage
 
-The modular design allows for:
-- **New Agent Types**: Easy addition through EthicalAgent interface or CustomAgent creation
-- **Multiple AI Providers**: OllamaService can be extended or replaced
-- **Enhanced UI**: Component-based architecture supports feature expansion
-- **Cloud Deployment**: Environment-aware configuration for local/cloud AI
-- **Database Migration**: AgentService abstracts storage, easy to migrate from JSON to database
-- **Community Features**: Rating and discovery systems ready for social features
-- **Advanced Analytics**: Agent performance tracking foundation in place
+### AI Integration
+- **Groq API** - Llama 3.3 70B for debates
+- **OpenAI API** - GPT-4o for agent enhancement
+
+### Deployment
+- **Vercel** - Frontend hosting
+- **Render** - Backend hosting
+- **GitHub Actions** - CI/CD & uptime monitoring
+
+---
+
+## Key Design Patterns
+
+1. **Service Layer Pattern** - Business logic separated into services
+2. **Repository Pattern** - Data access abstracted through services
+3. **Factory Pattern** - Agent creation through AgentService
+4. **Strategy Pattern** - Different AI providers (Groq/OpenAI)
+5. **Observer Pattern** - Metrics and history tracking
+6. **Singleton Pattern** - Service instances in FastAPI
+
+---
+
+## Future Enhancements (Phase 2)
+
+- User authentication and authorization
+- PostgreSQL database migration
+- Custom agents in live debates
+- Agent marketplace
+- Real-time debate streaming
+- Multi-language support
+- Advanced analytics dashboard
