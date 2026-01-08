@@ -22,6 +22,7 @@ function App() {
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
   const [historyViewTab, setHistoryViewTab] = useState('debate');
   const [showDashboard, setShowDashboard] = useState(false);
+  const [selectedAgentsInfo, setSelectedAgentsInfo] = useState({});
 
   // Load debate history on mount
   useEffect(() => {
@@ -76,8 +77,9 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [stage]); // Re-run when stage changes
 
-  const handleStartDebate = async (dilemmaData, selectedAgentIds = ['deon', 'conse', 'virtue']) => {
+  const handleStartDebate = async (dilemmaData, selectedAgentIds = ['deon', 'conse', 'virtue'], agentsInfo = {}) => {
     setDilemma(dilemmaData);
+    setSelectedAgentsInfo(agentsInfo);
     setTranscript({
       dilemma: dilemmaData,
       turns: [],
@@ -298,6 +300,7 @@ function App() {
               onContinue={handleContinue}
               onJudge={handleJudge}
               onReset={handleReset}
+              agentsInfo={selectedAgentsInfo}
             />
           )}
 

@@ -95,6 +95,16 @@ class AgentService:
             return CustomAgent(**agent_data)
         return None
 
+    def get_agent_by_name(self, name: str) -> Optional[CustomAgent]:
+        """Get a specific agent by name (case-insensitive)"""
+        agents = self._load_agents()
+        name_lower = name.lower().strip()
+        
+        for agent_data in agents.values():
+            if agent_data.get('name', '').lower().strip() == name_lower:
+                return CustomAgent(**agent_data)
+        return None
+
     def list_agents(self, public_only: bool = True, search: Optional[str] = None, limit: int = 50) -> List[CustomAgent]:
         """List all agents with optional filtering"""
         agents = self._load_agents()

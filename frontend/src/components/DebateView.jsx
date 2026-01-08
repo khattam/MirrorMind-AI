@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './DebateView.css';
 
-function DebateView({ transcript, roundCount, currentThinkingAgent, onContinue, onJudge, onReset, isHistoryView = false }) {
+function DebateView({ transcript, roundCount, currentThinkingAgent, onContinue, onJudge, onReset, isHistoryView = false, agentsInfo = {} }) {
   const [activeAgent, setActiveAgent] = useState(null);
   const [expandedRounds, setExpandedRounds] = useState(isHistoryView ? new Set() : new Set([0])); // History starts collapsed
 
@@ -19,16 +19,47 @@ function DebateView({ transcript, roundCount, currentThinkingAgent, onContinue, 
     }
   }, [transcript.turns.length, isHistoryView]);
 
+  // Custom gradient colors for custom agents
+  const customGradients = [
+    'linear-gradient(135deg, #f5af19 0%, #f12711 100%)',
+    'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+    'linear-gradient(135deg, #ee0979 0%, #ff6a00 100%)',
+    'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
+    'linear-gradient(135deg, #00c6ff 0%, #0072ff 100%)',
+  ];
+
   const getAgentInfo = (agent) => {
-    const info = {
-      Deon: { name: 'Deon', role: 'Deontologist', icon: '⚖', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+    const defaultInfo = {
+      Deon: { name: 'Deon', role: 'Deontologist', icon: '⚖️', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
       Conse: { name: 'Conse', role: 'Consequentialist', icon: '◆', gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
       Virtue: { name: 'Virtue', role: 'Virtue Ethicist', icon: '✦', gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
     };
-    return info[agent] || { name: agent, role: 'Agent', icon: '●', gradient: 'linear-gradient(135deg, #a8a8a8 0%, #6a6a6a 100%)' };
+    
+    // Check if it's a default agent
+    if (defaultInfo[agent]) {
+      return defaultInfo[agent];
+    }
+    
+    // Check if we have info from agentsInfo prop
+    if (agentsInfo[agent]) {
+      const info = agentsInfo[agent];
+      // Get a consistent gradient based on agent name hash
+      const gradientIndex = agent.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % customGradients.length;
+      return { 
+        name: info.name || agent, 
+        role: 'Custom Agent', 
+        icon: info.avatar || '🤖', 
+        gradient: customGradients[gradientIndex]
+      };
+    }
+    
+    // Fallback for unknown agents
+    const gradientIndex = agent.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % customGradients.length;
+    return { name: agent, role: 'Custom Agent', icon: '🤖', gradient: customGradients[gradientIndex] };
   };
 
-  const agents = ['Deon', 'Conse', 'Virtue'];
+  // Get unique agents from transcript instead of hardcoding
+  const agents = [...new Set(transcript.turns.map(turn => turn.agent))];
   const isThinking = currentThinkingAgent !== null;
 
   // Group turns by rounds

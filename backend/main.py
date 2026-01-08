@@ -244,11 +244,11 @@ def mk_base(d: Dilemma) -> str:
     )
 
 OPENING_INSTRUCT = (
-    "Opening: Choose A or B, and write a clear paragraph (5–8 sentences) that:\n"
-    "• names your core ethical concept (rule, outcome, or virtue)\n"
-    "• gives one concrete example or consequence\n"
-    "• stays consistent with your moral framework\n"
-    "Respond JSON only: {\"stance\":\"A|B\",\"argument\":\"<paragraph>\"}"
+    "Opening: Choose A or B, and write a BRIEF response (2-3 sentences max) that:\n"
+    "• states your position clearly\n"
+    "• gives ONE key reason from your ethical framework\n"
+    "Be concise and direct. No lengthy explanations.\n"
+    "Respond JSON only: {\"stance\":\"A|B\",\"argument\":\"<brief paragraph>\"}"
 )
 
 
@@ -266,13 +266,16 @@ def summarize_turns(turns: List[AgentTurn]) -> str:
     return "\n".join(lines)
 
 
-def has_valid_opponent(text: str, role: str) -> bool:
+def has_valid_opponent(text: str, role: str, all_agents: List[str] = None) -> bool:
     """Check if text mentions an opponent (not self) and has actual content."""
     text_lower = text.lower()
-    
-    # Check for opponent names (case insensitive)
-    names = ["deon", "conse", "virtue"]
     role_lower = role.lower()
+    
+    # Use provided agent list or default to the 3 default agents
+    if all_agents:
+        names = [a.lower() for a in all_agents]
+    else:
+        names = ["deon", "conse", "virtue"]
     
     mentioned_opponents = [n for n in names if n in text_lower and n != role_lower]
     
@@ -335,73 +338,69 @@ def single_agent(agent_name: str, d: Dilemma):
     role = get_agent_display_name(agent_name)
     
     try:
-        raw = call_ollama(sys_prompt, base + "\n" + OPENING_INSTRUCT, num_predict=300, temp=0.65)
-        print(f"DEBUG {role} raw response: {raw[:300]}...")  # Debug output
+        raw = call_ollama(sys_prompt, base + "\n" + OPENING_INSTRUCT, num_predict=150, temp=0.65)
+        print(f"DEBUG {role} raw response: {raw[:200]}...")
         
         j = clamp_json(raw, {"stance": "A", "argument": f"[{role} failed to generate proper response]"})
-        print(f"DEBUG {role} parsed JSON: {j}")  # Debug output
+        print(f"DEBUG {role} parsed JSON: {j}")
         
         if j.get("argument") == "—" or "[failed to generate]" in j.get("argument", ""):
             print(f"DEBUG {role} retrying...")
-            raw2 = call_ollama(sys_prompt, base + "\n" + OPENING_INSTRUCT, num_predict=250, temp=0.8)
+            raw2 = call_ollama(sys_prompt, base + "\n" + OPENING_INSTRUCT, num_predict=150, temp=0.8)
             j2 = clamp_json(raw2, j)
             if j2.get("argument", "—") not in ["—", "-"]:
                 j = j2
         
         return AgentTurn(agent=role, stance=j.get("stance","A"), argument=j.get("argument","—")).dict()
     except Exception as e:
-        print(f"DEBUG {role} exception: {str(e)}")  # Debug output
+        print(f"DEBUG {role} exception: {str(e)}")
         return AgentTurn(agent=role, stance="A", argument=f"[{role} error: {str(e)[:100]}]").dict()
 
 @app.post("/continue")
 def continue_round(t: Transcript):
     base = mk_base(t.dilemma)
     latest = latest_by_agent(t.turns)
+    
+    # Get all agent names from the transcript (supports custom agents)
+    all_agent_names = list(set(turn.agent for turn in t.turns))
 
     def respond(role: str, sys: str = None):
         # Get system prompt if not provided
         if sys is None:
             sys = get_agent_system_prompt(role)
-        # Build explicit opponent choices (cannot be self)
-        opponents = [name for name in ["Deon", "Conse", "Virtue"] if name in latest and name != role]
+        # Build explicit opponent choices from ALL agents in the debate (not just defaults)
+        opponents = [name for name in all_agent_names if name in latest and name != role]
         
         # Build a cleaner summary
         opp_lines = []
         for name in opponents:
-            arg_preview = latest[name].argument[:100].replace("\n", " ")
+            arg_preview = latest[name].argument[:80].replace("\n", " ")
             opp_lines.append(f"{name}: {arg_preview}...")
 
         summary_for_user = "\n".join(opp_lines) if opp_lines else "No opponents to address."
 
-        # Very explicit prompt with clear example
+        # Shorter, more direct prompt
         prompt = (
-            f"You are {role}. Here are your opponents' latest arguments:\n\n"
-            + summary_for_user + "\n\n"
-            f"TASK: Pick ONE opponent (choose from: {', '.join(opponents)}) and respond to them.\n\n"
-            f"CRITICAL: Your argument MUST start with the opponent's name followed by a comma.\n"
-            f"Example format: 'Virtue, I disagree with your point because...'\n\n"
-            f"Write 4-6 sentences explaining your position from your ethical framework.\n\n"
-            'Return JSON: {"stance":"A","argument":"OpponentName, your response here..."}'
+            f"You are {role}. Opponents said:\n{summary_for_user}\n\n"
+            f"Pick ONE opponent ({', '.join(opponents)}) and respond in 2-3 sentences.\n"
+            f"Start with their name + comma. Be direct and concise.\n"
+            'JSON: {"stance":"A or B","argument":"Name, your brief response..."}'
         )
 
         # first try
-        raw = call_ollama(sys, prompt, num_predict=400, temp=0.65)
+        raw = call_ollama(sys, prompt, num_predict=200, temp=0.65)
         j = clamp_json(raw, {"stance": "same", "argument": "—"})
         arg = j.get("argument", "—").strip()
 
-        # validate: must mention opponent and have content; else retry with VERY explicit format
-        if (arg in ["—", "-", ""]) or (not has_valid_opponent(arg, role)):
-            # Force the format by being extremely explicit
+        # validate: must mention opponent and have content; else retry
+        if (arg in ["—", "-", ""]) or (not has_valid_opponent(arg, role, all_agent_names)):
             retry_prompt = (
-                f"You are {role}. Respond to ONE of these opponents:\n"
-                + "\n".join([f"- {name}" for name in opponents]) + "\n\n"
-                f"Your response MUST begin with one of these exact phrases:\n"
-                + "\n".join([f'- "{name}, "' for name in opponents]) + "\n\n"
-                f"Then continue with your argument (4-6 sentences).\n\n"
-                f'Example: "Virtue, I believe your focus on character overlooks the practical consequences..."\n\n'
-                'JSON format: {"stance":"A","argument":"OpponentName, your full response..."}'
+                f"You are {role}. Respond to {opponents[0] if opponents else 'opponent'}.\n"
+                f"Start with: \"{opponents[0] if opponents else 'Opponent'}, \"\n"
+                f"Write 2-3 sentences max. Be concise.\n"
+                'JSON: {"stance":"A","argument":"Name, your response..."}'
             )
-            raw2 = call_ollama(sys, retry_prompt, num_predict=350, temp=0.7)
+            raw2 = call_ollama(sys, retry_prompt, num_predict=180, temp=0.7)
             j2 = clamp_json(raw2, {"stance": "same", "argument": "—"})
             if j2.get("argument", "—") not in ["—", "-", ""]:
                 j = j2
@@ -413,7 +412,6 @@ def continue_round(t: Transcript):
         # Clean and validate stance - only allow A, B, or same
         stance = str(raw_stance).strip().upper()
         if stance not in ["A", "B", "SAME"]:
-            # Try to extract A or B from the stance string
             if "A" in stance and "B" not in stance:
                 stance = "A"
             elif "B" in stance and "A" not in stance:
@@ -424,17 +422,8 @@ def continue_round(t: Transcript):
         final_stance = prev if stance == "SAME" else stance
         return AgentTurn(agent=role, stance=final_stance, argument=arg)
 
-    # Get unique agent names from the transcript
-    agent_names = list(set(turn.agent for turn in t.turns))
-    
-    # If we have the default 3 agents, use them
-    if len(agent_names) == 3 and all(name in ["Deon", "Conse", "Virtue"] for name in agent_names):
-        return {"turns": [respond("Deon").dict(),
-                          respond("Conse").dict(),
-                          respond("Virtue").dict()]}
-    else:
-        # Use the agents from the transcript
-        return {"turns": [respond(agent_name).dict() for agent_name in agent_names]}
+    # Use all agents from the transcript (works for both default and custom agents)
+    return {"turns": [respond(agent_name).dict() for agent_name in all_agent_names]}
 
 @app.post("/judge")
 def judge(t: Transcript):
@@ -673,15 +662,21 @@ def get_agent_system_prompt(agent_name: str) -> str:
     elif agent_name.lower() == "virtue":
         return VIRTUE_SYS
     else:
-        # Try to find custom agent
+        # Try to find custom agent by ID first
         agent = agent_service.get_agent(agent_name)
         if agent:
-            # Increment usage count
             agent_service.increment_usage(agent_name)
             return agent.system_prompt
-        else:
-            # Fallback to default if not found
-            return DEON_SYS
+        
+        # Try to find by name (for when display name is passed instead of ID)
+        agent = agent_service.get_agent_by_name(agent_name)
+        if agent:
+            agent_service.increment_usage(agent.id)
+            return agent.system_prompt
+        
+        # Fallback to default if not found
+        print(f"WARNING: Agent '{agent_name}' not found, using default Deon prompt")
+        return DEON_SYS
 
 def get_agent_display_name(agent_identifier: str) -> str:
     """Get display name for any agent"""
@@ -689,9 +684,17 @@ def get_agent_display_name(agent_identifier: str) -> str:
     if agent_identifier.lower() in ["deon", "conse", "virtue"]:
         return agent_identifier.capitalize()
     else:
-        # Try to find custom agent
+        # Try to find custom agent by ID
         agent = agent_service.get_agent(agent_identifier)
-        return agent.name if agent else agent_identifier
+        if agent:
+            return agent.name
+        
+        # Try to find by name
+        agent = agent_service.get_agent_by_name(agent_identifier)
+        if agent:
+            return agent.name
+            
+        return agent_identifier
 
 # -------------------- METRICS ENDPOINTS --------------------
 

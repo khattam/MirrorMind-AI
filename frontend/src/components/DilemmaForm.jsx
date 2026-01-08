@@ -12,6 +12,7 @@ function DilemmaForm({ onSubmit }) {
   });
   
   const [selectedAgents, setSelectedAgents] = useState(['deon', 'conse', 'virtue']); // Default selection
+  const [availableAgentsMap, setAvailableAgentsMap] = useState({}); // Map of agent id -> agent info
 
   const handleChange = (e) => {
     setFormData({
@@ -47,7 +48,15 @@ function DilemmaForm({ onSubmit }) {
       alert('Please select exactly 3 agents for the debate.');
       return;
     }
-    onSubmit(formData, validAgents);
+    // Build agents info map for selected agents
+    const agentsInfo = {};
+    validAgents.forEach(agentId => {
+      if (availableAgentsMap[agentId]) {
+        const agent = availableAgentsMap[agentId];
+        agentsInfo[agent.name] = agent;
+      }
+    });
+    onSubmit(formData, validAgents, agentsInfo);
   };
 
   return (
@@ -140,6 +149,7 @@ function DilemmaForm({ onSubmit }) {
           <AgentSelector 
             selectedAgents={selectedAgents}
             onSelectionChange={setSelectedAgents}
+            onAgentsLoaded={setAvailableAgentsMap}
           />
 
           <div className="wizard-actions">

@@ -3,7 +3,7 @@ import './AgentSelector.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
-function AgentSelector({ selectedAgents, onSelectionChange }) {
+function AgentSelector({ selectedAgents, onSelectionChange, onAgentsLoaded }) {
   const [availableAgents, setAvailableAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSlot, setActiveSlot] = useState(null);
@@ -47,13 +47,37 @@ function AgentSelector({ selectedAgents, onSelectionChange }) {
           ...agent,
           type: 'custom'
         }));
-        setAvailableAgents([...defaultAgents, ...customAgents]);
+        const allAgents = [...defaultAgents, ...customAgents];
+        setAvailableAgents(allAgents);
+        
+        // Build map and notify parent
+        if (onAgentsLoaded) {
+          const agentsMap = {};
+          allAgents.forEach(agent => {
+            agentsMap[agent.id] = agent;
+          });
+          onAgentsLoaded(agentsMap);
+        }
       } else {
         setAvailableAgents(defaultAgents);
+        if (onAgentsLoaded) {
+          const agentsMap = {};
+          defaultAgents.forEach(agent => {
+            agentsMap[agent.id] = agent;
+          });
+          onAgentsLoaded(agentsMap);
+        }
       }
     } catch (error) {
       console.error('Failed to load agents:', error);
       setAvailableAgents(defaultAgents);
+      if (onAgentsLoaded) {
+        const agentsMap = {};
+        defaultAgents.forEach(agent => {
+          agentsMap[agent.id] = agent;
+        });
+        onAgentsLoaded(agentsMap);
+      }
     } finally {
       setLoading(false);
     }
