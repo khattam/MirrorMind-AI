@@ -765,16 +765,19 @@ def get_debate_stats():
 
 # -------------------- DEBATE TEMPLATES ENDPOINTS --------------------
 
+# Get the directory where main.py is located
+BASE_DIR = Path(__file__).resolve().parent
+
 @app.get("/api/templates")
 def get_debate_templates():
     """Get all debate templates from the library"""
     try:
-        templates_path = Path("data/debate_templates.json")
+        templates_path = BASE_DIR / "data" / "debate_templates.json"
         if templates_path.exists():
             with open(templates_path, 'r', encoding='utf-8') as f:
                 templates = json.load(f)
             return {"templates": templates, "count": len(templates)}
-        return {"templates": [], "count": 0}
+        return {"templates": [], "count": 0, "debug": str(templates_path)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to load templates: {str(e)}")
 
@@ -782,7 +785,7 @@ def get_debate_templates():
 def get_debate_template(slug: str):
     """Get a specific debate template by slug"""
     try:
-        templates_path = Path("data/debate_templates.json")
+        templates_path = BASE_DIR / "data" / "debate_templates.json"
         if templates_path.exists():
             with open(templates_path, 'r', encoding='utf-8') as f:
                 templates = json.load(f)
