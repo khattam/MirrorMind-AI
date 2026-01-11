@@ -1,0 +1,20 @@
+.typewriter-text {
+  display: inline;
+}
+
+.typewriter-text .cursor {
+  display: inline-block;
+  animation: blink 0.7s infinite;
+  color: var(--accent-color, #667eea);
+  font-weight: 300;
+  margin-left: 1px;
+}
+
+.typewriter-text.complete .cursor {
+  display: none;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}

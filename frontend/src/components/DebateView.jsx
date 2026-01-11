@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import TypewriterText from './TypewriterText';
+import './TypewriterText.css';
 import './DebateView.css';
 
 function DebateView({ transcript, roundCount, currentThinkingAgent, onContinue, onJudge, onReset, isHistoryView = false, agentsInfo = {} }) {
   const [activeAgent, setActiveAgent] = useState(null);
-  const [expandedRounds, setExpandedRounds] = useState(isHistoryView ? new Set() : new Set([0])); // History starts collapsed
+  const [expandedRounds, setExpandedRounds] = useState(isHistoryView ? new Set() : new Set([0]));
+  const [animatedTurns, setAnimatedTurns] = useState(new Set()); // Track which turns have been animated
+  const prevTurnsLength = useRef(0);
 
   useEffect(() => {
     if (transcript.turns.length > 0 && !isHistoryView) {
@@ -14,10 +18,28 @@ function DebateView({ transcript, roundCount, currentThinkingAgent, onContinue, 
       const currentRound = Math.floor((transcript.turns.length - 1) / 3);
       setExpandedRounds(new Set([currentRound]));
       
+      // Mark new turns for animation
+      if (transcript.turns.length > prevTurnsLength.current) {
+        const newTurnIndex = transcript.turns.length - 1;
+        // Don't add to animatedTurns yet - let it animate first
+      }
+      prevTurnsLength.current = transcript.turns.length;
+      
       const timer = setTimeout(() => setActiveAgent(null), 1000);
       return () => clearTimeout(timer);
     }
   }, [transcript.turns.length, isHistoryView]);
+
+  // Mark a turn as animated (animation complete)
+  const handleAnimationComplete = (turnIndex) => {
+    setAnimatedTurns(prev => new Set([...prev, turnIndex]));
+  };
+
+  // Check if a turn should animate (new turn that hasn't been animated yet)
+  const shouldAnimate = (turnIndex) => {
+    if (isHistoryView) return false; // No animation in history view
+    return !animatedTurns.has(turnIndex);
+  };
 
   // Custom gradient colors for custom agents
   const customGradients = [
@@ -128,6 +150,7 @@ function DebateView({ transcript, roundCount, currentThinkingAgent, onContinue, 
               <div className="agents-panel">
                 {agents.map((agentName) => {
                   const turn = roundTurns.find(t => t.agent === agentName);
+                  const turnIndex = turn ? transcript.turns.findIndex(t => t === turn) : -1;
                   const agentInfo = getAgentInfo(agentName);
                   const isActive = activeAgent === agentName && isLatest;
                   const isCurrentlyThinking = currentThinkingAgent === agentName && isLatest;
@@ -161,7 +184,17 @@ function DebateView({ transcript, roundCount, currentThinkingAgent, onContinue, 
                       {turn && !isCurrentlyThinking && (
                         <div className="agent-speech">
                           <div className="speech-bubble">
-                            <p>{turn.argument}</p>
+                            <p>
+                              {shouldAnimate(turnIndex) ? (
+                                <TypewriterText 
+                                  text={turn.argument} 
+                                  speed={12}
+                                  onComplete={() => handleAnimationComplete(turnIndex)}
+                                />
+                              ) : (
+                                turn.argument
+                              )}
+                            </p>
                           </div>
                         </div>
                       )}

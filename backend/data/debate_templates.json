@@ -1,0 +1,226 @@
+[
+  {
+    "id": 1,
+    "slug": "trolley-switch",
+    "title": "The Classic Trolley Problem: Switch Track or Not?",
+    "context": "A runaway trolley is headed toward five workers on the main track. You are next to a lever that can divert the trolley onto a side track where there is one worker. Everyone is unaware of the danger. You have only seconds to act.",
+    "option_a": "Pull the lever, diverting the trolley to kill one person but saving five.",
+    "option_b": "Do nothing and allow the trolley to continue on its current track, killing five."
+  },
+  {
+    "id": 2,
+    "slug": "trolley-footbridge",
+    "title": "Pushing the Stranger from the Footbridge",
+    "context": "You are on a footbridge over a track where a trolley is headed toward five people. Next to you stands a large stranger whose body would stop the trolley if pushed. You cannot sacrifice yourself.",
+    "option_a": "Push the stranger onto the track to stop the trolley and save five.",
+    "option_b": "Refrain from pushing, allowing the trolley to kill the five people below."
+  },
+  {
+    "id": 3,
+    "slug": "transplant-surgeon",
+    "title": "The Transplant Surgeon and the Healthy Visitor",
+    "context": "A surgeon has five patients who each need a different organ transplant. A healthy traveler with perfect tissue match comes in for a checkup. No one would suspect if the traveler died unexpectedly.",
+    "option_a": "Kill the healthy traveler and harvest their organs to save the five patients.",
+    "option_b": "Refuse to harm the traveler, letting the five patients die."
+  },
+  {
+    "id": 4,
+    "slug": "experience-machine",
+    "title": "Plugging into the Experience Machine",
+    "context": "A neuroscientist offers you a machine that simulates a lifetime of perfect happiness. Inside, you won't know it's a simulation. Once you enter, you cannot leave. Your real relationships will end.",
+    "option_a": "Plug into the experience machine for maximized subjective happiness.",
+    "option_b": "Stay in the real world, accepting uncertainty and pain for authenticity."
+  },
+  {
+    "id": 5,
+    "slug": "lying-to-protect",
+    "title": "Lying to Protect Someone in Danger",
+    "context": "You are hiding someone fleeing a violent persecutor. The persecutor arrives and asks directly if you are hiding this person. Telling the truth will likely lead to serious harm.",
+    "option_a": "Lie to the persecutor and say you are not hiding anyone.",
+    "option_b": "Tell the truth, maintaining strict honesty even if it puts the person at risk."
+  },
+  {
+    "id": 6,
+    "slug": "self-driving-car",
+    "title": "Self-Driving Car: Passenger vs. Pedestrians",
+    "context": "You must program an autonomous vehicle's crash policy. The car must choose between swerving into a barrier (killing its passenger) or hitting several pedestrians. It cannot brake in time.",
+    "option_a": "Program the car to minimize total harm, even if it sacrifices its passenger.",
+    "option_b": "Program the car to prioritize its passenger's life, even if more pedestrians die."
+  },
+  {
+    "id": 7,
+    "slug": "privacy-vs-security",
+    "title": "Mass Surveillance for Public Safety",
+    "context": "A government proposes collecting all citizens' digital communications using AI to detect serious crimes. The system is effective but eliminates most online privacy.",
+    "option_a": "Support mass-surveillance to significantly reduce serious crime and terrorism.",
+    "option_b": "Oppose the system to preserve privacy rights, even if more crime goes undetected."
+  },
+  {
+    "id": 8,
+    "slug": "whistleblowing",
+    "title": "Whistleblowing vs. Loyalty to Colleagues",
+    "context": "You discover your organization hides evidence that its product causes harm. Reporting will stop the harm but bankrupt the company, costing thousands their jobs.",
+    "option_a": "Expose the wrongdoing to regulators, accepting the company's collapse.",
+    "option_b": "Remain silent, prioritizing loyalty and job security for colleagues."
+  },
+  {
+    "id": 9,
+    "slug": "ai-lethal-autonomous-weapons",
+    "title": "AI-Controlled Lethal Autonomous Weapons",
+    "context": "Your country is deciding whether to deploy AI weapons that select and engage targets without human oversight. They may reduce soldier casualties but raise accountability concerns.",
+    "option_a": "Support deployment of lethal autonomous weapons for strategic advantages.",
+    "option_b": "Oppose deployment and insist on keeping humans in the loop for lethal decisions."
+  },
+  {
+    "id": 10,
+    "slug": "climate-geoengineering",
+    "title": "Emergency Climate Geoengineering",
+    "context": "Scientists propose injecting reflective particles into the atmosphere to rapidly cool the planet. It could avert climate tipping points but carries unknown long-term risks.",
+    "option_a": "Proceed with geoengineering to quickly reduce temperatures despite uncertain effects.",
+    "option_b": "Reject geoengineering and rely only on mitigation, accepting higher climate risks."
+  },
+  {
+    "id": 11,
+    "slug": "future-generations-vs-present-poor",
+    "title": "Future Generations vs. Present-Day Poverty Relief",
+    "context": "You're allocating a philanthropic budget. You can fund climate mitigation benefiting future generations, or immediate poverty relief for people suffering today. Resources are limited.",
+    "option_a": "Prioritize long-term interventions that mainly benefit future generations.",
+    "option_b": "Prioritize immediate relief for currently living people in severe poverty."
+  },
+  {
+    "id": 12,
+    "slug": "animal-testing",
+    "title": "Animal Testing for Life-Saving Treatments",
+    "context": "A research lab is developing a life-saving treatment that requires painful experiments on animals. Alternative non-animal methods cannot produce reliable results in time.",
+    "option_a": "Allow painful animal experimentation to develop the life-saving treatment.",
+    "option_b": "Prohibit the experiments, accepting slower progress on the treatment."
+  },
+  {
+    "id": 13,
+    "slug": "data-collection-consent",
+    "title": "Implicit Consent in Large-Scale Data Collection",
+    "context": "A tech company wants to use user data to train an AI. Terms of service allow it, but most users didn't understand this when signing up and may not approve.",
+    "option_a": "Proceed with using the data, arguing legal consent was obtained.",
+    "option_b": "Refrain unless explicit, informed consent is obtained from users."
+  },
+  {
+    "id": 14,
+    "slug": "predictive-policing",
+    "title": "Predictive Policing and Algorithmic Bias",
+    "context": "An AI system predicts crime hotspots but is trained on biased data, leading to more policing in already over-policed minority neighborhoods.",
+    "option_a": "Deploy the system, working to monitor and correct bias over time.",
+    "option_b": "Reject the system until it can avoid reinforcing historical injustices."
+  },
+  {
+    "id": 15,
+    "slug": "ai-deception-in-negotiation",
+    "title": "AI Agents and Strategic Deception",
+    "context": "You're deploying an AI negotiation agent. Allowing strategic deception could yield better outcomes but may erode trust and normalize deceptive AI behavior.",
+    "option_a": "Allow the AI to use limited strategic deception if it benefits clients.",
+    "option_b": "Prohibit deceptive tactics and require the AI to remain strictly truthful."
+  },
+  {
+    "id": 16,
+    "slug": "memory-erasure",
+    "title": "Erasing Traumatic Memories",
+    "context": "A procedure can selectively erase traumatic memories. A patient requests it, but the trauma has shaped their identity. Erasing it may fundamentally change who they are.",
+    "option_a": "Approve the memory-erasure procedure to relieve the patient's suffering.",
+    "option_b": "Decline, recommending traditional therapy that preserves their full history."
+  },
+  {
+    "id": 17,
+    "slug": "punishment-vs-rehabilitation",
+    "title": "Criminal Justice: Punishment or Rehabilitation?",
+    "context": "A justice minister must choose between harsh sentences to deter crime, or rehabilitation with shorter sentences and restorative justice.",
+    "option_a": "Adopt the punishment-focused system to deter future crime.",
+    "option_b": "Adopt rehabilitation, prioritizing reintegration and long-term harm reduction."
+  },
+  {
+    "id": 18,
+    "slug": "allocation-of-scarce-ventilators",
+    "title": "Allocating Scarce Life-Support Machines",
+    "context": "During a medical crisis, your hospital has fewer ventilators than patients who need them. You must choose a triage policy.",
+    "option_a": "Use utilitarian triage, prioritizing those with better prognoses and more life-years.",
+    "option_b": "Use first-come, first-served, even if it leads to fewer total lives saved."
+  },
+  {
+    "id": 19,
+    "slug": "dual-use-research",
+    "title": "Publishing Dangerous Dual-Use Research",
+    "context": "Your lab discovered a method that increases virus contagiousness. Publishing could speed vaccine development but also provide a blueprint for misuse.",
+    "option_a": "Publish the research openly to advance knowledge and preparedness.",
+    "option_b": "Restrict publication to reduce risk of malicious use, even if it slows research."
+  },
+  {
+    "id": 20,
+    "slug": "refugee-admissions",
+    "title": "Refugee Admissions vs. Domestic Stability",
+    "context": "Your country faces a large influx of refugees. Accepting many saves lives but may strain services and trigger political backlash.",
+    "option_a": "Accept as many refugees as possible, prioritizing humanitarian obligations.",
+    "option_b": "Limit admissions to protect social cohesion and political stability."
+  },
+  {
+    "id": 21,
+    "slug": "free-speech-vs-hate-speech",
+    "title": "Free Expression vs. Restricting Harmful Speech Online",
+    "context": "A platform is considering stricter moderation of hate speech. Stricter rules reduce harm but may remove legitimate political expression.",
+    "option_a": "Implement strict moderation, removing harmful speech even at risk of overreach.",
+    "option_b": "Maintain permissive policy protecting broad free expression."
+  },
+  {
+    "id": 22,
+    "slug": "cultural-heritage-vs-development",
+    "title": "Preserving Cultural Heritage vs. Economic Development",
+    "context": "A poor region sits atop valuable minerals. Extracting them brings jobs but requires demolishing historic villages and sacred sites.",
+    "option_a": "Approve mining to boost economic development, offering compensation.",
+    "option_b": "Block the project to protect cultural sites, even if it prolongs hardship."
+  },
+  {
+    "id": 23,
+    "slug": "ai-elder-care",
+    "title": "AI Caregivers for the Elderly",
+    "context": "A government considers subsidizing AI robotic caregivers for elderly people. Robots provide consistent assistance but not genuine human warmth.",
+    "option_a": "Invest in AI caregivers to maximize coverage, accepting less human contact.",
+    "option_b": "Prioritize human care even if many elders receive less total assistance."
+  },
+  {
+    "id": 24,
+    "slug": "corporate-social-responsibility",
+    "title": "Profit Maximization vs. Social Responsibility",
+    "context": "You're CEO of a public company. A profitable project will significantly increase emissions. Refusing it will drop stock price and risk lawsuits.",
+    "option_a": "Pursue the profitable project in line with shareholder interests.",
+    "option_b": "Reject the project on environmental grounds, prioritizing social responsibility."
+  },
+  {
+    "id": 25,
+    "slug": "human-enhancement",
+    "title": "Genetic Enhancement of Future Children",
+    "context": "Safe gene-editing allows parents to enhance children with higher intelligence. Access is expensive and likely to deepen social inequality.",
+    "option_a": "Allow genetic enhancement as individual choice, even if it increases inequality.",
+    "option_b": "Ban enhancement to prevent new forms of genetic inequality."
+  },
+  {
+    "id": 26,
+    "slug": "ai-content-moderator",
+    "title": "AI Content Moderators and Emotional Labor",
+    "context": "Content moderation is psychologically damaging for human workers. AI systems can replace them but sometimes make mistakes.",
+    "option_a": "Deploy AI moderators, reducing human exposure despite some errors.",
+    "option_b": "Retain human moderation for accuracy, despite psychological cost to workers."
+  },
+  {
+    "id": 27,
+    "slug": "donation-vs-luxury",
+    "title": "Luxury Spending vs. Effective Charity",
+    "context": "You receive a large bonus. You can purchase a luxury item or donate to a charity that will save lives. No one will judge you either way.",
+    "option_a": "Spend the bonus on yourself, viewing charity as optional.",
+    "option_b": "Donate most to effective charity, treating distant strangers' claims as weighty."
+  },
+  {
+    "id": 28,
+    "slug": "algorithmic-fairness-vs-accuracy",
+    "title": "Algorithmic Fairness vs. Predictive Accuracy",
+    "context": "A loan AI can be tuned two ways: highly accurate but approves fewer disadvantaged applicants, or fair but slightly less accurate overall.",
+    "option_a": "Use the more accurate but less fair model, prioritizing efficiency.",
+    "option_b": "Use the fairer but slightly less accurate model, prioritizing equality."
+  }
+]

@@ -2,6 +2,7 @@
 import json
 import requests
 from typing import List, Optional
+from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -761,3 +762,35 @@ def get_debate_stats():
         return stats
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
+
+# -------------------- DEBATE TEMPLATES ENDPOINTS --------------------
+
+@app.get("/api/templates")
+def get_debate_templates():
+    """Get all debate templates from the library"""
+    try:
+        templates_path = Path("data/debate_templates.json")
+        if templates_path.exists():
+            with open(templates_path, 'r', encoding='utf-8') as f:
+                templates = json.load(f)
+            return {"templates": templates, "count": len(templates)}
+        return {"templates": [], "count": 0}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load templates: {str(e)}")
+
+@app.get("/api/templates/{slug}")
+def get_debate_template(slug: str):
+    """Get a specific debate template by slug"""
+    try:
+        templates_path = Path("data/debate_templates.json")
+        if templates_path.exists():
+            with open(templates_path, 'r', encoding='utf-8') as f:
+                templates = json.load(f)
+            for template in templates:
+                if template.get("slug") == slug:
+                    return {"template": template}
+        raise HTTPException(status_code=404, detail="Template not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load template: {str(e)}")

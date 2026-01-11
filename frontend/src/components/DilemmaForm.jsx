@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import AgentSelector from './AgentSelector';
+import DebateLibrary from './DebateLibrary';
 import './DilemmaForm.css';
 
 function DilemmaForm({ onSubmit }) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [showLibrary, setShowLibrary] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     A: '',
@@ -19,6 +21,11 @@ function DilemmaForm({ onSubmit }) {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleTemplateSelect = (template) => {
+    setFormData(template);
+    setShowLibrary(false);
   };
 
   const validateStep1 = () => {
@@ -69,8 +76,19 @@ function DilemmaForm({ onSubmit }) {
       {/* Step 1: Dilemma Setup */}
       {currentStep === 1 && (
         <div className="wizard-step">
-          <h2>Enter Your Ethical Dilemma</h2>
-          <p className="step-subtitle">Describe the ethical scenario you want the agents to debate</p>
+          <div className="step-header">
+            <div>
+              <h2>Enter Your Ethical Dilemma</h2>
+              <p className="step-subtitle">Describe the ethical scenario you want the agents to debate</p>
+            </div>
+            <button 
+              type="button"
+              className="btn btn-library"
+              onClick={() => setShowLibrary(true)}
+            >
+              Browse Debate Library
+            </button>
+          </div>
           
           <form onSubmit={handleNext}>
             <div className="form-group">
@@ -170,6 +188,14 @@ function DilemmaForm({ onSubmit }) {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Debate Library Modal */}
+      {showLibrary && (
+        <DebateLibrary 
+          onSelectTemplate={handleTemplateSelect}
+          onClose={() => setShowLibrary(false)}
+        />
       )}
     </div>
   );
