@@ -1,0 +1,318 @@
+# backend/services/debate_deduplication_service.py
+import json
+import os
+from pathlib import Path
+from typing import List, Optional, Dict
+from datetime import datetime
+import re
+from services.embedding_service import EmbeddingService
+
+
+class DeduplicationResult:
+    """Result of debate deduplication check"""
+    
+    def __init__(self, success: bool, is_duplicate: bool, message: str, 
+                 matched_template: Optional[dict] = None, 
+                 added_template: Optional[dict] = None):
+        self.success = success
+        self.is_duplicate = is_duplicate
+        self.message = message
+        self.matched_template = matched_template
+        self.added_template = added_template
+    
+    def to_dict(self) -> dict:
+        """Convert to dictionary for API responses"""
+        result = {
+            'success': self.success,
+            'is_duplicate': self.is_duplicate,
+            'message': self.message
+        }
+        if self.matched_template:
+            result['matched_template'] = self.matched_template
+        if self.added_template:
+            result['added_template'] = self.added_template
+        return result
+
+
+class DebateDeduplicationService:
+    """
+    Service for managing debate library and detecting duplicates.
+    
+    Handles:
+    - Loading/saving debate templates
+    - Generating slugs and IDs
+    - Semantic duplicate detection
+    - Adding unique debates to library
+    """
+    
+    def __init__(self, templates_path: str = "data/debate_templates.json", 
+                 embedding_service: Optional[EmbeddingService] = None):
+        """
+        Initialize the deduplication service.
+        
+        Args:
+            templates_path: Path to debate templates JSON file
+            embedding_service: Optional embedding service (creates new one if not provided)
+        """
+        self.templates_path = Path(templates_path)
+        self.embedding_service = embedding_service or EmbeddingService()
+        
+        # Ensure data directory exists
+        self.templates_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Initialize templates file if it doesn't exist
+        if not self.templates_path.exists():
+            self._save_templates([])
+    
+    def submit_custom_debate(self, debate: dict) -> DeduplicationResult:
+        """
+        Main entry point for debate submission.
+        
+        Checks for duplicates and adds to library if unique.
+        
+        Args:
+            debate: Dictionary with 'title', 'context', 'option_a', 'option_b'
+            
+        Returns:
+            DeduplicationResult indicating if added or duplicate found
+        """
+        try:
+            # Validate debate has required fields
+            required_fields = ['title', 'context', 'option_a', 'option_b']
+            missing_fields = [f for f in required_fields if not debate.get(f)]
+            
+            if missing_fields:
+                return DeduplicationResult(
+                    success=False,
+                    is_duplicate=False,
+                    message=f"Missing required fields: {', '.join(missing_fields)}"
+                )
+            
+            # Check for duplicates
+            duplicate = self.find_duplicate(debate)
+            
+            if duplicate:
+                return DeduplicationResult(
+                    success=True,
+                    is_duplicate=True,
+                    message="This debate already exists in the library.",
+                    matched_template=duplicate
+                )
+            
+            # Add to library
+            added_template = self.add_to_library(debate)
+            
+            return DeduplicationResult(
+                success=True,
+                is_duplicate=False,
+                message="Debate added to library successfully!",
+                added_template=added_template
+            )
+            
+        except Exception as e:
+            return DeduplicationResult(
+                success=False,
+                is_duplicate=False,
+                message=f"Failed to process debate: {str(e)}"
+            )
+    
+    def find_duplicate(self, debate: dict) -> Optional[dict]:
+        """
+        Search for semantic duplicates in existing library.
+        
+        Args:
+            debate: Debate to check
+            
+        Returns:
+            Matching template if found, None otherwise
+        """
+        templates = self._load_templates()
+        
+        if not templates:
+            return None
+        
+        # Generate embedding for candidate debate
+        candidate_embedding = self.embedding_service.generate_debate_embedding(debate)
+        
+        # Compare against all existing templates
+        best_match = None
+        best_similarity = 0.0
+        
+        for template in templates:
+            # Generate embedding for template
+            template_embedding = self.embedding_service.generate_debate_embedding(template)
+            
+            # Compute similarity
+            similarity = self.embedding_service.compute_similarity(
+                candidate_embedding, 
+                template_embedding
+            )
+            
+            # Track best match
+            if similarity > best_similarity:
+                best_similarity = similarity
+                best_match = template
+        
+        # Apply threshold
+        # High threshold: 0.90+ is considered a duplicate
+        if best_similarity >= 0.90:
+            # Add similarity score to result
+            result = best_match.copy()
+            result['similarity_score'] = round(best_similarity, 3)
+            return result
+        
+        # Medium threshold: 0.75-0.90 requires field-level validation
+        if best_similarity >= 0.75:
+            # Check if any single field differs significantly
+            if self._has_significant_field_difference(debate, best_match):
+                return None  # Different enough to be unique
+            else:
+                result = best_match.copy()
+                result['similarity_score'] = round(best_similarity, 3)
+                return result
+        
+        # Low similarity: definitely unique
+        return None
+    
+    def add_to_library(self, debate: dict) -> dict:
+        """
+        Add unique debate to templates library.
+        
+        Args:
+            debate: Debate to add
+            
+        Returns:
+            The added template with generated ID and slug
+        """
+        templates = self._load_templates()
+        
+        # Generate new ID (max existing ID + 1)
+        if templates:
+            max_id = max(t.get('id', 0) for t in templates)
+            new_id = max_id + 1
+        else:
+            new_id = 1
+        
+        # Generate slug from title
+        slug = self._generate_slug(debate['title'], templates)
+        
+        # Create new template
+        new_template = {
+            'id': new_id,
+            'slug': slug,
+            'title': debate['title'],
+            'context': debate['context'],
+            'option_a': debate['option_a'],
+            'option_b': debate['option_b'],
+            'created_at': datetime.now().isoformat(),
+            'is_custom': True
+        }
+        
+        # Add to templates
+        templates.append(new_template)
+        
+        # Save atomically
+        self._save_templates(templates)
+        
+        return new_template
+    
+    def _load_templates(self) -> List[dict]:
+        """Load debate templates from JSON file"""
+        try:
+            if not self.templates_path.exists():
+                return []
+            
+            with open(self.templates_path, 'r', encoding='utf-8') as f:
+                templates = json.load(f)
+            
+            return templates if isinstance(templates, list) else []
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Error loading templates: {e}")
+            return []
+    
+    def _save_templates(self, templates: List[dict]) -> None:
+        """
+        Persist templates back to JSON file.
+        Uses atomic write (write to temp, then rename) for safety.
+        """
+        # Write to temporary file first
+        temp_path = self.templates_path.with_suffix('.tmp')
+        
+        try:
+            with open(temp_path, 'w', encoding='utf-8') as f:
+                json.dump(templates, f, indent=2, ensure_ascii=False)
+            
+            # Atomic rename
+            temp_path.replace(self.templates_path)
+            
+        except Exception as e:
+            # Clean up temp file if it exists
+            if temp_path.exists():
+                temp_path.unlink()
+            raise e
+    
+    def _generate_slug(self, title: str, existing_templates: List[dict]) -> str:
+        """
+        Generate URL-friendly slug from title.
+        Ensures uniqueness by appending number if needed.
+        
+        Args:
+            title: Debate title
+            existing_templates: List of existing templates to check against
+            
+        Returns:
+            Unique slug
+        """
+        # Convert to lowercase and replace spaces/special chars with hyphens
+        slug = title.lower()
+        slug = re.sub(r'[^\w\s-]', '', slug)  # Remove special chars
+        slug = re.sub(r'[-\s]+', '-', slug)   # Replace spaces/multiple hyphens
+        slug = slug.strip('-')                 # Remove leading/trailing hyphens
+        
+        # Limit length
+        slug = slug[:50]
+        
+        # Check for uniqueness
+        existing_slugs = {t.get('slug') for t in existing_templates}
+        
+        if slug not in existing_slugs:
+            return slug
+        
+        # Append number if slug exists
+        counter = 2
+        while f"{slug}-{counter}" in existing_slugs:
+            counter += 1
+        
+        return f"{slug}-{counter}"
+    
+    def _has_significant_field_difference(self, debate1: dict, debate2: dict) -> bool:
+        """
+        Check if debates have significant differences in individual fields.
+        Used for medium-similarity cases (0.75-0.90).
+        
+        Args:
+            debate1: First debate
+            debate2: Second debate
+            
+        Returns:
+            True if there's a significant field-level difference
+        """
+        # Compare each content field individually
+        fields = ['context', 'option_a', 'option_b']
+        
+        for field in fields:
+            text1 = debate1.get(field, '')
+            text2 = debate2.get(field, '')
+            
+            # Create simple embeddings for each field
+            emb1 = self.embedding_service._text_to_embedding(text1)
+            emb2 = self.embedding_service._text_to_embedding(text2)
+            
+            field_similarity = self.embedding_service.compute_similarity(emb1, emb2)
+            
+            # If any field is significantly different (< 0.70), debates are unique
+            if field_similarity < 0.70:
+                return True
+        
+        # All fields are similar
+        return False

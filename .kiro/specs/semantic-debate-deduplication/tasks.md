@@ -1,24 +1,36 @@
 # Implementation Plan: Semantic Debate Deduplication
 
-- [ ] 1. Set up embedding service infrastructure
+- [x] 1. Set up embedding service infrastructure
+
+
+
   - Create `backend/services/embedding_service.py` with EmbeddingService class
   - Implement embedding generation using Groq embedding models (reuse existing GROQ_API_KEY)
   - Implement cosine similarity computation
   - Add fallback to Groq LLM for semantic comparison if embeddings unavailable
   - _Requirements: 3.1, 3.2, 5.1_
 
-- [ ] 1.1 Write property test for embedding service
+- [x] 1.1 Write property test for embedding service
+
+
+
+
   - **Property 7: Similarity Score Bounds**
   - **Validates: Requirements 3.2**
 
-- [ ] 1.2 Write unit tests for embedding service
+- [x] 1.2 Write unit tests for embedding service
+
+
   - Test embedding generation with mock API responses
   - Test similarity computation with known vectors
   - Test error handling for API failures
   - Test debate text formatting
   - _Requirements: 3.1, 3.2_
 
-- [ ] 2. Implement debate deduplication service core logic
+- [x] 2. Implement debate deduplication service core logic
+
+
+
   - Create `backend/services/debate_deduplication_service.py` with DebateDeduplicationService class
   - Implement template loading from `debate_templates.json`
   - Implement template saving with atomic writes
@@ -26,18 +38,23 @@
   - Implement ID assignment for new debates
   - _Requirements: 1.2, 2.1_
 
-- [ ] 2.1 Write property test for library preservation
+- [x] 2.1 Write property test for library preservation
+
+
   - **Property 2: Library Preservation Invariant**
   - **Validates: Requirements 1.4**
 
-- [ ] 2.2 Write unit tests for template management
+- [x] 2.2 Write unit tests for template management
+
+
   - Test loading templates from JSON
   - Test saving templates to JSON
   - Test slug generation from various titles
   - Test ID assignment logic
   - _Requirements: 1.2_
 
-- [ ] 3. Implement semantic comparison and duplicate detection
+- [-] 3. Implement semantic comparison and duplicate detection
+
   - Implement `find_duplicate()` method using embedding service
   - Implement similarity threshold logic (high: 0.90, medium: 0.75)
   - Implement field-level validation for medium similarity cases
@@ -109,7 +126,8 @@
   - Test performance improvement with cache
   - _Requirements: 3.1_
 
-- [ ] 6. Create API endpoint for debate submission
+- [-] 6. Create API endpoint for debate submission
+
   - Add `POST /api/debates/submit` endpoint in `backend/main.py`
   - Implement request validation (required fields, field lengths)
   - Integrate with DebateDeduplicationService
@@ -190,7 +208,9 @@
   - Test Case 10: Verify title is NOT a factor in duplicate detection
   - _Requirements: 2.2, 2.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 13. Create terminal testing script for manual validation
+- [x] 13. Create terminal testing script for manual validation
+
+
   - Create `backend/test_deduplication_manual.py` script
   - Add sample debates covering all edge cases from Task 12
   - Script should print similarity scores and classification for each test case

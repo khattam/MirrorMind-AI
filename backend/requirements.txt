@@ -6,3 +6,4 @@ pydantic
 openai
 httpx<0.28.0
 groq
+numpy

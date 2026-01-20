@@ -208,11 +208,15 @@ from services.enhancement_service import EnhancementService
 from services.metrics_service import MetricsService
 from services.debate_history_service import DebateHistoryService
 
+# Import deduplication service
+from services.debate_deduplication_service import DebateDeduplicationService
+
 # Initialize services
 agent_service = AgentService()
 enhancement_service = EnhancementService()
 metrics_service = MetricsService()
 debate_history_service = DebateHistoryService()
+deduplication_service = DebateDeduplicationService()
 
 # -------------------- APP CONFIG --------------------
 app = FastAPI(title="MirrorMinds API")
@@ -797,3 +801,47 @@ def get_debate_template(slug: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to load template: {str(e)}")
+
+
+# -------------------- DEBATE SUBMISSION ENDPOINTS --------------------
+
+class DebateSubmission(BaseModel):
+    """Model for debate submission"""
+    title: str = Field(..., min_length=5, max_length=200)
+    context: str = Field(..., min_length=20, max_length=2000)
+    option_a: str = Field(..., min_length=10, max_length=500)
+    option_b: str = Field(..., min_length=10, max_length=500)
+
+@app.post("/api/debates/submit")
+def submit_debate(submission: DebateSubmission):
+    """
+    Submit a custom debate to the library with semantic deduplication.
+    
+    This endpoint:
+    1. Validates the debate format
+    2. Checks for semantic duplicates in the library
+    3. Adds unique debates to the library
+    4. Returns appropriate response (added or duplicate found)
+    """
+    try:
+        # Convert to dict
+        debate = {
+            'title': submission.title,
+            'context': submission.context,
+            'option_a': submission.option_a,
+            'option_b': submission.option_b
+        }
+        
+        # Submit through deduplication service
+        result = deduplication_service.submit_custom_debate(debate)
+        
+        # Return appropriate status code
+        if not result.success:
+            raise HTTPException(status_code=400, detail=result.message)
+        
+        return result.to_dict()
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to submit debate: {str(e)}")
