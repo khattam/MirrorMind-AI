@@ -76,7 +76,7 @@ class EmbeddingService:
     def compare_debates(self, debate1: dict, debate2: dict) -> float:
         """
         High-level comparison returning similarity score.
-        Uses both embedding similarity and LLM-based semantic comparison.
+        Uses fast hash-based embedding comparison only (no LLM fallback).
         
         Args:
             debate1: First debate dictionary
@@ -85,23 +85,11 @@ class EmbeddingService:
         Returns:
             Similarity score between 0 and 1
         """
-        # First, use fast embedding comparison
+        # Use fast embedding comparison only
         embedding1 = self.generate_debate_embedding(debate1)
         embedding2 = self.generate_debate_embedding(debate2)
         
         embedding_similarity = self.compute_similarity(embedding1, embedding2)
-        
-        # If embeddings are very similar or very different, trust that
-        if embedding_similarity > 0.95 or embedding_similarity < 0.5:
-            return embedding_similarity
-        
-        # For edge cases (0.5-0.95), use LLM for semantic comparison
-        if self.groq_client:
-            llm_result = self.llm_semantic_comparison(debate1, debate2)
-            if llm_result.get('are_duplicates') is not None:
-                # Blend embedding and LLM scores
-                llm_score = 0.95 if llm_result['are_duplicates'] else 0.3
-                return (embedding_similarity * 0.4 + llm_score * 0.6)
         
         return embedding_similarity
     
