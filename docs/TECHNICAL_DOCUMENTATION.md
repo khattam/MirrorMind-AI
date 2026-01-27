@@ -949,31 +949,31 @@ backend/
 
 ## 14. Future Enhancements
 
-### 17.1 Phase 2: User Authentication
+### 14.1 Phase 2: User Authentication
 - User accounts
 - Personal agent libraries
 - Debate ownership
 - Social features
 
-### 17.2 Phase 3: Advanced Features
+### 14.2 Phase 3: Advanced Features
 - Agent tournaments
 - Collaborative debates
 - Debate challenges
 - Agent evolution/learning
 
-### 17.3 Phase 4: Platform Expansion
+### 14.3 Phase 4: Platform Expansion
 - Mobile applications
 - LMS integration
 - API marketplace
 - Multi-language support
 
-### 17.4 Phase 5: AI Improvements
+### 14.4 Phase 5: AI Improvements
 - Multi-model support
 - Fine-tuned models
 - Domain-specific agents
 - Fallacy detection
 
-### 17.5 Database Migration
+### 14.5 Database Migration
 - PostgreSQL implementation
 - Data migration strategy
 - Performance improvements
@@ -981,94 +981,45 @@ backend/
 
 ---
 
-## 18. Conclusion
+## 15. Conclusion
 
-### 18.1 Project Summary
+### 15.1 Project Summary
 - Achievements
 - Technical innovations
 - User impact
 
-### 18.2 Lessons Learned
+### 15.2 Lessons Learned
 - Technical insights
 - Development challenges
 - Best practices discovered
 
-### 18.3 Future Vision
+### 15.3 Future Vision
 - Long-term goals
 - Scalability plans
 - Community building
 
 ---
 
-## 19. References
+## 16. References
 
-### 19.1 Technical Documentation
+### 16.1 Technical Documentation
 - FastAPI documentation
 - React documentation
 - Vite documentation
 - Groq API documentation
 - OpenAI API documentation
 
-### 19.2 Research Papers
+### 16.2 Research Papers
 - Ethical AI papers
 - Multi-agent systems
 - Semantic similarity
 - Prompt engineering
 
-### 19.3 Libraries & Tools
+### 16.3 Libraries & Tools
 - Python libraries used
 - JavaScript libraries used
 - Development tools
 - Deployment platforms
-
----
-
-## 20. Appendices
-
-### Appendix A: API Request/Response Examples
-- Complete examples for all endpoints
-- Error response examples
-- Edge case examples
-
-### Appendix B: Configuration Files
-- vercel.json
-- render.yaml
-- package.json
-- requirements.txt
-
-### Appendix C: Database Schemas
-- JSON file structures
-- Data model diagrams
-- Relationship diagrams
-
-### Appendix D: Deployment Guides
-- Step-by-step deployment
-- Environment setup
-- Troubleshooting guide
-
-### Appendix E: Code Samples
-- Key algorithm implementations
-- Utility functions
-- Custom hooks
-- Service examples
-
-### Appendix F: Test Results
-- Unit test results
-- Property-based test results
-- Integration test results
-- Performance benchmarks
-
-### Appendix G: User Guide
-- Getting started
-- Feature walkthroughs
-- Tips and tricks
-- FAQ
-
-### Appendix H: Developer Guide
-- Setup instructions
-- Development workflow
-- Contribution guidelines
-- Code style guide
 
 ---
 
