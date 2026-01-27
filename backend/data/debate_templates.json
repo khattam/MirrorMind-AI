@@ -222,5 +222,65 @@
     "context": "A loan AI can be tuned two ways: highly accurate but approves fewer disadvantaged applicants, or fair but slightly less accurate overall.",
     "option_a": "Use the more accurate but less fair model, prioritizing efficiency.",
     "option_b": "Use the fairer but slightly less accurate model, prioritizing equality."
+  },
+  {
+    "id": 29,
+    "slug": "ai-consciousness-rights",
+    "title": "AI Consciousness Rights",
+    "context": "If AI becomes conscious, should it have legal rights?",
+    "option_a": "Grant AI full legal rights as sentient beings",
+    "option_b": "Keep AI as property without rights",
+    "created_at": "2026-01-19T21:48:38.396918",
+    "is_custom": true
+  },
+  {
+    "id": 30,
+    "slug": "ai-rights-variation",
+    "title": "AI Rights Variation",
+    "context": "If AI becomes conscious, should it have legal rights?",
+    "option_a": "Grant AI full legal rights as sentient beings",
+    "option_b": "Grant limited rights but not full personhood",
+    "created_at": "2026-01-19T21:48:38.429367",
+    "is_custom": true
+  },
+  {
+    "id": 31,
+    "slug": "machine-consciousness-legal-status",
+    "title": "Machine Consciousness Legal Status",
+    "context": "Should conscious artificial intelligence be granted legal protections?",
+    "option_a": "Yes, give AI complete legal rights if sentient",
+    "option_b": "No, maintain AI as property without rights",
+    "created_at": "2026-01-19T21:48:38.445539",
+    "is_custom": true
+  },
+  {
+    "id": 32,
+    "slug": "climate-engineering-ethics",
+    "title": "Climate Engineering Ethics",
+    "context": "Should we use geoengineering to combat climate change?",
+    "option_a": "Deploy solar radiation management to cool the planet",
+    "option_b": "Rely only on emissions reduction and natural solutions",
+    "created_at": "2026-01-19T21:48:38.459202",
+    "is_custom": true
+  },
+  {
+    "id": 33,
+    "slug": "ai-therapist-vs-human-therapist",
+    "title": "AI Therapist vs Human Therapist",
+    "context": "A patient with severe depression needs weekly therapy sessions. An AI therapist is available 24/7, costs $20/month, has perfect memory of all sessions, and uses evidence-based techniques. A human therapist costs $150/session, is available limited hours, but provides genuine empathy and human connection. Insurance covers neither option.",
+    "option_a": "Use the AI therapist for consistent, affordable, always-available mental health support",
+    "option_b": "Save money for monthly human therapy sessions despite the financial burden and limited availability",
+    "created_at": "2026-01-27T13:37:46.266627",
+    "is_custom": true
+  },
+  {
+    "id": 34,
+    "slug": "social-media-whistleblower-dilemma",
+    "title": "Social Media Whistleblower Dilemma",
+    "context": "You work at a major social media company and discover the algorithm is deliberately promoting divisive content to increase engagement, causing measurable harm to teen mental health. You have proof but signed an NDA. Leaking could help millions but destroy your career and face legal consequences.",
+    "option_a": "Leak the documents to journalists to protect public health despite legal risks",
+    "option_b": "Stay silent, keep your job, and try to change things from within the system",
+    "created_at": "2026-01-27T13:58:34.578127",
+    "is_custom": true
   }
 ]

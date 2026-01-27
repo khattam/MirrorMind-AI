@@ -1,0 +1,39 @@
+# Render Ignore File
+# Files and directories to exclude from deployment
+
+# Development
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+test/
+tests/
+*.test.py
+pytest_cache/
+
+# Documentation
+docs/
+*.md
+
+# Git
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local environment
+.env
+.env.local

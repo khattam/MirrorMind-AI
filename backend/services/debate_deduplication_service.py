@@ -46,16 +46,18 @@ class DebateDeduplicationService:
     """
     
     def __init__(self, templates_path: str = "data/debate_templates.json", 
-                 embedding_service: Optional[EmbeddingService] = None):
+                 embedding_service: Optional[EmbeddingService] = None,
+                 groq_client = None):
         """
         Initialize the deduplication service.
         
         Args:
             templates_path: Path to debate templates JSON file
             embedding_service: Optional embedding service (creates new one if not provided)
+            groq_client: Optional Groq client for LLM-based comparison
         """
         self.templates_path = Path(templates_path)
-        self.embedding_service = embedding_service or EmbeddingService()
+        self.embedding_service = embedding_service or EmbeddingService(groq_client=groq_client)
         
         # Ensure data directory exists
         self.templates_path.parent.mkdir(parents=True, exist_ok=True)
@@ -119,6 +121,7 @@ class DebateDeduplicationService:
     def find_duplicate(self, debate: dict) -> Optional[dict]:
         """
         Search for semantic duplicates in existing library.
+        Uses LLM to make intelligent duplicate detection decisions.
         
         Args:
             debate: Debate to check
@@ -131,48 +134,82 @@ class DebateDeduplicationService:
         if not templates:
             return None
         
-        # Generate embedding for candidate debate
-        candidate_embedding = self.embedding_service.generate_debate_embedding(debate)
-        
-        # Compare against all existing templates
-        best_match = None
-        best_similarity = 0.0
+        # Use LLM-based comparison for accurate semantic matching
+        candidate_text = self.embedding_service._create_debate_text(debate)
         
         for template in templates:
-            # Generate embedding for template
-            template_embedding = self.embedding_service.generate_debate_embedding(template)
+            template_text = self.embedding_service._create_debate_text(template)
             
-            # Compute similarity
-            similarity = self.embedding_service.compute_similarity(
-                candidate_embedding, 
-                template_embedding
-            )
+            # Ask LLM if these are duplicates
+            is_duplicate = self._llm_duplicate_check(candidate_text, template_text, debate['title'], template.get('title', ''))
             
-            # Track best match
-            if similarity > best_similarity:
-                best_similarity = similarity
-                best_match = template
-        
-        # Apply threshold
-        # High threshold: 0.90+ is considered a duplicate
-        if best_similarity >= 0.90:
-            # Add similarity score to result
-            result = best_match.copy()
-            result['similarity_score'] = round(best_similarity, 3)
-            return result
-        
-        # Medium threshold: 0.75-0.90 requires field-level validation
-        if best_similarity >= 0.75:
-            # Check if any single field differs significantly
-            if self._has_significant_field_difference(debate, best_match):
-                return None  # Different enough to be unique
-            else:
-                result = best_match.copy()
-                result['similarity_score'] = round(best_similarity, 3)
+            if is_duplicate:
+                result = template.copy()
+                result['similarity_score'] = 1.0  # LLM confirmed duplicate
                 return result
         
-        # Low similarity: definitely unique
         return None
+    
+    def _llm_duplicate_check(self, debate1_text: str, debate2_text: str, title1: str, title2: str) -> bool:
+        """
+        Use LLM to determine if two debates are duplicates.
+        
+        Args:
+            debate1_text: First debate content (context + options)
+            debate2_text: Second debate content (context + options)
+            title1: First debate title (for context only)
+            title2: Second debate title (for context only)
+            
+        Returns:
+            True if debates are duplicates, False otherwise
+        """
+        if not self.embedding_service.groq_client:
+            # Fallback to simple text comparison if no LLM available
+            return debate1_text.lower().strip() == debate2_text.lower().strip()
+        
+        prompt = f"""You are a semantic duplicate detector for ethical debates. Determine if these two debates are the SAME debate or DIFFERENT debates.
+
+DEBATE 1 (Title: "{title1}"):
+{debate1_text}
+
+DEBATE 2 (Title: "{title2}"):
+{debate2_text}
+
+RULES FOR DUPLICATE DETECTION:
+1. IGNORE titles completely - titles don't matter for duplicate detection
+2. Focus ONLY on the content: context and the two options
+3. Consider debates DUPLICATES if:
+   - The ethical dilemma/scenario is the same (even if worded differently)
+   - Both options present the same choices (even if paraphrased)
+   - Example: "I am happy" vs "I am not sad" = SAME meaning = DUPLICATE
+   - Example: "Kill 1 to save 5" vs "Sacrifice one person to rescue five people" = DUPLICATE
+
+4. Consider debates DIFFERENT if:
+   - The context/scenario is different
+   - ANY option is different (even if context is same)
+   - Example: Same trolley context but "pull lever" vs "push person" = DIFFERENT
+   - Example: Same context but different option B = DIFFERENT
+
+Respond with ONLY "DUPLICATE" or "DIFFERENT" - nothing else."""
+
+        try:
+            response = self.embedding_service.groq_client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": "You are a precise semantic comparison expert. Respond with only DUPLICATE or DIFFERENT."},
+                    {"role": "user", "content": prompt}
+                ],
+                model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+                temperature=0.1,
+                max_tokens=10
+            )
+            
+            result = response.choices[0].message.content.strip().upper()
+            return "DUPLICATE" in result
+            
+        except Exception as e:
+            print(f"LLM duplicate check failed: {e}")
+            # Fallback to exact text match
+            return debate1_text.lower().strip() == debate2_text.lower().strip()
     
     def add_to_library(self, debate: dict) -> dict:
         """
@@ -310,8 +347,8 @@ class DebateDeduplicationService:
             
             field_similarity = self.embedding_service.compute_similarity(emb1, emb2)
             
-            # If any field is significantly different (< 0.70), debates are unique
-            if field_similarity < 0.70:
+            # If any field is significantly different (< 0.80), debates are unique
+            if field_similarity < 0.80:
                 return True
         
         # All fields are similar

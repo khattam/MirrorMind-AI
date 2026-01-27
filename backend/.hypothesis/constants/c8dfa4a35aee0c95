@@ -1,0 +1,4 @@
+# file: C:\MirrorMinds\backend\services\embedding_service.py
+# hypothesis_version: 6.150.2
+
+[0.0, 0.1, 1.0, 200, 'A', 'B', 'GROQ_MODEL', 'all-MiniLM-L6-v2', 'are_duplicates', 'constraints', 'content', 'context', 'error', 'fallback', 'option_a', 'option_b', 'raw_response', 'reasoning', 'role', 'sentence_transformer', 'system', 'user']

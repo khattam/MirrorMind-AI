@@ -1,0 +1,4 @@
+# file: C:\MirrorMinds\backend\services\debate_deduplication_service.py
+# hypothesis_version: 6.150.2
+
+[0.0, 0.7, 0.75, 0.9, '-', '.tmp', '[-\\s]+', '[^\\w\\s-]', 'added_template', 'context', 'created_at', 'id', 'is_custom', 'is_duplicate', 'matched_template', 'message', 'option_a', 'option_b', 'r', 'similarity_score', 'slug', 'success', 'title', 'utf-8', 'w']

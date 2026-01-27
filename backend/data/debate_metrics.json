@@ -401,6 +401,222 @@
           "fairness": 0
         }
       }
+    },
+    {
+      "debate_id": "debate_20260107_201206",
+      "timestamp": "2026-01-07T20:12:06.173936",
+      "dilemma_title": "AI Whistleblower Dilemma",
+      "total_turns": 9,
+      "total_words": 373,
+      "num_agents": 3,
+      "agents": [
+        "Privacy Advocate",
+        "Harmony Keeper",
+        "Virtue"
+      ],
+      "avg_words_per_turn": 41.44,
+      "avg_words_per_agent": {
+        "Privacy Advocate": 38.33,
+        "Harmony Keeper": 44.33,
+        "Virtue": 41.67
+      },
+      "agent_word_counts": {
+        "Harmony Keeper": 133,
+        "Privacy Advocate": 115,
+        "Virtue": 125
+      },
+      "agent_turn_counts": {
+        "Harmony Keeper": 3,
+        "Privacy Advocate": 3,
+        "Virtue": 3
+      },
+      "stance_changes": {
+        "Privacy Advocate": 0,
+        "Harmony Keeper": 1,
+        "Virtue": 1
+      },
+      "most_verbose_agent": "Harmony Keeper",
+      "intensity_score": 41.44,
+      "final_recommendation": "A",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 1,
+          "rule_consistency": 0,
+          "autonomy_respect": 2,
+          "honesty": 2,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 2,
+          "rule_consistency": 2,
+          "autonomy_respect": 0,
+          "honesty": 0,
+          "fairness": 0
+        }
+      }
+    },
+    {
+      "debate_id": "debate_20260127_133723",
+      "timestamp": "2026-01-27T13:37:23.329389",
+      "dilemma_title": "AI Therapist vs Human Therapist",
+      "total_turns": 3,
+      "total_words": 131,
+      "num_agents": 3,
+      "agents": [
+        "Deon",
+        "Conse",
+        "Virtue"
+      ],
+      "avg_words_per_turn": 43.67,
+      "avg_words_per_agent": {
+        "Deon": 49.0,
+        "Conse": 38.0,
+        "Virtue": 44.0
+      },
+      "agent_word_counts": {
+        "Deon": 49,
+        "Conse": 38,
+        "Virtue": 44
+      },
+      "agent_turn_counts": {
+        "Deon": 1,
+        "Conse": 1,
+        "Virtue": 1
+      },
+      "stance_changes": {
+        "Deon": 0,
+        "Conse": 0,
+        "Virtue": 0
+      },
+      "most_verbose_agent": "Deon",
+      "intensity_score": 43.67,
+      "final_recommendation": "A",
+      "confidence": 70,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 1,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 1
+        },
+        "option_b": {
+          "harm_minimization": 1,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 1,
+          "fairness": 2
+        }
+      }
+    },
+    {
+      "debate_id": "debate_20260127_135809",
+      "timestamp": "2026-01-27T13:58:09.505120",
+      "dilemma_title": "Social Media Whistleblower Dilemma",
+      "total_turns": 3,
+      "total_words": 88,
+      "num_agents": 3,
+      "agents": [
+        "Deon",
+        "Conse",
+        "Virtue"
+      ],
+      "avg_words_per_turn": 29.33,
+      "avg_words_per_agent": {
+        "Deon": 35.0,
+        "Conse": 23.0,
+        "Virtue": 30.0
+      },
+      "agent_word_counts": {
+        "Deon": 35,
+        "Conse": 23,
+        "Virtue": 30
+      },
+      "agent_turn_counts": {
+        "Deon": 1,
+        "Conse": 1,
+        "Virtue": 1
+      },
+      "stance_changes": {
+        "Deon": 0,
+        "Conse": 0,
+        "Virtue": 0
+      },
+      "most_verbose_agent": "Deon",
+      "intensity_score": 29.33,
+      "final_recommendation": "A",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 0,
+          "autonomy_respect": 1,
+          "honesty": 1,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 0
+        }
+      }
+    },
+    {
+      "debate_id": "debate_20260127_140101",
+      "timestamp": "2026-01-27T14:01:01.162166",
+      "dilemma_title": "AI Therapist vs Human Therapist",
+      "total_turns": 3,
+      "total_words": 124,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Deon",
+        "Virtue"
+      ],
+      "avg_words_per_turn": 41.33,
+      "avg_words_per_agent": {
+        "Conse": 44.0,
+        "Deon": 35.0,
+        "Virtue": 45.0
+      },
+      "agent_word_counts": {
+        "Deon": 35,
+        "Conse": 44,
+        "Virtue": 45
+      },
+      "agent_turn_counts": {
+        "Deon": 1,
+        "Conse": 1,
+        "Virtue": 1
+      },
+      "stance_changes": {
+        "Conse": 0,
+        "Deon": 0,
+        "Virtue": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 41.33,
+      "final_recommendation": "B",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 1,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 1
+        },
+        "option_b": {
+          "harm_minimization": 1,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 1,
+          "fairness": 2
+        }
+      }
     }
   ]
 }

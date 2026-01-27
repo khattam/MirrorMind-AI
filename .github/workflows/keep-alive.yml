@@ -1,10 +1,11 @@
 name: Keep Backend Alive
 
+# Disabled: GitHub Actions cron is unreliable for free tier
+# Using UptimeRobot instead: https://uptimerobot.com
+# Monitor URL: https://mirrormind-ai.onrender.com/
+
 on:
-  schedule:
-    # Ping every 5 minutes (Render free tier spins down after 15 minutes of inactivity)
-    - cron: '*/5 * * * *'
-  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab only
 
 jobs:
   ping:

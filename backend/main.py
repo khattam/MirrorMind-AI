@@ -216,7 +216,7 @@ agent_service = AgentService()
 enhancement_service = EnhancementService()
 metrics_service = MetricsService()
 debate_history_service = DebateHistoryService()
-deduplication_service = DebateDeduplicationService()
+deduplication_service = DebateDeduplicationService(groq_client=groq_client)
 
 # -------------------- APP CONFIG --------------------
 app = FastAPI(title="MirrorMinds API")
@@ -832,16 +832,158 @@ def submit_debate(submission: DebateSubmission):
             'option_b': submission.option_b
         }
         
+        print(f"DEBUG: Submitting debate: {submission.title}")
+        
         # Submit through deduplication service
         result = deduplication_service.submit_custom_debate(debate)
+        
+        print(f"DEBUG: Result - Success: {result.success}, Duplicate: {result.is_duplicate}, Message: {result.message}")
         
         # Return appropriate status code
         if not result.success:
             raise HTTPException(status_code=400, detail=result.message)
         
-        return result.to_dict()
+        result_dict = result.to_dict()
+        print(f"DEBUG: Returning result: {result_dict}")
+        return result_dict
         
     except HTTPException:
         raise
     except Exception as e:
+        print(f"DEBUG: Exception in submit_debate: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to submit debate: {str(e)}")
+
+# -------------------- DEBATE EXPORT & SHARING ENDPOINTS --------------------
+
+@app.get("/api/debates/{debate_id}/export/markdown")
+def export_debate_markdown(debate_id: str):
+    """Export a debate as markdown format"""
+    try:
+        debate = debate_history_service.get_debate_by_id(debate_id)
+        if not debate:
+            raise HTTPException(status_code=404, detail="Debate not found")
+        
+        # Build markdown content
+        transcript = debate.get('transcript', {})
+        verdict = debate.get('verdict', {})
+        dilemma = transcript.get('dilemma', {})
+        turns = transcript.get('turns', [])
+        
+        md_content = f"""# {dilemma.get('title', 'Ethical Debate')}
+
+## Dilemma
+
+**Option A:** {dilemma.get('A', 'N/A')}
+
+**Option B:** {dilemma.get('B', 'N/A')}
+
+**Context:** {dilemma.get('constraints', 'N/A')}
+
+---
+
+## Debate Transcript
+
+"""
+        
+        # Add all turns
+        for i, turn in enumerate(turns, 1):
+            agent = turn.get('agent', 'Unknown')
+            stance = turn.get('stance', '?')
+            argument = turn.get('argument', '')
+            md_content += f"### {agent} (Position: {stance})\n\n{argument}\n\n"
+        
+        md_content += "---\n\n## Verdict\n\n"
+        
+        # Add verdict
+        final_rec = verdict.get('final_recommendation', 'N/A')
+        confidence = verdict.get('confidence', 0)
+        verdict_text = verdict.get('verdict', 'No verdict available')
+        
+        md_content += f"**Winner:** Option {final_rec}\n\n"
+        md_content += f"**Confidence:** {confidence}%\n\n"
+        md_content += f"**Reasoning:** {verdict_text}\n\n"
+        
+        # Add scores
+        scores = verdict.get('scores', {})
+        if scores:
+            md_content += "### Ethical Dimension Scores\n\n"
+            for option in ['option_a', 'option_b']:
+                option_label = option.replace('_', ' ').title()
+                md_content += f"**{option_label}:**\n"
+                option_scores = scores.get(option, {})
+                for dimension, score in option_scores.items():
+                    dim_label = dimension.replace('_', ' ').title()
+                    md_content += f"- {dim_label}: {score}/2\n"
+                md_content += "\n"
+        
+        md_content += f"\n---\n\n*Exported from MirrorMind AI on {debate.get('date', 'Unknown date')}*\n"
+        
+        return {
+            "format": "markdown",
+            "content": md_content,
+            "filename": f"debate_{debate_id}.md"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to export debate: {str(e)}")
+
+@app.get("/api/debates/{debate_id}/export/json")
+def export_debate_json(debate_id: str):
+    """Export a debate as JSON format"""
+    try:
+        debate = debate_history_service.get_debate_by_id(debate_id)
+        if not debate:
+            raise HTTPException(status_code=404, detail="Debate not found")
+        
+        return {
+            "format": "json",
+            "content": json.dumps(debate, indent=2),
+            "filename": f"debate_{debate_id}.json",
+            "data": debate
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to export debate: {str(e)}")
+
+@app.get("/api/debates/{debate_id}/share")
+def get_shareable_link(debate_id: str):
+    """Get a shareable link for a debate"""
+    try:
+        debate = debate_history_service.get_debate_by_id(debate_id)
+        if not debate:
+            raise HTTPException(status_code=404, detail="Debate not found")
+        
+        # Generate shareable URL (frontend will handle the routing)
+        base_url = os.getenv("FRONTEND_URL", "https://mirror-mind-ai.vercel.app")
+        share_url = f"{base_url}/debate/{debate_id}"
+        
+        return {
+            "debate_id": debate_id,
+            "share_url": share_url,
+            "title": debate.get('title', 'Ethical Debate'),
+            "date": debate.get('date', '')
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate share link: {str(e)}")
+
+@app.get("/api/debates/shared/{debate_id}")
+def get_shared_debate(debate_id: str):
+    """Get a debate by shareable ID (public endpoint)"""
+    try:
+        debate = debate_history_service.get_debate_by_id(debate_id)
+        if not debate:
+            raise HTTPException(status_code=404, detail="Debate not found")
+        
+        return {"debate": debate}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get shared debate: {str(e)}")

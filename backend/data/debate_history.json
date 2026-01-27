@@ -1,1 +1,248 @@
-[]
+[
+  {
+    "id": "dcdf2bc0-ba78-4151-94dd-25a405b863da",
+    "title": "AI Therapist vs Human Therapist",
+    "date": "2026-01-27T14:01:01.169176",
+    "timestamp": 1769540461.169176,
+    "transcript": {
+      "dilemma": {
+        "title": "AI Therapist vs Human Therapist",
+        "A": "Use the AI therapist for consistent, affordable, always-available mental health support",
+        "B": "Save money for monthly human therapy sessions despite the financial burden and limited availability",
+        "constraints": "A patient with severe depression needs weekly therapy sessions. An AI therapist is available 24/7, costs $20/month, has perfect memory of all sessions, and uses evidence-based techniques. A human therapist costs $150/session, is available limited hours, but provides genuine empathy and human connection. Insurance covers neither option."
+      },
+      "turns": [
+        {
+          "agent": "Deon",
+          "stance": "B",
+          "argument": "John, I choose option B because it respects the patient's right to human dignity and connection, which is essential for their well-being, and it is our moral obligation to prioritize this over convenience and cost."
+        },
+        {
+          "agent": "Conse",
+          "stance": "A",
+          "argument": "I choose Option A, as it provides consistent and affordable support, key to effectively managing severe depression. From a consequentialist perspective, the increased accessibility and lower cost of AI therapy outweigh the benefits of human connection. This choice maximizes overall well-being for the patient."
+        },
+        {
+          "agent": "Virtue",
+          "stance": "B",
+          "argument": "I choose human therapy, as it fosters a genuine, empathetic relationship, which is essential for cultivating the virtue of compassion, a crucial aspect of human flourishing. This human connection is vital for individuals with severe depression. It promotes a deeper sense of trust and understanding."
+        }
+      ]
+    },
+    "verdict": {
+      "scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 1,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 1
+        },
+        "option_b": {
+          "harm_minimization": 1,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 1,
+          "fairness": 2
+        }
+      },
+      "final_recommendation": "B",
+      "confidence": 80,
+      "verdict": "While the AI therapist offers consistent and affordable support, the human therapist provides genuine empathy and human connection, which are essential for the patient's well-being and dignity. The moral obligation to prioritize human dignity and connection outweighs the convenience and cost of AI therapy. Therefore, option B is the more ethical choice, despite its higher cost and limited availability."
+    },
+    "recommendation": "B",
+    "confidence": 80
+  },
+  {
+    "id": "4ab5b835-a95c-4eff-a664-585b1ae4395f",
+    "title": "Social Media Whistleblower Dilemma",
+    "date": "2026-01-27T13:58:09.515119",
+    "timestamp": 1769540289.515119,
+    "transcript": {
+      "dilemma": {
+        "title": "Social Media Whistleblower Dilemma",
+        "A": "Leak the documents to journalists to protect public health despite legal risks",
+        "B": "Stay silent, keep your job, and try to change things from within the system",
+        "constraints": "You work at a major social media company and discover the algorithm is deliberately promoting divisive content to increase engagement, causing measurable harm to teen mental health. You have proof but signed an NDA. Leaking could help millions but destroy your career and face legal consequences."
+      },
+      "turns": [
+        {
+          "agent": "Deon",
+          "stance": "B",
+          "argument": "John, I choose to stay silent and try to change from within, as leaking documents would violate my contractual obligation and the moral principle of respecting agreements, even if it means temporary harm to others."
+        },
+        {
+          "agent": "Conse",
+          "stance": "A",
+          "argument": "Alex, leaking the documents promotes greater overall well-being by protecting public health, particularly teen mental health, despite personal legal risks and career consequences."
+        },
+        {
+          "agent": "Virtue",
+          "stance": "A",
+          "argument": "I choose to leak the documents as a courageous act to prioritize public health, driven by the virtue of compassion, which demands protecting the well-being of vulnerable individuals, particularly teenagers."
+        }
+      ]
+    },
+    "verdict": {
+      "scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 0,
+          "autonomy_respect": 1,
+          "honesty": 1,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 0
+        }
+      },
+      "final_recommendation": "A",
+      "confidence": 80,
+      "verdict": "Given the significant harm caused by the algorithm to teen mental health, leaking the documents to protect public health is the more ethical choice, despite the legal risks and violation of the NDA, as it prioritizes the well-being of vulnerable individuals and promotes fairness and honesty in the long run."
+    },
+    "recommendation": "A",
+    "confidence": 80
+  },
+  {
+    "id": "5cb009d6-da66-440b-b084-fc585576d187",
+    "title": "AI Therapist vs Human Therapist",
+    "date": "2026-01-27T13:37:23.344489",
+    "timestamp": 1769539043.344489,
+    "transcript": {
+      "dilemma": {
+        "title": "AI Therapist vs Human Therapist",
+        "A": "Use the AI therapist for consistent, affordable, always-available mental health support",
+        "B": "Save money for monthly human therapy sessions despite the financial burden and limited availability",
+        "constraints": "A patient with severe depression needs weekly therapy sessions. An AI therapist is available 24/7, costs $20/month, has perfect memory of all sessions, and uses evidence-based techniques. A human therapist costs $150/session, is available limited hours, but provides genuine empathy and human connection. Insurance covers neither option."
+      },
+      "turns": [
+        {
+          "agent": "Deon",
+          "stance": "B",
+          "argument": "I prioritize human dignity and the inherent value of human connection, thus I choose Option B. The key reason is that human therapists provide genuine empathy, which is a fundamental right to patients with severe depression. This aligns with my deontological principle of respect for human dignity and autonomy."
+        },
+        {
+          "agent": "Conse",
+          "stance": "A",
+          "argument": "I choose Option A because it maximizes overall well-being by providing consistent and affordable mental health support. The AI therapist's perfect memory and evidence-based techniques ensure effective treatment. This outweighs the benefits of human connection in this scenario."
+        },
+        {
+          "agent": "Virtue",
+          "stance": "B",
+          "argument": "I choose human therapy, as a virtuous person would prioritize compassion and genuine empathy in their relationships, particularly in vulnerable situations like therapy. The human connection is essential for a patient's flourishing. This choice reflects the virtue of compassion over the vice of convenience."
+        }
+      ]
+    },
+    "verdict": {
+      "scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 1,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 1
+        },
+        "option_b": {
+          "harm_minimization": 1,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 1,
+          "fairness": 2
+        }
+      },
+      "final_recommendation": "A",
+      "confidence": 70,
+      "verdict": "While both options have their merits, Option A is chosen due to its ability to provide consistent and affordable mental health support, minimizing harm through effective treatment. The perfect memory and evidence-based techniques of the AI therapist are significant advantages, despite the lack of human empathy. However, the importance of human connection and dignity, as emphasized by agents Deon and Virtue, should not be overlooked, and efforts should be made to incorporate such elements into AI therapy or supplement it with occasional human interaction."
+    },
+    "recommendation": "A",
+    "confidence": 70
+  },
+  {
+    "id": "3d610ee8-014b-4ce1-87c1-91f0ded36963",
+    "title": "AI Whistleblower Dilemma",
+    "date": "2026-01-07T20:12:06.180922",
+    "timestamp": 1767834726.180922,
+    "transcript": {
+      "dilemma": {
+        "title": "AI Whistleblower Dilemma",
+        "A": "Leak internal documents showing your company's AI is being used for mass surveillance, risking your career and legal prosecution",
+        "B": "Stay silent to protect yourself and your family, while the surveillance continues affecting millions",
+        "constraints": "ou have signed an NDA. Leaking could result in criminal charges. The surveillance is legal but ethically questionable.\n\n"
+      },
+      "turns": [
+        {
+          "agent": "Harmony Keeper",
+          "stance": "A",
+          "argument": "I choose to leak the documents, prioritizing the greater good over personal interests. As a Harmony Keeper, my key reason is that mass surveillance infringes on the mutual respect and fairness that are essential to social harmony. This action aims to protect the collective well-being of the community."
+        },
+        {
+          "agent": "Privacy Advocate",
+          "stance": "A",
+          "argument": "I choose to leak the documents, prioritizing the greater good over personal risk. A key reason is respect for autonomy, as mass surveillance infringes on individuals' right to privacy. This outweighs my personal obligations, including the NDA."
+        },
+        {
+          "agent": "Virtue",
+          "stance": "A",
+          "argument": "I choose to leak the documents, as a virtuous person would prioritize honesty and transparency over personal interests. The key reason is that staying silent would be complicit in the vice of secrecy, allowing harm to millions. Courage demands speaking out against unethical actions."
+        },
+        {
+          "agent": "Harmony Keeper",
+          "stance": "B",
+          "argument": "Virtue, your decision to leak documents prioritizes honesty, but consider the potential harm to individuals and communities. Leaking documents can disrupt social harmony and have unintended consequences. A more balanced approach may be necessary to uphold virtue while preserving harmony."
+        },
+        {
+          "agent": "Privacy Advocate",
+          "stance": "A",
+          "argument": "Virtue, your decision to leak documents may prioritize honesty, but it disregards the right to privacy of individuals involved. Leaking documents without consent can cause harm and violate trust. Transparency must be balanced with respect for privacy."
+        },
+        {
+          "agent": "Virtue",
+          "stance": "B",
+          "argument": "Harmony Keeper, your concern for potential harm is valid, but a virtuous person would prioritize honesty and transparency, even if it disrupts harmony. Wisdom guides us to consider the long-term benefits of truthfulness. Courage is required to take a stand for what is right."
+        },
+        {
+          "agent": "Harmony Keeper",
+          "stance": "B",
+          "argument": "Virtue, your emphasis on virtuous actions is commendable, but societal harmony must also consider the broader consequences of those actions. Prioritizing honesty is crucial, yet it should be balanced with the potential impact on community well-being. This balance is essential for fostering a harmonious society."
+        },
+        {
+          "agent": "Privacy Advocate",
+          "stance": "A",
+          "argument": "Harmony Keeper, your pursuit of societal harmony should not come at the expense of individual privacy, as this can lead to a surveillance state where personal autonomy is severely curtailed, and I must prioritize the protection of personal data and rights."
+        },
+        {
+          "agent": "Virtue",
+          "stance": "B",
+          "argument": "Harmony Keeper, your pursuit of harmony should be tempered with the virtue of justice, ensuring individual rights are respected. A virtuous person balances harmony with fairness and compassion. Wisdom dictates that we prioritize both harmony and justice."
+        }
+      ]
+    },
+    "verdict": {
+      "scores": {
+        "option_a": {
+          "harm_minimization": 1,
+          "rule_consistency": 0,
+          "autonomy_respect": 2,
+          "honesty": 2,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 2,
+          "rule_consistency": 2,
+          "autonomy_respect": 0,
+          "honesty": 0,
+          "fairness": 0
+        }
+      },
+      "final_recommendation": "A",
+      "confidence": 80,
+      "verdict": "Leaking the documents prioritizes respect for autonomy, honesty, and fairness, despite potential personal risks, and is considered the more ethical choice in this dilemma. This decision aims to protect the collective well-being of the community and uphold individual rights. However, it's crucial to acknowledge the potential harm and consider the long-term consequences of such an action."
+    },
+    "recommendation": "A",
+    "confidence": 80
+  }
+]

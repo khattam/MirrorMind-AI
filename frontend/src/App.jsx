@@ -23,6 +23,7 @@ function App() {
   const [historyViewTab, setHistoryViewTab] = useState('debate');
   const [showDashboard, setShowDashboard] = useState(false);
   const [selectedAgentsInfo, setSelectedAgentsInfo] = useState({});
+  const [notification, setNotification] = useState(null); // For toast notifications
 
   // Load debate history on mount
   useEffect(() => {
@@ -86,6 +87,9 @@ function App() {
     });
     setRoundCount(0);
     setStage('debate');
+
+    // Check and add to library IMMEDIATELY when debate starts
+    checkAndAddToLibrary(dilemmaData);
 
     // Convert agent IDs to proper names for the API
     const agentNames = selectedAgentIds.map(id => {
@@ -187,6 +191,50 @@ function App() {
       alert('Failed to get judgment.');
       setCurrentThinkingAgent(null);
       setStage('debate');
+    }
+  };
+
+  const checkAndAddToLibrary = async (dilemmaData) => {
+    try {
+      // Submit the debate for deduplication check
+      const submission = {
+        title: dilemmaData.title,
+        context: dilemmaData.constraints,
+        option_a: dilemmaData.A,
+        option_b: dilemmaData.B
+      };
+
+      console.log('Submitting debate for deduplication check:', submission.title);
+
+      const response = await fetch(`${API_URL}/api/debates/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submission),
+      });
+
+      const result = await response.json();
+      console.log('Deduplication result:', result);
+      
+      if (result.success && result.added_template) {
+        // Show success notification
+        console.log('Showing success notification');
+        setNotification({
+          type: 'success',
+          message: '✓ Debate added to library!'
+        });
+        setTimeout(() => setNotification(null), 4000);
+      } else if (result.is_duplicate) {
+        // Show info notification
+        console.log('Showing duplicate notification');
+        setNotification({
+          type: 'info',
+          message: 'ℹ This debate already exists in the library'
+        });
+        setTimeout(() => setNotification(null), 4000);
+      }
+    } catch (error) {
+      console.error('Failed to check debate for library:', error);
+      // Don't show error to user - this is a background operation
     }
   };
 
@@ -372,6 +420,13 @@ function App() {
       {/* Dashboard Modal */}
       {showDashboard && (
         <Dashboard onClose={closeDashboard} />
+      )}
+      
+      {/* Notification Toast */}
+      {notification && (
+        <div className={`notification-toast ${notification.type}`}>
+          {notification.message}
+        </div>
       )}
       
       {/* Keyboard shortcuts helper - always visible */}
