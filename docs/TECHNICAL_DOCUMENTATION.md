@@ -2,10 +2,9 @@
 
 **Version:** 1.0  
 **Date:** January 2025  
-**Author:** Medhansh Khattar
-**Institution:** [Rose-Hulman Institute of Technology] 
-**Advisor:** Dr. Stephen Chenoweth 
-**Course:** [Organizational AI]
+**Author:** Medhansh Khattam  
+**Institution:** [Your University]  
+**Course:** [Course Name]
 
 ---
 
@@ -23,14 +22,10 @@
 10. [Backend Architecture](#10-backend-architecture)
 11. [State-of-the-Art Innovations](#11-state-of-the-art-innovations)
 12. [Challenges & Solutions](#12-challenges--solutions)
-13. [Testing & Quality Assurance](#13-testing--quality-assurance)
-14. [Deployment & DevOps](#14-deployment--devops)
-15. [Performance Optimization](#15-performance-optimization)
-16. [Security & Privacy](#16-security--privacy)
-17. [Future Enhancements](#17-future-enhancements)
-18. [Conclusion](#18-conclusion)
-19. [References](#19-references)
-20. [Appendices](#20-appendices)
+13. [Testing & Deployment](#13-testing--deployment)
+14. [Future Enhancements](#14-future-enhancements)
+15. [Conclusion](#15-conclusion)
+16. [References](#16-references)
 
 ---
 
@@ -825,7 +820,7 @@ backend/
 
 ---
 
-## 13. Testing & Quality Assurance
+## 13. Testing & Deployment
 
 ### 13.1 Testing Strategy
 - Unit testing
@@ -876,202 +871,83 @@ backend/
 - Mobile responsiveness
 - Accessibility testing
 
-### 13.6 Continuous Integration
-- GitHub Actions setup
-- Automated test runs
-- Deployment triggers
-
----
-
-## 14. Deployment & DevOps
-
-### 14.1 Deployment Architecture
+### 13.6 Deployment Architecture
 - Frontend: Vercel
 - Backend: Render
 - Monitoring: GitHub Actions
 
-### 14.2 Frontend Deployment (Vercel)
+### 13.7 Frontend Deployment (Vercel)
 
-#### 14.2.1 Configuration
+#### 13.7.1 Configuration
 - Root directory: frontend
 - Framework: Vite
 - Build command: npm run build
 - Output directory: dist
 
-#### 14.2.2 Environment Variables
+#### 13.7.2 Environment Variables
 - VITE_API_URL
 - Analytics configuration
 
-#### 14.2.3 Deployment Process
+#### 13.7.3 Deployment Process
 - Git push triggers deploy
 - Automatic builds
 - Preview deployments
 - Production deployment
 
-### 14.3 Backend Deployment (Render)
+### 13.8 Backend Deployment (Render)
 
-#### 14.3.1 Configuration
+#### 13.8.1 Configuration
 - Runtime: Python 3.8+
 - Build command: pip install
 - Start command: uvicorn main:app
 
-#### 14.3.2 Environment Variables
+#### 13.8.2 Environment Variables
 - GROQ_API_KEY
 - OPENAI_API_KEY
 - AI_PROVIDER
 - GROQ_MODEL
 
-#### 14.3.3 Deployment Process
+#### 13.8.3 Deployment Process
 - Git push triggers deploy
 - Automatic builds
 - Health checks
 - Auto-scaling
 
-### 14.4 CI/CD Pipeline
+### 13.9 CI/CD Pipeline
 
-#### 14.4.1 GitHub Actions
+#### 13.9.1 GitHub Actions
 - Uptime monitoring
 - Health checks every 5 minutes
 - Automatic restarts
 
-#### 14.4.2 Deployment Workflow
+#### 13.9.2 Deployment Workflow
 - Code push
 - Automated tests
 - Build process
 - Deployment
 - Health verification
 
-### 14.5 Monitoring & Logging
+### 13.10 Monitoring & Logging
 
-#### 14.5.1 Application Monitoring
+#### 13.10.1 Application Monitoring
 - Vercel Analytics
 - Render metrics
 - Error tracking
 
-#### 14.5.2 Logging Strategy
+#### 13.10.2 Logging Strategy
 - Console logging
 - Error logging
 - Debug logging
 - Performance logging
 
-### 14.6 Backup & Recovery
+### 13.11 Backup & Recovery
 - Data backup strategy
 - Disaster recovery plan
 - Rollback procedures
 
 ---
 
-## 15. Performance Optimization
-
-### 15.1 Frontend Optimization
-
-#### 15.1.1 Build Optimization
-- Vite build tool
-- Code splitting
-- Tree shaking
-- Minification
-
-#### 15.1.2 Asset Optimization
-- Image optimization
-- Font loading
-- CSS optimization
-- Cache headers
-
-#### 15.1.3 Runtime Optimization
-- Component memoization
-- Lazy loading
-- Virtual scrolling (future)
-- Debouncing/throttling
-
-### 15.2 Backend Optimization
-
-#### 15.2.1 API Performance
-- Async/await patterns
-- Connection pooling (future)
-- Response caching (future)
-- Query optimization
-
-#### 15.2.2 LLM Call Optimization
-- Prompt length optimization
-- Token limit management
-- Parallel processing where possible
-- Strategic model selection
-
-#### 15.2.3 Data Access Optimization
-- File read caching
-- Atomic operations
-- Efficient data structures
-
-### 15.3 Network Optimization
-
-#### 15.3.1 API Design
-- Minimal payloads
-- Compression
-- CDN usage
-- HTTP/2
-
-#### 15.3.2 Caching Strategy
-- Browser caching
-- API response caching (future)
-- Static asset caching
-
-### 15.4 Performance Metrics
-
-#### 15.4.1 Frontend Metrics
-- First Contentful Paint
-- Time to Interactive
-- Largest Contentful Paint
-- Cumulative Layout Shift
-
-#### 15.4.2 Backend Metrics
-- API response times
-- LLM call latency
-- Database query times
-- Error rates
-
----
-
-## 16. Security & Privacy
-
-### 16.1 Security Measures
-
-#### 16.1.1 API Security
-- CORS configuration
-- Input validation
-- SQL injection prevention (N/A)
-- XSS prevention
-
-#### 16.1.2 Authentication (Future)
-- JWT tokens
-- OAuth integration
-- Session management
-- Password hashing
-
-#### 16.1.3 Authorization (Future)
-- Role-based access control
-- Resource ownership
-- Permission checks
-
-### 16.2 Data Privacy
-
-#### 16.2.1 User Data
-- No personal data collection (current)
-- Anonymous usage
-- Future privacy policy
-
-#### 16.2.2 API Keys
-- Environment variables
-- Secure storage
-- Key rotation strategy
-
-### 16.3 Compliance
-- GDPR considerations (future)
-- Data retention policies
-- User rights
-
----
-
-## 17. Future Enhancements
+## 14. Future Enhancements
 
 ### 17.1 Phase 2: User Authentication
 - User accounts
