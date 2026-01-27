@@ -1,6 +1,7 @@
 import './VerdictView.css';
+import { exportDebateToPDF } from '../utils/pdfExport';
 
-function VerdictView({ verdict, onReset }) {
+function VerdictView({ verdict, onReset, debate }) {
   const formatCriterion = (criterion) => {
     // Special case for autonomy_respect
     if (criterion === 'autonomy_respect') {

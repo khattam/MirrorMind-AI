@@ -158,6 +158,7 @@ function Sidebar({ stage, debateHistory, onNewDebate, onViewHistory, onDeleteHis
                         e.stopPropagation();
                         onDeleteHistory(item.id);
                       }}
+                      title="Delete debate"
                     >
                       ×
                     </button>

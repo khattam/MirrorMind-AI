@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar';
 import AgentBuilderScreen from './components/AgentBuilder/AgentBuilderScreen';
 import KeyboardShortcuts from './components/KeyboardShortcuts';
 import Dashboard from './components/Dashboard';
+import { exportDebateToPDF } from './utils/pdfExport';
 import './App.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
@@ -368,7 +369,17 @@ function App() {
           )}
 
           {stage === 'verdict' && (
-            <VerdictView verdict={verdict} onReset={handleReset} />
+            <VerdictView 
+              verdict={verdict} 
+              onReset={handleReset}
+              debate={{
+                id: Date.now(),
+                date: new Date().toLocaleDateString(),
+                title: transcript?.dilemma?.title || 'Ethical Debate',
+                transcript: transcript,
+                verdict: verdict
+              }}
+            />
           )}
 
           {stage === 'history' && selectedHistoryItem && (
@@ -378,7 +389,16 @@ function App() {
                   ← Back
                 </button>
                 <h2>{selectedHistoryItem.title}</h2>
-                <span className="history-date">{selectedHistoryItem.date}</span>
+                <div className="history-header-actions">
+                  <span className="history-date">{selectedHistoryItem.date}</span>
+                  <button 
+                    className="download-btn" 
+                    onClick={() => exportDebateToPDF(selectedHistoryItem)}
+                    title="Download as PDF"
+                  >
+                    ⬇
+                  </button>
+                </div>
               </div>
               
               <div className="history-tabs">
@@ -409,7 +429,11 @@ function App() {
               )}
 
               {historyViewTab === 'verdict' && (
-                <VerdictView verdict={selectedHistoryItem.verdict} onReset={handleReset} />
+                <VerdictView 
+                  verdict={selectedHistoryItem.verdict} 
+                  onReset={handleReset}
+                  debate={selectedHistoryItem}
+                />
               )}
             </div>
           )}

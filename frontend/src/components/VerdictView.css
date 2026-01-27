@@ -175,3 +175,15 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
 }
+
+.verdict-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.verdict-actions .btn {
+  flex: 1;
+  max-width: 200px;
+}
