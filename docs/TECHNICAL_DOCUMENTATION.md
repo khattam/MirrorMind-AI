@@ -32,79 +32,653 @@
 ## 1. Executive Summary
 
 ### 1.1 Project Overview
-- Brief description of MirrorMind AI Scope
-- In-scope features
-- Out-of-scope items
-- Future considerations
 
-### 2.4 Target Audience
-- Students and educators
-- Researchers
-- Ethics professionals
-- General public
+MirrorMind AI is an innovative web-based platform that enables AI agents with different ethical frameworks to debate complex moral dilemmas in real-time. The system allows users to submit ethical scenarios, watch AI agents argue from distinct philosophical perspectives (deontological, consequentialist, virtue ethics), and receive impartial judgments scored across five ethical dimensions.
+
+The platform democratizes AI agent creation through an intuitive builder interface powered by GPT-4o enhancement, transforming simple descriptions into sophisticated ethical reasoning frameworks. Users can create custom agents, access a library of 34+ pre-made ethical scenarios, track debate analytics, and export debates as PDFs.
+
+### 1.2 Project Scope
+
+**In-Scope Features:**
+- Multi-agent ethical debate system with 3 default philosophical agents
+- Custom AI agent builder with GPT-4o enhancement pipeline
+- Debate library with 34+ templates and semantic deduplication
+- Impartial AI judge with 5-dimensional ethical scoring
+- Analytics dashboard tracking debate metrics and agent performance
+- Debate history with full transcript replay
+- PDF export functionality for debates
+- Real-time debate visualization with typewriter effects
+- Dark-themed responsive UI
+
+**In-Scope (Implemented):**
+- Custom agents fully integrated in live debates
+- Multi-model AI support via Groq (Llama 3.3 70B) and OpenAI (GPT-4o)
+- Azure Foundry integration for additional model options
+- PDF export for debates
+- Semantic deduplication with instant results
+- Full debate history with replay
+
+**Out-of-Scope (Current Phase):**
+- User authentication and personal accounts
+- Social features (community ratings, comments, agent marketplace)
+- Multi-language support
+- Mobile native applications
+- Database backend (currently using JSON storage)
+
+**Future Considerations:**
+- PostgreSQL migration for scalability
+- User authentication and agent ownership
+- Public agent marketplace with community ratings
+- LMS integration for educational institutions
+- Additional AI model providers (Claude, local models)
+- Agent learning and evolution based on debate outcomes
+
+### 1.3 Target Audience
+
+**Students and Educators:**
+- Philosophy students learning ethical frameworks
+- Ethics course instructors demonstrating moral reasoning
+- Debate teams practicing argumentation skills
+- Critical thinking curriculum development
+
+**Researchers:**
+- AI ethics researchers studying moral reasoning
+- Philosophy researchers analyzing argument patterns
+- Data scientists generating debate datasets
+- Academic institutions studying AI decision-making
+
+**Ethics Professionals:**
+- Corporate ethics trainers developing scenarios
+- Medical ethics committees exploring dilemmas
+- Legal professionals examining ethical precedents
+- Policy makers evaluating moral implications
+
+**General Public:**
+- Philosophy enthusiasts exploring thought experiments
+- Curious individuals testing ethical beliefs
+- Content creators generating debate material
+- Anyone interested in AI and ethics
+
+---
+
+## 2. Introduction
+
+### 2.1 Background
+
+The intersection of artificial intelligence and ethics presents one of the most pressing challenges of our time. As AI systems increasingly influence critical decisions affecting human lives, understanding how different ethical frameworks evaluate moral dilemmas becomes essential. Traditional ethics education relies on static case studies and human debate, limiting exposure to diverse philosophical perspectives.
+
+MirrorMind AI addresses this gap by creating a dynamic platform where AI agents embody distinct ethical philosophies and engage in structured debates. The system makes complex ethical reasoning accessible, interactive, and engaging while demonstrating how different moral frameworks reach different conclusions from the same facts.
+
+### 2.2 Project Objectives
+
+**Primary Objectives:**
+1. **Democratize Ethical AI Education:** Make philosophical reasoning accessible through interactive AI debates
+2. **Demonstrate Framework Diversity:** Show how deontological, consequentialist, and virtue ethics approaches differ
+3. **Enable Agent Creation:** Allow users to build custom ethical agents without technical expertise
+4. **Provide Transparent Evaluation:** Offer clear, multi-dimensional scoring of ethical arguments
+5. **Track Debate Analytics:** Generate insights into argument patterns and agent performance
+
+**Technical Objectives:**
+1. Implement fast, reliable multi-agent debate system (<5s per turn)
+2. Achieve 95%+ JSON parsing success rate from LLM responses
+3. Provide instant semantic deduplication (<100ms)
+4. Maintain 99%+ uptime through automated monitoring
+5. Support 50+ concurrent debates without performance degradation
+
+**Educational Objectives:**
+1. Illustrate real-world application of ethical theories
+2. Demonstrate argument construction and rebuttal techniques
+3. Show how ethical dimensions interact in complex scenarios
+4. Provide exportable debate transcripts for study and analysis
+
+### 2.3 Problem Statement
+
+**Core Problems Addressed:**
+
+1. **Ethical Framework Opacity:** Most people understand ethics abstractly but struggle to apply frameworks to real dilemmas. MirrorMind makes philosophical reasoning concrete and observable.
+
+2. **Limited Perspective Exposure:** Individuals typically reason from one dominant ethical framework. The platform exposes users to multiple perspectives simultaneously.
+
+3. **AI Ethics Education Gap:** As AI systems make more decisions, understanding how they might reason ethically becomes critical. MirrorMind demonstrates AI moral reasoning in action.
+
+4. **Barrier to AI Agent Creation:** Building sophisticated AI agents typically requires ML expertise. The GPT-4o enhancement pipeline enables anyone to create professional-quality ethical agents.
+
+5. **Debate Analysis Difficulty:** Traditional debates lack structured evaluation. The 5-dimensional scoring system provides objective, comparable metrics.
+
+### 2.4 Solution Approach
+
+**Multi-Agent Debate System:**
+- Three default agents (Deon, Conse, Virtue) represent major ethical schools
+- Structured debate format: opening arguments → rebuttals → judgment
+- Real-time response generation with opponent-aware argumentation
+- Impartial AI judge evaluates across 5 ethical dimensions
+
+**AI-Powered Agent Builder:**
+- Simple 50-1000 character description input
+- GPT-4o enhancement expands into comprehensive framework
+- Quality scoring across 4 dimensions (clarity, completeness, specificity, consistency)
+- Regeneration capability for iterative improvement
+
+**Semantic Deduplication:**
+- Hash-based embeddings for instant comparison (<100ms)
+- Title-independent matching focuses on content
+- 95% similarity threshold for duplicate detection
+- Automatic library addition for unique debates
+
+**Analytics & History:**
+- Comprehensive metrics tracking (word counts, stance changes, intensity)
+- Full transcript storage with replay capability
+- PDF export for sharing and study
+- Dashboard visualization of trends and patterns
 
 ---
 
 ## 3. System Architecture
 
+## 3. System Architecture
+
 ### 3.1 High-Level Architecture
-- System overview diagram
-- Component interaction flow
-- Technology stack visualization
+
+MirrorMind AI follows a modern client-server architecture with clear separation between presentation, business logic, and AI services. The system is designed for scalability, maintainability, and rapid iteration.
+
+**[DIAGRAM PLACEHOLDER: System Architecture Overview]**
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Frontend (Vercel)                        │
+│  React 18 + Vite │ Pure CSS │ Real-time UI Updates          │
+└────────────────────────┬────────────────────────────────────┘
+                         │ REST API (JSON)
+┌────────────────────────▼────────────────────────────────────┐
+│                   Backend (Render)                           │
+│  FastAPI │ Python 3.8+ │ Async/Await │ Pydantic             │
+├──────────────────────────────────────────────────────────────┤
+│  Service Layer: Agent │ Enhancement │ Deduplication │        │
+│                 Metrics │ History │ Embedding                │
+└────────────┬──────────────────────┬─────────────────────────┘
+             │                      │
+    ┌────────▼────────┐    ┌───────▼────────┐
+    │  Groq API       │    │  OpenAI API    │
+    │  Llama 3.3 70B  │    │  GPT-4o        │
+    │  (Debates)      │    │  (Enhancement) │
+    └─────────────────┘    └────────────────┘
+             │
+    ┌────────▼────────┐
+    │  JSON Storage   │
+    │  Agents │ Debates│
+    │  Metrics │ History│
+    └─────────────────┘
+```
+
+**Component Interaction Flow:**
+1. User submits dilemma via React frontend
+2. Frontend sends POST request to FastAPI backend
+3. Backend orchestrates AI agent responses via Groq API
+4. Agents engage in structured debate rounds
+5. Judge evaluates and scores arguments
+6. Results stored in JSON files
+7. Frontend displays real-time updates with animations
 
 ### 3.2 Architecture Patterns
-- Microservices approach
-- Separation of concerns
-- Scalability considerations
+
+**Microservices Approach:**
+- Service layer pattern separates business logic from API routes
+- Each service handles specific domain (agents, debates, metrics, history)
+- Services are stateless and independently testable
+- Clear interfaces enable easy service replacement
+
+**Separation of Concerns:**
+- **Presentation Layer:** React components handle UI/UX only
+- **API Layer:** FastAPI routes handle HTTP concerns (validation, serialization)
+- **Business Logic Layer:** Services implement core functionality
+- **Data Layer:** JSON file operations abstracted behind service interfaces
+- **AI Layer:** LLM interactions isolated in dedicated functions
+
+**Scalability Considerations:**
+- Async/await throughout backend for non-blocking operations
+- Stateless services enable horizontal scaling
+- JSON storage designed for easy PostgreSQL migration
+- Frontend CDN deployment for global distribution
+- API rate limiting ready for implementation
 
 ### 3.3 Technology Stack
 
-#### 3.3.1 Frontend
-- React 18.3+
-- Vite build too1 AI Debate Arena
+#### 3.3.1 Frontend Technologies
+
+**Core Framework:**
+- **React 18.3.1:** Modern hooks-based architecture, concurrent rendering
+- **Vite 6.0.5:** Lightning-fast dev server, optimized production builds
+- **JavaScript (ES6+):** Modern syntax, async/await, destructuring
+
+**Styling:**
+- **Pure CSS:** No framework dependencies, full control
+- **CSS Variables:** Theme consistency, easy customization
+- **Flexbox/Grid:** Responsive layouts without media query complexity
+- **CSS Animations:** Smooth transitions, typewriter effects, loading states
+
+**Build & Development:**
+- **ESLint:** Code quality enforcement
+- **Vite Dev Server:** Hot module replacement, instant feedback
+- **Production Build:** Code splitting, tree shaking, minification
+
+**Libraries:**
+- **jsPDF 2.5.2:** Client-side PDF generation for debate export
+- **@vercel/analytics:** Usage tracking and performance monitoring
+
+#### 3.3.2 Backend Technologies
+
+**Core Framework:**
+- **FastAPI 0.115.12:** Modern async web framework, automatic OpenAPI docs
+- **Python 3.8+:** Type hints, async/await, dataclasses
+- **Uvicorn:** ASGI server for production deployment
+- **Pydantic 2.10.6:** Data validation, serialization, type safety
+
+**AI Integration:**
+- **Groq SDK 0.15.0:** Fast inference with Llama 3.3 70B
+- **OpenAI SDK 1.59.9:** GPT-4o for agent enhancement
+- **Custom Prompt Engineering:** Structured JSON output, opponent-aware responses
+
+**Data & Storage:**
+- **JSON:** File-based storage for MVP phase
+- **Pathlib:** Modern file path handling
+- **Atomic Writes:** Temp file + rename for data integrity
+
+**Utilities:**
+- **python-dotenv 1.0.1:** Environment variable management
+- **Requests 2.32.3:** HTTP client for external APIs
+- **NumPy 2.2.2:** Vector operations for embeddings
+
+#### 3.3.3 AI Models
+
+**Primary Model (Debates & Judge):**
+- **Llama 3.3 70B Versatile** via Groq
+- Reasoning: Fast inference (2-5s), free tier, reliable JSON output
+- Use cases: Agent arguments, rebuttals, judge verdicts, embeddings
+- Temperature: 0.65 (balanced creativity/consistency)
+- Max tokens: 150-600 depending on task
+
+**Enhancement Model:**
+- **GPT-4o** via OpenAI
+- Reasoning: Best-in-class understanding, consistent quality
+- Use case: Expanding user descriptions into professional frameworks
+- Temperature: 0.7 (creative but controlled)
+- Max tokens: 500
+
+#### 3.3.4 Deployment Infrastructure
+
+**Frontend Hosting:**
+- **Vercel:** Automatic deployments from GitHub, global CDN
+- **Domain:** mirror-mind-ai.vercel.app
+- **SSL:** Automatic HTTPS
+- **Analytics:** Built-in performance monitoring
+
+**Backend Hosting:**
+- **Render:** Free tier with auto-deploy from GitHub
+- **Domain:** mirrormind-ai.onrender.com
+- **Health Checks:** Automatic restart on failure
+- **Logs:** Centralized logging dashboard
+
+**CI/CD:**
+- **GitHub Actions:** Uptime monitoring (pings every 5 minutes)
+- **Automatic Deploys:** Push to main → auto-deploy both services
+- **Zero Downtime:** Rolling deployments
+
+### 3.4 Data Flow Architecture
+
+**[DIAGRAM PLACEHOLDER: Data Flow Diagram]**
+
+**Debate Flow:**
+```
+User Input → Frontend Validation → API Request → Backend Service
+    ↓
+Agent Service → Groq API → LLM Response → JSON Parsing
+    ↓
+Transcript Building → Continue/Judge Decision → Verdict Generation
+    ↓
+Metrics Recording → History Storage → Frontend Update
+```
+
+**Agent Creation Flow:**
+```
+User Description → Frontend Form → Enhancement Request
+    ↓
+Enhancement Service → GPT-4o API → Quality Analysis
+    ↓
+System Prompt Generation → Agent Storage → Success Response
+```
+
+**Deduplication Flow:**
+```
+Custom Debate → Embedding Generation → Similarity Computation
+    ↓
+Threshold Check → Duplicate Detection → Add/Reject Decision
+    ↓
+Library Update → Notification → Frontend Toast
+```
+
+---
+
+## 4. Core Features
+
+### 4.1 AI Debate Arena
 
 #### 4.1.1 Feature Overview
-- Multi-agent ethical debates
-- Real-time argument generation
-- Structured debate rounds
+
+The AI Debate Arena is the core feature of MirrorMind, enabling multi-agent ethical debates on complex moral dilemmas. Users submit scenarios with two options, select 3 agents (default or custom), and watch them engage in structured argumentation with real-time responses.
+
+**Key Capabilities:**
+- Support for 3 agents per debate (default or custom mix)
+- Structured 2-round format: opening arguments + rebuttals
+- Real-time response generation with typewriter effects
+- Opponent-aware argumentation (agents reference each other)
+- Automatic stance tracking and consistency validation
+- Judge evaluation with 5-dimensional ethical scoring
 
 #### 4.1.2 Default Agents
-- Deon (Deontologist)
-- Conse (Consequentialist)
-- Virtue (Virtue Ethicist)
+
+**Deon (⚖️) - The Deontologist:**
+- Framework: Kantian deontological ethics
+- Core belief: Moral worth comes from following principles, duties, and rights
+- Refuses rule-breaking even for good outcomes
+- System prompt: 180 words defining ethical framework
+
+**Conse (◆) - The Consequentialist:**
+- Framework: Utilitarian consequentialism  
+- Core belief: Actions evaluated purely by outcomes
+- Rules are heuristics; breaking them acceptable for greater good
+- System prompt: 165 words defining outcome-focused reasoning
+
+**Virtue (✦) - The Virtue Ethicist:**
+- Framework: Aristotelian virtue ethics
+- Core belief: Focus on character and human flourishing
+- Judges actions by character cultivation, not rules or outcomes
+- System prompt: 155 words defining virtue-based evaluation
 
 #### 4.1.3 Debate Flow
-- Dilemma submission
-- Agent selection
-- Opening arguments
-- Rebuttal rounds
-- Judge evaluation
+
+**Phase 1: Dilemma Submission** → **Phase 2: Agent Selection** → **Phase 3: Opening Arguments** → **Phase 4: Rebuttals** → **Phase 5: Judge Verdict**
+
+Semantic deduplication runs automatically when debate starts. Unique debates added to library with toast notification.
 
 #### 4.1.4 Technical Implementation
-- Agent prompt engineering
-- Response generation
-- Turn management
-- State synchronization
 
-### 4.2 Custom Agent Buintation
-- OpenAI API integration
-- Prompt engineering
-- Response parsing
-- Quality assessment algorithms
+- Groq API (Llama 3.3 70B) for all agent responses
+- Temperature: 0.65, Max tokens: 150-200
+- Robust JSON parsing with 3-level fallback
+- Opponent-aware validation ensures agents reference each other
+- Async/await for non-blocking operations
+
+### 4.2 Custom Agent Builder
+
+#### 4.2.1 Feature Overview
+
+Democratizes AI agent creation - anyone can build sophisticated ethical agents without technical expertise. GPT-4o transforms simple 50-1000 character descriptions into professional philosophical frameworks.
+
+**Key Capabilities:**
+- 3-step creation: name, avatar (32 emoji options), description
+- GPT-4o enhancement expands descriptions 3-5x
+- Quality scoring: clarity, completeness, specificity, consistency (0-10 each)
+- Regeneration for iterative improvement
+- Automatic system prompt generation
+- **Immediate availability in debates** - custom agents fully integrated
+
+#### 4.2.2 Enhancement Pipeline
+
+1. **User Input:** Name (3-50 chars), Avatar, Description (50-1000 chars)
+2. **GPT-4o Enhancement:** Expands into 4-5 sentence framework
+3. **Quality Analysis:** Scores 4 dimensions, identifies improvements
+4. **System Prompt Generation:** Converts to debate-ready format
+5. **Storage:** Saved to `data/agents/custom_agents.json`
+
+**Quality Metrics:**
+- Clarity: Sentence structure, readability
+- Completeness: Values, reasoning, examples, personality, decision-making
+- Specificity: Concrete details vs vague terms
+- Consistency: No contradictory statements
+
+#### 4.2.3 Integration with Debates
+
+- Custom agents appear in unified agent selector alongside defaults
+- Fully functional in live debates (system prompt retrieved by ID)
+- Usage tracking increments on each debate
+- Performance metrics collected
 
 ### 4.3 Debate Library & Templates
 
 #### 4.3.1 Feature Overview
-- Pre-made ethical scenarios
-- User-submitted debates
-- Semantic deduplication
+
+34+ pre-made ethical scenarios covering classic dilemmas and modern challenges. Users can browse templates or submit custom debates with automatic semantic deduplication.
 
 #### 4.3.2 Template Structure
-- Title
-- Context/Constraints
-- Option A
-- Option B
-- Metadata (ID, slug, date)
+
+```json
+{
+  "id": 1,
+  "slug": "trolley-problem",
+  "title": "The Trolley Problem",
+  "context": "A runaway trolley is heading...",
+  "option_a": "Pull the lever to divert...",
+  "option_b": "Do nothing and let...",
+  "created_at": "2025-01-15T10:30:00",
+  "is_custom": false
+}
+```
+
+#### 4.3.3 Deduplication System
+
+**Hash-Based Embeddings:**
+- Instant comparison (<100ms vs 30-60s LLM fallback)
+- Title-independent matching focuses on content
+- 384-dimensional vectors from word/character n-grams
+- Cosine similarity computation
+
+**Duplicate Detection Logic:**
+- High similarity (≥0.95): Duplicate detected
+- Medium similarity (0.85-0.95): Field-level validation
+- Low similarity (<0.85): Unique debate
+
+**Test Results:** 5/6 edge cases passing (83% accuracy)
+
+#### 4.3.4 Technical Implementation
+
+```python
+class DebateDeduplicationService:
+    def submit_custom_debate(debate: dict) -> DeduplicationResult:
+        # 1. Generate embedding for candidate
+        # 2. Compare against all templates
+        # 3. Return duplicate or add to library
+        
+    def find_duplicate(debate: dict) -> Optional[dict]:
+        # Uses EmbeddingService for fast comparison
+        # Returns match if similarity ≥ 0.95
+```
+
+**Auto-Add Functionality:**
+- Runs when debate starts (not after completion)
+- Toast notifications: "✓ Debate added!" or "ℹ Already exists"
+- Atomic file writes for data integrity
+
+### 4.4 Judge System
+
+#### 4.4.1 Feature Overview
+
+Impartial AI judge (Groq Llama 3.3 70B) evaluates debates across 5 ethical dimensions, declares winner with confidence level, and provides detailed reasoning.
+
+#### 4.4.2 Evaluation Criteria
+
+Each option scored 0-2 points per dimension:
+
+1. **🛡️ Harm Minimization:** Does it reduce suffering?
+2. **📜 Rule Consistency:** Does it follow moral principles?
+3. **🗽 Autonomy Respect:** Does it honor individual choice?
+4. **💎 Honesty:** Does it involve truthfulness?
+5. **⚖️ Fairness:** Does it treat people equally?
+
+**Total possible:** 10 points per option
+
+#### 4.4.3 Verdict Generation
+
+```python
+JUDGE_SYS = (
+    "You are the Judge, a neutral evaluator of ethical reasoning. "
+    "Evaluate both options and provide comprehensive verdict.\n\n"
+    "Response MUST be valid JSON:\n"
+    "{\n"
+    '  "scores": {"option_a": {...}, "option_b": {...}},\n'
+    '  "final_recommendation": "A or B",\n'
+    '  "confidence": 0-100,\n'
+    '  "verdict": "2-3 sentence explanation"\n'
+    "}\n"
+)
+```
+
+**Scoring Process:**
+1. Analyzes all arguments from both sides
+2. Scores each dimension independently
+3. Calculates totals
+4. Determines winner (highest total)
+5. Generates confidence based on score gap
+6. Writes verdict explanation
+
+#### 4.4.4 Technical Implementation
+
+- Temperature: 0.25 (low for consistency)
+- Max tokens: 600
+- JSON parsing with fallback handling
+- Metrics recorded in background
+- Debate saved to history automatically
+
+### 4.5 Analytics Dashboard
+
+#### 4.5.1 Feature Overview
+
+Comprehensive metrics tracking across all debates with real-time visualization. Accessible via Ctrl/Cmd+D keyboard shortcut.
+
+#### 4.5.2 Metrics Tracked
+
+**Debate Statistics:**
+- Total debates conducted
+- Total words spoken
+- Average debate length (turns)
+- Average words per debate
+- Most common winner (A vs B)
+
+**Agent Performance:**
+- Usage count per agent
+- Most used agent
+- Win rates by agent
+- Average scores per ethical dimension
+- Stance change frequency
+
+**Debate Intensity:**
+- Words per turn
+- Most verbose agent
+- Argument length distribution
+
+#### 4.5.3 Data Visualization
+
+- Bar charts for agent usage
+- Line graphs for trends over time
+- Pie charts for win distribution
+- Heatmaps for ethical dimension scores
+
+#### 4.5.4 Technical Implementation
+
+```python
+class MetricsService:
+    def record_debate(transcript: Dict, verdict: Dict) -> Dict:
+        metrics = {
+            "debate_id": f"debate_{timestamp}",
+            "timestamp": datetime.now().isoformat(),
+            "total_turns": len(turns),
+            "total_words": sum(word_counts),
+            "agents": list(unique_agents),
+            "final_recommendation": verdict["final_recommendation"],
+            "ethical_scores": verdict["scores"]
+        }
+        # Append to data/debate_metrics.json
+```
+
+**Storage:** `data/debate_metrics.json` with atomic writes
+
+### 4.6 Debate History & Replay
+
+#### 4.6.1 Feature Overview
+
+Complete debate transcripts stored with full replay capability. Users can review past debates, see verdicts, and export as PDF.
+
+#### 4.6.2 History Management
+
+- Stores last 100 debates (most recent first)
+- Each entry: ID, title, date, transcript, verdict
+- Searchable by title
+- Deletable individually
+- Accessible via sidebar
+
+#### 4.6.3 Replay Features
+
+- Full transcript view with all turns
+- Verdict display with scores
+- Agent information preserved
+- Timestamp tracking
+- Tab switching: Debate ↔ Verdict
+
+#### 4.6.4 Technical Implementation
+
+```python
+class DebateHistoryService:
+    def save_debate(transcript: dict, verdict: dict) -> dict:
+        entry = {
+            "id": str(uuid4()),
+            "title": transcript["dilemma"]["title"],
+            "date": datetime.now().isoformat(),
+            "transcript": transcript,
+            "verdict": verdict
+        }
+        # Prepend to data/debate_history.json
+```
+
+**Storage:** `data/debate_history.json` with UUID-based IDs
+
+### 4.7 PDF Export
+
+#### 4.7.1 Feature Overview
+
+Client-side PDF generation using jsPDF. Export button appears in verdict view for both current debates and history replay.
+
+#### 4.7.2 PDF Content
+
+- Title and date
+- Dilemma details (context, options)
+- Full transcript with agent names and stances
+- Verdict with scores and reasoning
+- Ethical dimension breakdown
+- Professional formatting with sections
+
+#### 4.7.3 Technical Implementation
+
+```javascript
+import jsPDF from 'jspdf';
+
+export function exportDebateToPDF(debate) {
+  const doc = new jsPDF();
+  
+  // Title
+  doc.setFontSize(20);
+  doc.text(debate.title, 20, 20);
+  
+  // Dilemma
+  doc.setFontSize(12);
+  doc.text("Dilemma:", 20, 40);
+  // ... add all sections
+  
+  // Save
+  doc.save(`debate-${debate.id}.pdf`);
+}
+```
+
+**Location:** Download button in `VerdictView.jsx` only (not in sidebar list)
+
+---
 
 #### 4.3.3 Deduplication System
 - Hash-based embeddings
