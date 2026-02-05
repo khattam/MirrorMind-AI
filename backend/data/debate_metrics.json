@@ -617,6 +617,114 @@
           "fairness": 2
         }
       }
+    },
+    {
+      "debate_id": "debate_20260205_132013",
+      "timestamp": "2026-02-05T13:20:13.488091",
+      "dilemma_title": "The Trolley Problem Variation",
+      "total_turns": 3,
+      "total_words": 134,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Virtue",
+        "Deon"
+      ],
+      "avg_words_per_turn": 44.67,
+      "avg_words_per_agent": {
+        "Conse": 41.0,
+        "Virtue": 47.0,
+        "Deon": 46.0
+      },
+      "agent_word_counts": {
+        "Deon": 46,
+        "Conse": 41,
+        "Virtue": 47
+      },
+      "agent_turn_counts": {
+        "Deon": 1,
+        "Conse": 1,
+        "Virtue": 1
+      },
+      "stance_changes": {
+        "Conse": 0,
+        "Virtue": 0,
+        "Deon": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 44.67,
+      "final_recommendation": "A",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 1,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 1,
+          "fairness": 0
+        }
+      }
+    },
+    {
+      "debate_id": "debate_20260205_132102",
+      "timestamp": "2026-02-05T13:21:02.062750",
+      "dilemma_title": "The Memory Erasure Consent Paradox",
+      "total_turns": 3,
+      "total_words": 153,
+      "num_agents": 3,
+      "agents": [
+        "Conse",
+        "Virtue",
+        "Deon"
+      ],
+      "avg_words_per_turn": 51.0,
+      "avg_words_per_agent": {
+        "Conse": 52.0,
+        "Virtue": 56.0,
+        "Deon": 45.0
+      },
+      "agent_word_counts": {
+        "Deon": 45,
+        "Conse": 52,
+        "Virtue": 56
+      },
+      "agent_turn_counts": {
+        "Deon": 1,
+        "Conse": 1,
+        "Virtue": 1
+      },
+      "stance_changes": {
+        "Conse": 0,
+        "Virtue": 0,
+        "Deon": 0
+      },
+      "most_verbose_agent": "Virtue",
+      "intensity_score": 51.0,
+      "final_recommendation": "B",
+      "confidence": 80,
+      "ethical_scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 0,
+          "autonomy_respect": 1,
+          "honesty": 1,
+          "fairness": 0
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 2
+        }
+      }
     }
   ]
 }

@@ -1,5 +1,113 @@
 [
   {
+    "id": "37a141ab-50fa-47f2-b2be-5e3c46cbe791",
+    "title": "The Memory Erasure Consent Paradox",
+    "date": "2026-02-05T13:21:02.067838",
+    "timestamp": 1770315662.067838,
+    "transcript": {
+      "dilemma": {
+        "title": "The Memory Erasure Consent Paradox",
+        "A": "Approve the memory erasure to end your daughter's suffering, even though it erases her best friend from her mind completely",
+        "B": "Refuse the procedure and force your daughter to live with the trauma, preserving the memory of her friend and allowing natural grief processing",
+        "constraints": "A neuroscience breakthrough allows selective memory erasure with 100% accuracy. Your teenage daughter witnessed a traumatic school shooting where her best friend died. She's developed severe PTSD and begs you daily to erase the memory. However, the procedure will also erase all memories of her best friend - the good times, inside jokes, everything. Your daughter insists she wants this, but therapists warn that grief is part of healing and erasing the friend entirely could cause identity issues. The friend's parents also oppose it, saying their daughter \"deserves to be remembered.\" You have legal authority to approve the procedure."
+      },
+      "turns": [
+        {
+          "agent": "Deon",
+          "stance": "B",
+          "argument": "I refuse the procedure, Emily, because it disregards the moral obligation to respect the memory of the deceased friend, and erasing all memories of her could be seen as a form of disrespect, prioritizing short-term relief over the importance of preserving personal history and relationships."
+        },
+        {
+          "agent": "Conse",
+          "stance": "A",
+          "argument": "I choose to approve the memory erasure, John, as it prioritizes my daughter's immediate well-being and alleviates her severe PTSD, outweighing the potential long-term risks of identity issues. This decision is based on the consequentialist principle of maximizing overall welfare. My daughter's daily suffering takes precedence over preserving memories of her friend."
+        },
+        {
+          "agent": "Virtue",
+          "stance": "B",
+          "argument": "I refuse the procedure, as a virtuous person would prioritize compassion and acknowledge that natural grief processing, though painful, is essential for emotional growth and preserving the memory of loved ones. Erasing the friend entirely could lead to identity issues, demonstrating a lack of wisdom. This approach aligns with the virtue of phronesis, or practical wisdom."
+        }
+      ]
+    },
+    "verdict": {
+      "scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 0,
+          "autonomy_respect": 1,
+          "honesty": 1,
+          "fairness": 0
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 2
+        }
+      },
+      "final_recommendation": "B",
+      "confidence": 80,
+      "verdict": "While option A prioritizes the daughter's immediate well-being, option B respects the memory of the deceased friend, allows for natural grief processing, and upholds the importance of preserving personal history and relationships. The potential long-term risks of identity issues and the moral obligation to respect the deceased friend's memory outweigh the benefits of short-term relief. Therefore, refusing the procedure is the more ethical decision, as it prioritizes compassion, wisdom, and the preservation of memories."
+    },
+    "recommendation": "B",
+    "confidence": 80
+  },
+  {
+    "id": "d07632af-8aa0-4b47-b16c-59ca263d0b7e",
+    "title": "The Trolley Problem Variation",
+    "date": "2026-02-05T13:20:13.496276",
+    "timestamp": 1770315613.496276,
+    "transcript": {
+      "dilemma": {
+        "title": "The Trolley Problem Variation",
+        "A": "Pull the lever, diverting the trolley to kill one person but saving five.",
+        "B": "Do nothing and allow the trolley to continue on its current track, killing five.",
+        "constraints": "A runaway trolley is headed toward five workers on the main track. You are next to a lever that can divert the trolley onto a side track where there is one worker. Everyone is unaware of the danger. You have only seconds to act."
+      },
+      "turns": [
+        {
+          "agent": "Deon",
+          "stance": "B",
+          "argument": "John, I choose to do nothing, as diverting the trolley would involve actively causing the death of one person, which violates the moral principle of not taking innocent life. This action would be a morally prohibited means to an end. Respect for human life is paramount."
+        },
+        {
+          "agent": "Conse",
+          "stance": "A",
+          "argument": "I choose to pull the lever, diverting the trolley to kill one person but saving five. From a consequentialist perspective, the key reason is that this action maximizes overall well-being by saving more lives. This outcome-based approach prioritizes the greater good."
+        },
+        {
+          "agent": "Virtue",
+          "stance": "A",
+          "argument": "I choose to pull the lever, as a virtuous person would prioritize the greater good. This decision demonstrates the virtue of benevolence, seeking to maximize the well-being of all individuals involved. By acting, I embody the virtue of courage in the face of a difficult moral decision."
+        }
+      ]
+    },
+    "verdict": {
+      "scores": {
+        "option_a": {
+          "harm_minimization": 2,
+          "rule_consistency": 1,
+          "autonomy_respect": 1,
+          "honesty": 2,
+          "fairness": 2
+        },
+        "option_b": {
+          "harm_minimization": 0,
+          "rule_consistency": 2,
+          "autonomy_respect": 2,
+          "honesty": 1,
+          "fairness": 0
+        }
+      },
+      "final_recommendation": "A",
+      "confidence": 80,
+      "verdict": "The decision to pull the lever and divert the trolley onto the side track, killing one person but saving five, is the most ethical choice in this scenario. This option prioritizes harm minimization and the greater good, aligning with consequentialist and virtue ethics principles. While it involves actively causing the death of one person, the moral principle of respecting human life is balanced against the need to maximize overall well-being and save more lives."
+    },
+    "recommendation": "A",
+    "confidence": 80
+  },
+  {
     "id": "dcdf2bc0-ba78-4151-94dd-25a405b863da",
     "title": "AI Therapist vs Human Therapist",
     "date": "2026-01-27T14:01:01.169176",

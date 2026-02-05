@@ -282,5 +282,15 @@
     "option_b": "Stay silent, keep your job, and try to change things from within the system",
     "created_at": "2026-01-27T13:58:34.578127",
     "is_custom": true
+  },
+  {
+    "id": 35,
+    "slug": "the-memory-erasure-consent-paradox",
+    "title": "The Memory Erasure Consent Paradox",
+    "context": "A neuroscience breakthrough allows selective memory erasure with 100% accuracy. Your teenage daughter witnessed a traumatic school shooting where her best friend died. She's developed severe PTSD and begs you daily to erase the memory. However, the procedure will also erase all memories of her best friend - the good times, inside jokes, everything. Your daughter insists she wants this, but therapists warn that grief is part of healing and erasing the friend entirely could cause identity issues. The friend's parents also oppose it, saying their daughter \"deserves to be remembered.\" You have legal authority to approve the procedure.",
+    "option_a": "Approve the memory erasure to end your daughter's suffering, even though it erases her best friend from her mind completely",
+    "option_b": "Refuse the procedure and force your daughter to live with the trauma, preserving the memory of her friend and allowing natural grief processing",
+    "created_at": "2026-02-05T13:20:47.924479",
+    "is_custom": true
   }
 ]
