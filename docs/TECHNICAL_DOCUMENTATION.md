@@ -39,9 +39,9 @@ The platform democratizes AI agent creation through an intuitive builder interfa
 
 ### 1.2 Project Scope
 
-**In-Scope Features:**
+**Features Implemented:**
 - Multi-agent ethical debate system with 3 default philosophical agents
-- Custom AI agent builder with GPT-4o enhancement pipeline
+- Custom AI agent builder with GPT-4o enhancement pipeline (fully integrated in live debates)
 - Debate library with 34+ templates and semantic deduplication
 - Impartial AI judge with 5-dimensional ethical scoring
 - Analytics dashboard tracking debate metrics and agent performance
@@ -49,16 +49,10 @@ The platform democratizes AI agent creation through an intuitive builder interfa
 - PDF export functionality for debates
 - Real-time debate visualization with typewriter effects
 - Dark-themed responsive UI
-
-**In-Scope (Implemented):**
-- Custom agents fully integrated in live debates
 - Multi-model AI support via Groq (Llama 3.3 70B) and OpenAI (GPT-4o)
 - Azure Foundry integration for additional model options
-- PDF export for debates
-- Semantic deduplication with instant results
-- Full debate history with replay
 
-**Out-of-Scope (Current Phase):**
+**Out-of-Scope (Future Phases):**
 - User authentication and personal accounts
 - Social features (community ratings, comments, agent marketplace)
 - Multi-language support
