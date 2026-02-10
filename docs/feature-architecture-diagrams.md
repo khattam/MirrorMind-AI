@@ -695,6 +695,8 @@ graph TD
     Template -->|atomic write| Save[_save_templates<br/>temp file + rename]
     
     Save -->|return| ReturnSuccess[Return DeduplicationResult<br/>success=True, added_template]
+```
+
 ---
 
 ## 4. Judge System
