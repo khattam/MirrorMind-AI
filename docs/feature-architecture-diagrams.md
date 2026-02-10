@@ -265,7 +265,7 @@ graph TB
     subgraph Backend["Backend API"]
         CreateEndpoint[POST /api/agents/create]
         EnhanceEndpoint[POST /api/enhance]
-        RegenerateEndpoint[POST /api/agents/{id}/regenerate]
+        RegenerateEndpoint[POST /api/agents/regenerate]
     end
     
     subgraph EnhancementPipeline["Enhancement Pipeline"]
