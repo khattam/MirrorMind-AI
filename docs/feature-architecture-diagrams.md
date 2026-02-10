@@ -1146,14 +1146,14 @@ classDiagram
     class FastAPIApp {
         <<FastAPI>>
         +CORSMiddleware cors
-        +post /openings
-        +post /continue
-        +post /judge
-        +post /agent/{agent_name}
-        +get /api/agents
-        +post /api/agents/create
-        +post /api/debates/submit
-        +get /api/history
+        +post_openings()
+        +post_continue()
+        +post_judge()
+        +post_agent_by_name()
+        +get_agents()
+        +post_agents_create()
+        +post_debates_submit()
+        +get_history()
     }
     
     class DilemmaRequest {
@@ -1218,14 +1218,14 @@ classDiagram
 classDiagram
     %% Core API
     class FastAPIApp {
-        +post /openings
-        +post /continue
-        +post /judge
-        +post /agent/{agent_name}
-        +get /api/agents
-        +post /api/agents/create
-        +post /api/debates/submit
-        +get /api/history
+        +post_openings()
+        +post_continue()
+        +post_judge()
+        +post_agent_by_name()
+        +get_agents()
+        +post_agents_create()
+        +post_debates_submit()
+        +get_history()
     }
     
     %% Services
