@@ -127,12 +127,6 @@ graph TB
     
     JudgeEndpoint --> MetricsService
     JudgeEndpoint --> HistoryService
-    
-    style User fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
-    style Frontend fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
-    style Backend fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
-    style AILayer fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
-    style Services fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
 ```
 
 ### 1.2 Data Flow - Opening Arguments
@@ -243,9 +237,6 @@ graph LR
     TurnComponent --> AgentInfo
     TurnComponent --> ArgumentText
     TurnComponent --> StanceBadge
-    
-    style DebateView fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
-    style TurnComponent fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
 ```
 
 ---
@@ -312,13 +303,6 @@ graph TB
     
     AgentService --> QualityDisplay
     AgentService --> PreviewPanel
-    
-    style UI fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
-    style Frontend fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
-    style Backend fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
-    style EnhancementPipeline fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
-    style AI fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
-    style Storage fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
 ```
 
 ### 2.2 Data Flow - Agent Creation
@@ -406,11 +390,6 @@ graph TD
     ConsistencyLogic --> OverallScore
     
     OverallScore --> Display[Display to User<br/>Color-coded:<br/><60% red<br/>60-80% yellow<br/>>80% green]
-    
-    style Description fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
-    style Analyzer fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
-    style OverallScore fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
-    style Display fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
 ```
 
 ---
@@ -471,13 +450,6 @@ graph TB
     ToastNotification --> NotificationState
     
     TemplatesEndpoint --> TemplatesJSON
-    
-    style UI fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
-    style Frontend fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
-    style Backend fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
-    style DeduplicationService fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
-    style EmbeddingService fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
-    style Storage fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
 ```
 
 
