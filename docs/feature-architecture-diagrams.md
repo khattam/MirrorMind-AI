@@ -18,6 +18,20 @@
 
 ## 1. AI Debate Arena
 
+**How It Works:**
+
+**Step 1: User Input** - User fills 2-step wizard (dilemma details → select 3 agents). AgentSelector loads available agents via GET /api/agents. Optional: browse 34+ templates from DebateLibrary.
+
+**Step 2: Initialization** - DilemmaForm validates and calls handleStartDebate(). App.jsx sets dilemma, stage='debate', and calls checkAndAddToLibrary() in background. Agent IDs converted: defaults to lowercase, custom keep UUID.
+
+**Step 3: Opening Arguments** - App.jsx loops through agents sequentially. For each: shows spinner, POSTs to /agent/{endpoint}. Backend retrieves system prompt, builds prompt with mk_base(dilemma) + OPENING_INSTRUCT, calls Groq (temp 0.65, max_tokens 150). Response parsed via clamp_json() with 4-level fallback. Retry with temp 0.8 if parsing fails. Returns AgentTurn {agent, stance, argument}.
+
+**Step 4: Display** - App.jsx appends turns to transcript, updates DebateView. TypewriterText animates each argument. User clicks "Continue Debate" for rebuttals.
+
+**Step 5: Rebuttals** - Similar flow but backend builds opponent summary. Validates with has_valid_opponent() to ensure agents address each other. Retries with stricter prompt if validation fails.
+
+**Step 6: Verdict** - User clicks "Get Verdict" → POST /judge. Backend builds judge prompt, calls Groq (temp 0.3, max_tokens 800) for verdict with 5-dimensional ethical scores. MetricsService calculates stats (word counts, stance changes, intensity). DebateHistoryService saves with UUID. VerdictView displays recommendation, confidence, reasoning, and scores.
+
 ### 1.1 Class Diagram
 
 ```mermaid
@@ -306,6 +320,20 @@ graph LR
 
 ## 2. Custom Agent Builder
 
+**How It Works:**
+
+**Step 1: Basic Info** - User enters name (1-50 chars, unique), avatar emoji, description (50-1000 chars). Frontend validates against default agents and existing custom agents.
+
+**Step 2: Quality Analysis** - User clicks "Enhance with AI" → POST /api/agents/create. PromptAnalyzer scores description: Clarity (sentence length), Completeness (values/reasoning/examples), Specificity (vague vs specific terms), Consistency (contradictions). Each scored 0-10.
+
+**Step 3: GPT-4o Enhancement** - PromptEnhancer calls OpenAI GPT-4o (temp 0.7, max_tokens 500) to expand description into 4-5 sentences. Must incorporate agent name, elaborate beliefs, describe reasoning framework, explain debate application, acknowledge nuances. Quality check: if <50 words or missing name, retries with temp 0.75.
+
+**Step 4: System Prompt** - EnhancementService generates debate-ready format: "You are {name}, {enhanced}. Respond to opponents by name. JSON only." Preserves original name by removing JSON fields.
+
+**Step 5: Storage** - AgentService generates UUID, checks duplicates, creates CustomAgent. Atomic write to custom_agents.json (temp file → rename). Returns agent with quality scores. Color-coded display: <60% red, 60-80% yellow, >80% green.
+
+**Step 6: Usage Tracking** - increment_usage() updates count when agent debates. Users rate agents (quality, consistency, engagement, satisfaction). _update_agent_rating() recalculates average from all ratings.
+
 ### 2.1 Class Diagram
 
 ```mermaid
@@ -538,6 +566,22 @@ graph TD
 
 ## 3. Debate Library & Deduplication
 
+**How It Works:**
+
+**Step 1: Auto-Submit** - When debate starts, App.jsx calls checkAndAddToLibrary() in background (non-blocking). Builds {title, context, option_a, option_b}, POSTs to /api/debates/submit.
+
+**Step 2: Validation** - DebateDeduplicationService validates required fields. If missing, returns error. Calls find_duplicate().
+
+**Step 3: Embedding** - EmbeddingService creates 384-dim vector using hash-based approach: word hashing + char n-grams. For each word: hash(word) % 384, hash(reverse) % 384, hash(every other char) % 384. For each trigram: hash(trigram) % 384. Normalizes to unit length. Title excluded (only context/options matter).
+
+**Step 4: Comparison** - Loads all templates from JSON. If empty, adds immediately. Otherwise: generates candidate embedding, loops through templates, computes cosine similarity, tracks best match.
+
+**Step 5: Detection** - Threshold: 0.95 (exact/near-exact only). If best_similarity >= 0.95: duplicate found, returns match. If < 0.95: unique, proceeds to add.
+
+**Step 6: Adding** - Generates ID (max + 1), creates URL-friendly slug (lowercase, remove special chars, limit 50 chars, ensure unique). Creates template with is_custom: true. Atomic write (temp file → rename).
+
+**Step 7: Notification** - Frontend shows toast: success (green "✓ Added!") or duplicate (blue "ℹ Already exists"). Auto-clears after 4s. Debate continues regardless.
+
 ### 3.1 Class Diagram
 
 ```mermaid
@@ -651,9 +695,25 @@ graph TD
     Template -->|atomic write| Save[_save_templates<br/>temp file + rename]
     
     Save -->|return| ReturnSuccess[Return DeduplicationResult<br/>success=True, added_template]
-```
+---
 
 ## 4. Judge System
+
+**How It Works:**
+
+**Step 1: Request** - User clicks "Get Verdict". App.jsx sets stage='judging', POSTs /judge with transcript.
+
+**Step 2: Prompt** - Backend validates transcript has turns. Builds judge prompt: summarizes dilemma, extracts all arguments by round.
+
+**Step 3: Analysis** - Calls Groq with JUDGE_SYS prompt (temp 0.3, max_tokens 800, Llama 3.3 70B). Requests JSON with final_recommendation, confidence, 5-dimensional scores (autonomy, harm_prevention, fairness, transparency, long_term_impact), reasoning, key_considerations.
+
+**Step 4: Parsing** - clamp_json() parses with 4-level fallback. Validates structure. Retries with stricter prompt if validation fails.
+
+**Step 5: Metrics** - MetricsService calculates: total turns/words, per-agent stats, stance changes, most verbose agent, intensity score. Saves to debate_metrics.json.
+
+**Step 6: Storage** - DebateHistoryService generates UUID, stores transcript + verdict with metadata. Inserts at beginning (most recent first). Keeps last 100 debates. Saves to debate_history.json.
+
+**Step 7: Display** - Returns {verdict, metrics}. App.jsx sets verdict, stage='verdict'. VerdictView renders recommendation, confidence, 5 ethical scores with bars, reasoning, key considerations, "Export to PDF" button.
 
 ### 4.1 Class Diagram
 
@@ -757,6 +817,16 @@ sequenceDiagram
 
 ## 5. Analytics Dashboard
 
+**How It Works:**
+
+**Step 1: Collection** - MetricsService auto-records after every verdict. Stores in debate_metrics.json: metadata (ID, timestamp, title), participation (agents, turns, words), performance (verbosity, stance changes, intensity), outcome (recommendation, confidence, ethical scores).
+
+**Step 2: Calculation** - calculate_debate_metrics() processes each debate: counts turns/words, calculates per-agent stats, tracks stance changes, identifies most verbose agent, computes intensity (avg words/turn), extracts verdict data.
+
+**Step 3: Aggregation** - get_summary_stats() aggregates all debates: total debates/words/turns, averages, most common winner, agent usage stats, most used agent.
+
+**Step 4: Display** - Dashboard fetches via GET /api/metrics. Renders: total debates counter, average stats, agent usage charts, win rate distribution, recent history, trend analysis.
+
 ### 5.1 Class Diagram
 
 ```mermaid
@@ -825,6 +895,18 @@ classDiagram
 ---
 
 ## 6. Debate History & Replay
+
+**How It Works:**
+
+**Step 1: Auto-Save** - After every verdict, DebateHistoryService.save_debate() creates entry: UUID, title, date/timestamp, complete transcript, full verdict. Inserts at beginning (most recent first). Limits to last 100. Saves to debate_history.json with atomic write.
+
+**Step 2: Browse** - User opens DebateLibrary. Fetches via GET /api/history?limit=50. Displays list with title, date, recommendation, confidence, preview.
+
+**Step 3: Select** - User clicks debate → GET /api/history/{debate_id}. Returns complete data (transcript + verdict).
+
+**Step 4: Replay** - DebateLibrary calls App.loadDebate(transcript, verdict). App.jsx sets transcript, verdict, stage='verdict'. DebateView renders full transcript. VerdictView shows original verdict. No AI calls needed.
+
+**Step 5: Management** - Delete via DELETE /api/history/{debate_id}. Removes entry, updates JSON, deletes associated ratings. get_stats() provides overview.
 
 ### 6.1 Class Diagram
 
@@ -914,6 +996,24 @@ sequenceDiagram
 
 ## 7. PDF Export
 
+**How It Works:**
+
+**Step 1: Trigger** - User clicks "Export to PDF" in VerdictView. Calls PDFExporter.exportDebateToPDF(transcript, verdict).
+
+**Step 2: Initialize** - Creates jsPDF instance (A4, portrait). Sets font: Helvetica. Initializes margins.
+
+**Step 3: Header** - _addHeader() adds: title "MirrorMind AI - Ethical Debate", debate title, date, participating agents. Font: 16pt title, 12pt metadata.
+
+**Step 4: Dilemma** - _addDilemma() formats: section header, context (word-wrapped), Option A, Option B. Uses _formatText() to wrap text (max 170mm width).
+
+**Step 5: Rounds** - _addDebateRounds() processes turns: round headers, agent name + stance badge, argument (wrapped, indented). Checks page space, calls addPage() if full.
+
+**Step 6: Verdict** - _addVerdict() includes: section header, recommendation, confidence %, reasoning, key considerations as bullets.
+
+**Step 7: Scores** - _addScores() displays 5 dimensions: Autonomy, Harm Prevention, Fairness, Transparency, Long-term Impact (0-10 each).
+
+**Step 8: Finalize** - _addPageNumbers() adds "Page X of Y". Generates filename: "debate-{title}-{date}.pdf". Calls save() to trigger download.
+
 ### 7.1 Class Diagram
 
 ```mermaid
@@ -996,77 +1096,4 @@ sequenceDiagram
     PDFExporter->>jsPDF: save('debate-export.pdf')
     jsPDF->>Browser: Trigger download
     Browser->>User: Download PDF file
-```
-
----
-
-## 8. Core Backend Classes
-
-### 8.1 Main API Class Diagram
-
-```mermaid
-classDiagram
-    class FastAPIApp {
-        <<FastAPI>>
-        +CORSMiddleware cors
-        +post_openings()
-        +post_continue()
-        +post_judge()
-        +post_agent_by_name()
-        +get_agents()
-        +post_agents_create()
-        +post_debates_submit()
-        +get_history()
-    }
-    
-    class DilemmaRequest {
-        <<Pydantic BaseModel>>
-        +str title
-        +str A
-        +str B
-        +str constraints
-    }
-    
-    class AgentTurn {
-        <<dict>>
-        +str agent
-        +str stance
-        +str argument
-    }
-    
-    class Transcript {
-        <<dict>>
-        +dict dilemma
-        +List~AgentTurn~ turns
-    }
-    
-    class AIProvider {
-        <<main.py>>
-        +str AI_PROVIDER
-        +Groq groq_client
-        +call_ollama(sys, user, temp, tokens) str
-        +clamp_json(response, fallback) dict
-    }
-    
-    class PromptTemplates {
-        <<main.py constants>>
-        +str DEON_SYS
-        +str CONSE_SYS
-        +str VIRTUE_SYS
-        +str JUDGE_SYS
-        +str OPENING_INSTRUCT
-        +str CONTINUE_INSTRUCT
-    }
-    
-    FastAPIApp --> DilemmaRequest : receives
-    FastAPIApp --> Transcript : manages
-    FastAPIApp --> AIProvider : uses
-    FastAPIApp --> AgentService : uses
-    FastAPIApp --> EnhancementService : uses
-    FastAPIApp --> DebateDeduplicationService : uses
-    FastAPIApp --> MetricsService : uses
-    FastAPIApp --> DebateHistoryService : uses
-    
-    AIProvider --> PromptTemplates : uses
-    Transcript --> AgentTurn : contains
 ```
