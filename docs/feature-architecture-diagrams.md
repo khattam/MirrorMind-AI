@@ -283,7 +283,124 @@ graph LR
 
 ## 2. Custom Agent Builder
 
-### 2.1 System Architecture
+### 2.1 Class Diagram
+
+```mermaid
+classDiagram
+    class CustomAgent {
+        +str id
+        +str name
+        +str avatar
+        +str description
+        +str enhanced_prompt
+        +str system_prompt
+        +str created_by
+        +datetime created_at
+        +bool is_public
+        +int usage_count
+        +float average_rating
+        +int rating_count
+    }
+    
+    class AgentRating {
+        +str id
+        +str agent_id
+        +str debate_id
+        +str user_id
+        +int argument_quality
+        +int consistency
+        +int engagement
+        +int overall_satisfaction
+        +str comment
+        +datetime created_at
+    }
+    
+    class EnhancementRequest {
+        +str original_description
+        +str enhanced_prompt
+        +List~str~ improvements_made
+        +Dict~str,float~ analysis_scores
+        +List~str~ suggestions
+    }
+    
+    class AgentCreationRequest {
+        +str name
+        +str avatar
+        +str description
+    }
+    
+    class AgentUpdateRequest {
+        +Optional~str~ name
+        +Optional~str~ avatar
+        +Optional~str~ description
+    }
+    
+    class AgentService {
+        -Path storage_path
+        -Path agents_file
+        -Path ratings_file
+        +__init__(storage_path)
+        +create_agent(request, enhanced_prompt, system_prompt) CustomAgent
+        +get_agent(agent_id) Optional~CustomAgent~
+        +get_agent_by_name(name) Optional~CustomAgent~
+        +list_agents(public_only, search, limit) List~CustomAgent~
+        +update_agent(agent_id, request) Optional~CustomAgent~
+        +delete_agent(agent_id) bool
+        +increment_usage(agent_id) None
+        +add_rating(rating) None
+        +get_agent_ratings(agent_id) List~AgentRating~
+        +get_default_agents() List~Dict~
+        +get_all_available_agents() List~Dict~
+        -_load_agents() Dict
+        -_save_agents(agents) None
+        -_load_ratings() Dict
+        -_save_ratings(ratings) None
+        -_check_duplicate_name(name) None
+        -_update_agent_rating(agent_id) None
+    }
+    
+    class PromptAnalyzer {
+        +analyze_description(description) Dict~str,float~
+        -_score_clarity(description) float
+        -_score_completeness(description) float
+        -_score_specificity(description) float
+        -_score_consistency(description) float
+        +generate_suggestions(description, scores) List~str~
+    }
+    
+    class PromptEnhancer {
+        +str ENHANCER_SYSTEM_PROMPT
+        +enhance_description(description, agent_name) EnhancementRequest
+        -_identify_improvements(original, enhanced, agent_name) List~str~
+        -_fallback_enhancement(description, agent_name, scores, suggestions) EnhancementRequest
+    }
+    
+    class EnhancementService {
+        -PromptAnalyzer analyzer
+        -PromptEnhancer enhancer
+        +__init__()
+        +enhance_agent_description(description, agent_name) EnhancementRequest
+        +analyze_only(description) Dict
+        +generate_system_prompt(enhanced_prompt, agent_name) str
+        -_preserve_agent_name(enhanced_prompt, original_name) str
+    }
+    
+    AgentService --> CustomAgent : creates/manages
+    AgentService --> AgentRating : stores
+    AgentService --> AgentCreationRequest : receives
+    AgentService --> AgentUpdateRequest : receives
+    
+    EnhancementService --> PromptAnalyzer : uses
+    EnhancementService --> PromptEnhancer : uses
+    EnhancementService --> EnhancementRequest : returns
+    
+    PromptEnhancer --> EnhancementRequest : creates
+    PromptAnalyzer --> EnhancementRequest : contributes to
+    
+    AgentRating --> CustomAgent : rates
+```
+
+### 2.2 System Architecture
 
 ```mermaid
 graph TD
@@ -318,7 +435,7 @@ graph TD
 - Quality scores displayed to user
 ```
 
-### 2.2 Data Flow - Agent Creation
+### 2.3 Data Flow - Agent Creation
 
 ```mermaid
 sequenceDiagram
@@ -378,7 +495,7 @@ sequenceDiagram
 ```
 
 
-### 2.3 Quality Scoring Algorithm
+### 2.4 Quality Scoring Algorithm
 
 ```mermaid
 graph TD
@@ -409,7 +526,62 @@ graph TD
 
 ## 3. Debate Library & Deduplication
 
-### 3.1 Frontend Architecture
+### 3.1 Class Diagram
+
+```mermaid
+classDiagram
+    class DeduplicationResult {
+        +bool success
+        +bool is_duplicate
+        +str message
+        +Optional~dict~ matched_template
+        +Optional~dict~ added_template
+        +to_dict() dict
+    }
+    
+    class DebateDeduplicationService {
+        -Path templates_path
+        -EmbeddingService embedding_service
+        +__init__(templates_path, embedding_service, groq_client)
+        +submit_custom_debate(debate) DeduplicationResult
+        +find_duplicate(debate) Optional~dict~
+        +add_to_library(debate) dict
+        -_load_templates() List~dict~
+        -_save_templates(templates) None
+        -_generate_slug(title, existing_templates) str
+        -_has_significant_field_difference(debate1, debate2) bool
+    }
+    
+    class EmbeddingService {
+        -Optional~Groq~ groq_client
+        +__init__(groq_client)
+        +generate_debate_embedding(debate) ndarray
+        +compute_similarity(embedding1, embedding2) float
+        +compare_debates(debate1, debate2) float
+        +llm_semantic_comparison(debate1, debate2) dict
+        -_create_debate_text(debate) str
+        -_text_to_embedding(text) ndarray
+    }
+    
+    class DebateTemplate {
+        <<dict>>
+        +int id
+        +str slug
+        +str title
+        +str context
+        +str option_a
+        +str option_b
+        +str created_at
+        +bool is_custom
+    }
+    
+    DebateDeduplicationService --> EmbeddingService : uses
+    DebateDeduplicationService --> DeduplicationResult : returns
+    DebateDeduplicationService --> DebateTemplate : manages
+    EmbeddingService --> DebateTemplate : embeds
+```
+
+### 3.2 Frontend Architecture
 
 ```mermaid
 graph TD
@@ -442,7 +614,7 @@ graph TD
 7. If `result.is_duplicate` → info toast
 8. Toast auto-clears after 4 seconds
 
-### 3.2 Backend Architecture
+### 3.3 Backend Architecture
 
 ```mermaid
 graph TD
@@ -614,3 +786,536 @@ sequenceDiagram
     App->>App: setCurrentThinkingAgent(null)
     DebateView->>User: Show "Continue Debate" button
 ```
+
+
+---
+
+## 4. Judge System
+
+### 4.1 Class Diagram
+
+```mermaid
+classDiagram
+    class JudgeRequest {
+        <<Pydantic BaseModel>>
+        +dict transcript
+        +validate_transcript() dict
+    }
+    
+    class EthicalScores {
+        <<dict>>
+        +float autonomy
+        +float harm_prevention
+        +float fairness
+        +float transparency
+        +float long_term_impact
+    }
+    
+    class Verdict {
+        <<dict>>
+        +str final_recommendation
+        +float confidence
+        +EthicalScores scores
+        +str reasoning
+        +List~str~ key_considerations
+    }
+    
+    class JudgeSystem {
+        <<main.py functions>>
+        +str JUDGE_SYS
+        +judge_debate(transcript) Verdict
+        +call_ollama(system_prompt, user_prompt) str
+        +clamp_json(response, fallback) dict
+        -_build_judge_prompt(transcript) str
+        -_parse_verdict(response) Verdict
+    }
+    
+    JudgeSystem --> JudgeRequest : receives
+    JudgeSystem --> Verdict : returns
+    Verdict --> EthicalScores : contains
+```
+
+### 4.2 Data Flow - Verdict Generation
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant DebateView
+    participant App
+    participant Backend
+    participant JudgeSystem
+    participant Groq
+    participant MetricsService
+    participant HistoryService
+    
+    User->>DebateView: Click "Get Verdict"
+    DebateView->>App: handleJudge()
+    App->>App: setStage('judging')
+    
+    App->>Backend: POST /judge {transcript}
+    Backend->>Backend: Validate transcript has turns
+    
+    Backend->>JudgeSystem: Build judge prompt
+    Note over JudgeSystem: Summarize dilemma<br/>Extract all arguments<br/>Format for analysis
+    
+    JudgeSystem->>Groq: call_ollama(JUDGE_SYS, prompt)
+    Note over Groq: Temperature: 0.3<br/>Max tokens: 800<br/>Model: Llama 3.3 70B
+    
+    Groq-->>JudgeSystem: Raw verdict JSON
+    JudgeSystem->>JudgeSystem: clamp_json(response)
+    
+    JudgeSystem->>JudgeSystem: Validate verdict structure
+    Note over JudgeSystem: Check: final_recommendation,<br/>confidence, scores (5 dimensions),<br/>reasoning, key_considerations
+    
+    alt Verdict valid
+        JudgeSystem-->>Backend: Verdict object
+    else Verdict invalid
+        JudgeSystem->>Groq: Retry with stricter prompt
+        Groq-->>JudgeSystem: Second attempt
+        JudgeSystem->>JudgeSystem: Parse again
+    end
+    
+    Backend->>MetricsService: record_debate(transcript, verdict)
+    MetricsService->>MetricsService: Calculate metrics
+    MetricsService->>MetricsService: Save to debate_metrics.json
+    
+    Backend->>HistoryService: save_debate(transcript, verdict)
+    HistoryService->>HistoryService: Generate debate ID
+    HistoryService->>HistoryService: Save to debate_history.json
+    
+    Backend-->>App: {verdict, metrics}
+    App->>App: setVerdict(verdict)
+    App->>App: setStage('verdict')
+    App->>DebateView: Update to VerdictView
+    DebateView->>User: Display verdict with scores
+```
+
+---
+
+## 5. Analytics Dashboard
+
+### 5.1 Class Diagram
+
+```mermaid
+classDiagram
+    class MetricsService {
+        -str storage_path
+        +__init__(storage_path)
+        +calculate_debate_metrics(transcript, verdict) Dict
+        +record_debate(transcript, verdict) Dict
+        +get_all_metrics() List~Dict~
+        +get_summary_stats() Dict
+        -_load_metrics() Dict
+        -_save_metrics(data) None
+        -_ensure_storage_exists() None
+    }
+    
+    class DebateMetrics {
+        <<dict>>
+        +str debate_id
+        +str timestamp
+        +str dilemma_title
+        +int total_turns
+        +int total_words
+        +int num_agents
+        +List~str~ agents
+        +float avg_words_per_turn
+        +Dict avg_words_per_agent
+        +Dict agent_word_counts
+        +Dict agent_turn_counts
+        +Dict stance_changes
+        +str most_verbose_agent
+        +float intensity_score
+        +str final_recommendation
+        +float confidence
+        +Dict ethical_scores
+    }
+    
+    class SummaryStats {
+        <<dict>>
+        +int total_debates
+        +int total_words
+        +int total_turns
+        +float avg_debate_length
+        +float avg_words_per_debate
+        +str most_common_winner
+        +Dict agent_usage
+        +str most_used_agent
+    }
+    
+    class Dashboard {
+        <<React Component>>
+        +state metrics
+        +state summaryStats
+        +useEffect() void
+        +fetchMetrics() Promise
+        +renderCharts() JSX
+        +renderAgentStats() JSX
+        +renderDebateHistory() JSX
+    }
+    
+    MetricsService --> DebateMetrics : creates
+    MetricsService --> SummaryStats : aggregates
+    Dashboard --> MetricsService : fetches from
+```
+
+---
+
+## 6. Debate History & Replay
+
+### 6.1 Class Diagram
+
+```mermaid
+classDiagram
+    class DebateHistoryService {
+        -Path storage_path
+        -Path history_file
+        +__init__(storage_path)
+        +save_debate(transcript, verdict) dict
+        +get_all_debates(limit) List~dict~
+        +get_debate_by_id(debate_id) Optional~dict~
+        +delete_debate(debate_id) bool
+        +clear_all_history() bool
+        +get_stats() dict
+        -_load_history() List~dict~
+        -_save_history(history) None
+    }
+    
+    class DebateEntry {
+        <<dict>>
+        +str id
+        +str title
+        +str date
+        +float timestamp
+        +dict transcript
+        +dict verdict
+        +str recommendation
+        +float confidence
+    }
+    
+    class DebateLibrary {
+        <<React Component>>
+        +state debates
+        +state selectedDebate
+        +useEffect() void
+        +fetchDebates() Promise
+        +handleSelectDebate(id) void
+        +handleDeleteDebate(id) void
+        +renderDebateList() JSX
+        +renderDebatePreview() JSX
+    }
+    
+    DebateHistoryService --> DebateEntry : manages
+    DebateLibrary --> DebateHistoryService : fetches from
+    DebateLibrary --> DebateEntry : displays
+```
+
+### 6.2 Data Flow - Replay Debate
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant DebateLibrary
+    participant Backend
+    participant HistoryService
+    participant App
+    participant DebateView
+    
+    User->>DebateLibrary: Browse saved debates
+    DebateLibrary->>Backend: GET /api/history
+    Backend->>HistoryService: get_all_debates(limit=50)
+    HistoryService->>HistoryService: _load_history()
+    HistoryService-->>Backend: List of debate entries
+    Backend-->>DebateLibrary: debates array
+    
+    DebateLibrary->>User: Display debate list
+    User->>DebateLibrary: Click debate to replay
+    
+    DebateLibrary->>Backend: GET /api/history/{debate_id}
+    Backend->>HistoryService: get_debate_by_id(debate_id)
+    HistoryService-->>Backend: Full debate entry
+    Backend-->>DebateLibrary: {transcript, verdict}
+    
+    DebateLibrary->>App: loadDebate(transcript, verdict)
+    App->>App: setTranscript(transcript)
+    App->>App: setVerdict(verdict)
+    App->>App: setStage('verdict')
+    
+    App->>DebateView: Render with full transcript
+    DebateView->>User: Display all turns + verdict
+    
+    Note over User,DebateView: User can view full debate<br/>without re-running AI
+```
+
+---
+
+## 7. PDF Export
+
+### 7.1 Class Diagram
+
+```mermaid
+classDiagram
+    class PDFExporter {
+        <<pdfExport.js>>
+        +exportDebateToPDF(transcript, verdict) Promise
+        -_createPDFDocument() jsPDF
+        -_addHeader(doc, title) void
+        -_addDilemma(doc, dilemma) void
+        -_addDebateRounds(doc, turns) void
+        -_addVerdict(doc, verdict) void
+        -_addScores(doc, scores) void
+        -_formatText(text, maxWidth) string[]
+        -_addPageNumbers(doc) void
+    }
+    
+    class VerdictView {
+        <<React Component>>
+        +props transcript
+        +props verdict
+        +handleExportPDF() void
+        +renderExportButton() JSX
+    }
+    
+    class jsPDF {
+        <<External Library>>
+        +text(text, x, y) void
+        +setFontSize(size) void
+        +setFont(font, style) void
+        +addPage() void
+        +save(filename) void
+        +getNumberOfPages() int
+    }
+    
+    VerdictView --> PDFExporter : uses
+    PDFExporter --> jsPDF : uses
+```
+
+### 7.2 Data Flow - PDF Generation
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant VerdictView
+    participant PDFExporter
+    participant jsPDF
+    participant Browser
+    
+    User->>VerdictView: Click "Export to PDF"
+    VerdictView->>PDFExporter: exportDebateToPDF(transcript, verdict)
+    
+    PDFExporter->>jsPDF: new jsPDF()
+    PDFExporter->>jsPDF: setFont('helvetica')
+    
+    PDFExporter->>PDFExporter: _addHeader(doc, title)
+    Note over PDFExporter: Add title, date, agents
+    
+    PDFExporter->>PDFExporter: _addDilemma(doc, dilemma)
+    Note over PDFExporter: Add context, options A & B
+    
+    loop For each turn
+        PDFExporter->>PDFExporter: _formatText(argument, maxWidth)
+        PDFExporter->>jsPDF: text(agent + stance)
+        PDFExporter->>jsPDF: text(formatted argument)
+        
+        alt Page full
+            PDFExporter->>jsPDF: addPage()
+        end
+    end
+    
+    PDFExporter->>PDFExporter: _addVerdict(doc, verdict)
+    Note over PDFExporter: Add recommendation,<br/>confidence, reasoning
+    
+    PDFExporter->>PDFExporter: _addScores(doc, scores)
+    Note over PDFExporter: Add 5-dimensional<br/>ethical scores
+    
+    PDFExporter->>PDFExporter: _addPageNumbers(doc)
+    
+    PDFExporter->>jsPDF: save('debate-export.pdf')
+    jsPDF->>Browser: Trigger download
+    Browser->>User: Download PDF file
+```
+
+---
+
+## 8. Core Backend Classes
+
+### 8.1 Main API Class Diagram
+
+```mermaid
+classDiagram
+    class FastAPIApp {
+        <<FastAPI>>
+        +CORSMiddleware cors
+        +post /openings
+        +post /continue
+        +post /judge
+        +post /agent/{agent_name}
+        +get /api/agents
+        +post /api/agents/create
+        +post /api/debates/submit
+        +get /api/history
+    }
+    
+    class DilemmaRequest {
+        <<Pydantic BaseModel>>
+        +str title
+        +str A
+        +str B
+        +str constraints
+    }
+    
+    class AgentTurn {
+        <<dict>>
+        +str agent
+        +str stance
+        +str argument
+    }
+    
+    class Transcript {
+        <<dict>>
+        +dict dilemma
+        +List~AgentTurn~ turns
+    }
+    
+    class AIProvider {
+        <<main.py>>
+        +str AI_PROVIDER
+        +Groq groq_client
+        +call_ollama(sys, user, temp, tokens) str
+        +clamp_json(response, fallback) dict
+    }
+    
+    class PromptTemplates {
+        <<main.py constants>>
+        +str DEON_SYS
+        +str CONSE_SYS
+        +str VIRTUE_SYS
+        +str JUDGE_SYS
+        +str OPENING_INSTRUCT
+        +str CONTINUE_INSTRUCT
+    }
+    
+    FastAPIApp --> DilemmaRequest : receives
+    FastAPIApp --> Transcript : manages
+    FastAPIApp --> AIProvider : uses
+    FastAPIApp --> AgentService : uses
+    FastAPIApp --> EnhancementService : uses
+    FastAPIApp --> DebateDeduplicationService : uses
+    FastAPIApp --> MetricsService : uses
+    FastAPIApp --> DebateHistoryService : uses
+    
+    AIProvider --> PromptTemplates : uses
+    Transcript --> AgentTurn : contains
+```
+
+---
+
+## 9. Complete System Class Diagram
+
+### 9.1 Full Backend Architecture
+
+```mermaid
+classDiagram
+    %% Core API
+    class FastAPIApp {
+        +post /openings
+        +post /continue
+        +post /judge
+        +post /agent/{agent_name}
+        +get /api/agents
+        +post /api/agents/create
+        +post /api/debates/submit
+        +get /api/history
+    }
+    
+    %% Services
+    class AgentService {
+        +create_agent()
+        +get_agent()
+        +list_agents()
+        +increment_usage()
+    }
+    
+    class EnhancementService {
+        +enhance_agent_description()
+        +generate_system_prompt()
+    }
+    
+    class DebateDeduplicationService {
+        +submit_custom_debate()
+        +find_duplicate()
+        +add_to_library()
+    }
+    
+    class EmbeddingService {
+        +generate_debate_embedding()
+        +compute_similarity()
+    }
+    
+    class MetricsService {
+        +calculate_debate_metrics()
+        +record_debate()
+        +get_summary_stats()
+    }
+    
+    class DebateHistoryService {
+        +save_debate()
+        +get_all_debates()
+        +get_debate_by_id()
+    }
+    
+    %% Models
+    class CustomAgent {
+        +str id
+        +str name
+        +str system_prompt
+        +int usage_count
+    }
+    
+    class DebateTemplate {
+        +int id
+        +str title
+        +str context
+        +bool is_custom
+    }
+    
+    class DebateMetrics {
+        +str debate_id
+        +int total_turns
+        +Dict scores
+    }
+    
+    %% Relationships
+    FastAPIApp --> AgentService
+    FastAPIApp --> EnhancementService
+    FastAPIApp --> DebateDeduplicationService
+    FastAPIApp --> MetricsService
+    FastAPIApp --> DebateHistoryService
+    
+    AgentService --> CustomAgent
+    EnhancementService --> CustomAgent
+    
+    DebateDeduplicationService --> EmbeddingService
+    DebateDeduplicationService --> DebateTemplate
+    
+    MetricsService --> DebateMetrics
+    DebateHistoryService --> DebateMetrics
+```
+
+---
+
+## Summary
+
+This document provides comprehensive architecture diagrams for all MirrorMind AI features:
+
+1. **AI Debate Arena**: Component architecture, system architecture, data flows for opening arguments and rebuttals
+2. **Custom Agent Builder**: Class diagram, system architecture, data flow, quality scoring algorithm
+3. **Debate Library & Deduplication**: Class diagram, frontend/backend architecture, semantic deduplication flow
+4. **Judge System**: Class diagram, verdict generation data flow
+5. **Analytics Dashboard**: Class diagram showing metrics calculation and aggregation
+6. **Debate History & Replay**: Class diagram, replay data flow
+7. **PDF Export**: Class diagram, PDF generation data flow
+8. **Core Backend Classes**: Main API structure and relationships
+9. **Complete System**: Full backend architecture overview
+
+All diagrams are based on actual code implementation and accurately represent the codebase structure.
