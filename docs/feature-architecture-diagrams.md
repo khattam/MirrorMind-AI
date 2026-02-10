@@ -69,11 +69,6 @@ graph TB
     StageControls --> handleJudge
     
     Step1 --> DebateLibrary
-    
-    style App fill:#1a1a2e,stroke:#00d9ff,stroke-width:3px,color:#fff
-    style DilemmaForm fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
-    style AgentSelector fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
-    style DebateView fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
 ```
 
 ### 1.2 System Architecture (Full Stack)
@@ -534,11 +529,6 @@ graph TB
     ContinueEndpoint --> CallOllama
     CallOllama --> ValidateOpponent
     ValidateOpponent --> DebateView
-    
-    style Frontend fill:#1a1a2e,stroke:#00d9ff,stroke-width:2px,color:#fff
-    style Backend fill:#1a1a2e,stroke:#00ff88,stroke-width:2px,color:#fff
-    style AIProcessing fill:#1a1a2e,stroke:#ff6b6b,stroke-width:2px,color:#fff
-    style Services fill:#1a1a2e,stroke:#ffd700,stroke-width:2px,color:#fff
 ```
 
 ### 1.3 Data Flow - Opening Arguments (ACTUAL CODE)
