@@ -57,7 +57,6 @@ graph TD
 - AgentSelector loads agents and provides 3-slot team builder
 - DebateView displays rounds with agent cards using TypewriterText for animation
 - All actions flow back to App.jsx to update state
-```
 
 ### 1.2 System Architecture (Full Stack)
 
