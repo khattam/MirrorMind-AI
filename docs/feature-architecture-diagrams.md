@@ -18,7 +18,106 @@
 
 ## 1. AI Debate Arena
 
-### 1.1 Component Architecture (Frontend)
+### 1.1 Class Diagram
+
+```mermaid
+classDiagram
+    class DilemmaRequest {
+        <<Pydantic BaseModel>>
+        +str title
+        +str A
+        +str B
+        +str constraints
+    }
+    
+    class AgentTurn {
+        <<dict>>
+        +str agent
+        +str stance
+        +str argument
+    }
+    
+    class Transcript {
+        <<dict>>
+        +dict dilemma
+        +List~AgentTurn~ turns
+    }
+    
+    class DebateAPI {
+        <<main.py endpoints>>
+        +post_openings(dilemma) List~AgentTurn~
+        +post_continue(transcript) List~AgentTurn~
+        +post_agent_by_name(agent_name, dilemma) AgentTurn
+        +call_ollama(sys, user, temp, tokens) str
+        +clamp_json(response, fallback) dict
+        +get_agent_system_prompt(agent_name) str
+        +has_valid_opponent(text, agent, all_agents) bool
+    }
+    
+    class PromptTemplates {
+        <<main.py constants>>
+        +str DEON_SYS
+        +str CONSE_SYS
+        +str VIRTUE_SYS
+        +str OPENING_INSTRUCT
+        +str CONTINUE_INSTRUCT
+    }
+    
+    class AppComponent {
+        <<React Component>>
+        +state stage
+        +state dilemma
+        +state transcript
+        +state verdict
+        +state selectedAgentsInfo
+        +state currentThinkingAgent
+        +handleStartDebate(formData, agentIds, agentsInfo)
+        +handleContinue()
+        +handleJudge()
+        +checkAndAddToLibrary(dilemmaData)
+    }
+    
+    class DilemmaForm {
+        <<React Component>>
+        +state step
+        +state formData
+        +state selectedAgents
+        +validateStep1() bool
+        +validateStep2() bool
+        +handleSubmit()
+    }
+    
+    class DebateView {
+        <<React Component>>
+        +props transcript
+        +props currentThinkingAgent
+        +renderDilemma()
+        +renderTurns()
+        +renderControls()
+    }
+    
+    class TypewriterText {
+        <<React Component>>
+        +props text
+        +props speed
+        +state displayedText
+        +useEffect() void
+    }
+    
+    DebateAPI --> DilemmaRequest : receives
+    DebateAPI --> Transcript : manages
+    DebateAPI --> AgentTurn : creates
+    DebateAPI --> PromptTemplates : uses
+    
+    AppComponent --> DilemmaForm : renders
+    AppComponent --> DebateView : renders
+    AppComponent --> Transcript : manages
+    
+    DebateView --> TypewriterText : uses
+    DebateView --> AgentTurn : displays
+```
+
+### 1.2 Component Architecture (Frontend)
 
 ```mermaid
 graph TD
@@ -51,72 +150,26 @@ graph TD
     HandleJudge -->|updates| App
 ```
 
-**Clean Component Flow:**
-- App.jsx manages all state and renders DilemmaForm or DebateView based on stage
-- DilemmaForm is a 2-step wizard: dilemma input → agent selection
-- AgentSelector loads agents and provides 3-slot team builder
-- DebateView displays rounds with agent cards using TypewriterText for animation
-- All actions flow back to App.jsx to update state
-
-### 1.2 System Architecture (Full Stack)
+### 1.3 System Architecture (Full Stack)
 
 ```mermaid
-graph TB
-    subgraph User["User Interface"]
-        DilemmaForm[Dilemma Form<br/>Title, Context, Options]
-        AgentSelect[Agent Selector<br/>3 agents required]
-        DebateDisplay[Debate Display<br/>Real-time updates]
-    end
+graph LR
+    User[User] --> DilemmaForm[DilemmaForm]
+    DilemmaForm --> App[App.jsx]
     
-    subgraph Frontend["Frontend Logic"]
-        StateManager[State Manager<br/>transcript, stage, agents]
-        APIClient[API Client<br/>Fetch requests]
-        TypewriterEffect[Typewriter Effect<br/>Animated text]
-    end
+    App --> API[Backend API]
+    API --> Groq[Groq API<br/>Llama 3.3 70B]
     
-    subgraph Backend["Backend API"]
-        OpeningsEndpoint[POST /openings<br/>Generate opening args]
-        ContinueEndpoint[POST /continue<br/>Generate rebuttals]
-        JudgeEndpoint[POST /judge<br/>Get verdict]
-    end
+    API --> AgentService[AgentService]
+    API --> MetricsService[MetricsService]
+    API --> HistoryService[HistoryService]
     
-    subgraph AILayer["AI Processing"]
-        GroqAPI[Groq API<br/>Llama 3.3 70B]
-        PromptEngine[Prompt Engineering<br/>System + User prompts]
-        JSONParser[JSON Parser<br/>3-level fallback]
-    end
-    
-    subgraph Services["Backend Services"]
-        AgentService[Agent Service<br/>Get system prompts]
-        MetricsService[Metrics Service<br/>Record stats]
-        HistoryService[History Service<br/>Save debates]
-    end
-
-    
-    DilemmaForm --> StateManager
-    AgentSelect --> StateManager
-    StateManager --> APIClient
-    APIClient --> OpeningsEndpoint
-    APIClient --> ContinueEndpoint
-    APIClient --> JudgeEndpoint
-    
-    OpeningsEndpoint --> AgentService
-    OpeningsEndpoint --> PromptEngine
-    ContinueEndpoint --> AgentService
-    ContinueEndpoint --> PromptEngine
-    JudgeEndpoint --> PromptEngine
-    
-    PromptEngine --> GroqAPI
-    GroqAPI --> JSONParser
-    JSONParser --> StateManager
-    StateManager --> DebateDisplay
-    DebateDisplay --> TypewriterEffect
-    
-    JudgeEndpoint --> MetricsService
-    JudgeEndpoint --> HistoryService
+    Groq --> App
+    App --> DebateView[DebateView]
+    DebateView --> User
 ```
 
-### 1.2 Data Flow - Opening Arguments (ACTUAL CODE)
+### 1.4 Data Flow - Opening Arguments
 
 ```mermaid
 sequenceDiagram
@@ -182,37 +235,7 @@ sequenceDiagram
     Note over App: DebateView shows "Continue Debate" button
 ```
 
-**Actual Opening Arguments Flow:**
-1. User completes 2-step wizard in DilemmaForm
-2. DilemmaForm calls `onSubmit(formData, agentIds, agentsInfo)`
-3. App.jsx `handleStartDebate()`:
-   - Sets dilemma and stage to 'debate'
-   - Calls `checkAndAddToLibrary()` in background
-   - Converts agent IDs: default agents to lowercase, custom agents keep ID
-4. **Loops through each agent sequentially:**
-   - Sets `currentThinkingAgent` (shows spinner)
-   - Determines endpoint: `deon`→`/agent/deon`, custom→`/agent/{uuid}`
-   - POST to `/agent/{agentEndpoint}` with dilemma
-5. Backend `single_agent()`:
-   - Calls `get_agent_system_prompt()` (returns default or custom prompt)
-   - For custom agents: increments usage count
-   - Builds prompt: `mk_base(dilemma) + OPENING_INSTRUCT`
-   - Calls Groq via `call_ollama()` (temp 0.65, max_tokens 150)
-6. Response parsing via `clamp_json()` (4-level fallback)
-7. If parsing fails, retry with temp 0.8
-8. Returns `AgentTurn {agent, stance, argument}`
-9. App appends to turns array and updates transcript
-10. DebateView re-renders with TypewriterText animation
-```
-            Groq-->>API: Second attempt
-            API->>JSONParser: Parse again
-        end
-        API-->>Frontend: AgentTurn object
-        Frontend->>Frontend: Append to transcript
-        Frontend->>User: Display with typewriter effect
-```
-
-### 1.3 Data Flow - Rebuttal Round
+### 1.5 Data Flow - Rebuttal Round
 
 ```mermaid
 sequenceDiagram
@@ -250,7 +273,7 @@ sequenceDiagram
     Frontend->>User: Show "Get Verdict" button
 ```
 
-### 1.4 Component Architecture
+### 1.6 Component Architecture
 
 ```mermaid
 graph LR
@@ -424,17 +447,6 @@ graph TD
     Response -->|displays| AgentBuilder
 ```
 
-**Clean Flow:**
-- User fills 3-step form (name, avatar, description)
-- Frontend validates inputs
-- Backend calls EnhancementService
-- PromptAnalyzer scores quality (4 dimensions)
-- GPT-4o expands description to 4-5 sentences
-- System prompt generated for debates
-- AgentService saves to JSON with atomic write
-- Quality scores displayed to user
-```
-
 ### 2.3 Data Flow - Agent Creation
 
 ```mermaid
@@ -603,16 +615,6 @@ graph TD
     SuccessNotif -->|setTimeout 4000ms| ClearNotif[setNotification null]
     DuplicateNotif -->|setTimeout 4000ms| ClearNotif
 ```
-
-**Actual Frontend Flow:**
-1. User fills DilemmaForm (title, constraints, A, B)
-2. On submit → `handleStartDebate()` in App.jsx
-3. **IMMEDIATELY** calls `checkAndAddToLibrary(dilemmaData)` in background
-4. Builds submission object: `{title, context: constraints, option_a: A, option_b: B}`
-5. POST to `/api/debates/submit`
-6. If `result.success && result.added_template` → success toast
-7. If `result.is_duplicate` → info toast
-8. Toast auto-clears after 4 seconds
 
 ### 3.3 Backend Architecture
 
@@ -1207,115 +1209,3 @@ classDiagram
     AIProvider --> PromptTemplates : uses
     Transcript --> AgentTurn : contains
 ```
-
----
-
-## 9. Complete System Class Diagram
-
-### 9.1 Full Backend Architecture
-
-```mermaid
-classDiagram
-    %% Core API
-    class FastAPIApp {
-        +post_openings()
-        +post_continue()
-        +post_judge()
-        +post_agent_by_name()
-        +get_agents()
-        +post_agents_create()
-        +post_debates_submit()
-        +get_history()
-    }
-    
-    %% Services
-    class AgentService {
-        +create_agent()
-        +get_agent()
-        +list_agents()
-        +increment_usage()
-    }
-    
-    class EnhancementService {
-        +enhance_agent_description()
-        +generate_system_prompt()
-    }
-    
-    class DebateDeduplicationService {
-        +submit_custom_debate()
-        +find_duplicate()
-        +add_to_library()
-    }
-    
-    class EmbeddingService {
-        +generate_debate_embedding()
-        +compute_similarity()
-    }
-    
-    class MetricsService {
-        +calculate_debate_metrics()
-        +record_debate()
-        +get_summary_stats()
-    }
-    
-    class DebateHistoryService {
-        +save_debate()
-        +get_all_debates()
-        +get_debate_by_id()
-    }
-    
-    %% Models
-    class CustomAgent {
-        +str id
-        +str name
-        +str system_prompt
-        +int usage_count
-    }
-    
-    class DebateTemplate {
-        +int id
-        +str title
-        +str context
-        +bool is_custom
-    }
-    
-    class DebateMetrics {
-        +str debate_id
-        +int total_turns
-        +Dict scores
-    }
-    
-    %% Relationships
-    FastAPIApp --> AgentService
-    FastAPIApp --> EnhancementService
-    FastAPIApp --> DebateDeduplicationService
-    FastAPIApp --> MetricsService
-    FastAPIApp --> DebateHistoryService
-    
-    AgentService --> CustomAgent
-    EnhancementService --> CustomAgent
-    
-    DebateDeduplicationService --> EmbeddingService
-    DebateDeduplicationService --> DebateTemplate
-    
-    MetricsService --> DebateMetrics
-    DebateHistoryService --> DebateMetrics
-```
-
----
-
-## Summary
-
-This document provides comprehensive architecture diagrams for all MirrorMind AI features:
-
-1. **AI Debate Arena**: Component architecture, system architecture, data flows for opening arguments and rebuttals
-2. **Custom Agent Builder**: Class diagram, system architecture, data flow, quality scoring algorithm
-3. **Debate Library & Deduplication**: Class diagram, frontend/backend architecture, semantic deduplication flow
-4. **Judge System**: Class diagram, verdict generation data flow
-5. **Analytics Dashboard**: Class diagram showing metrics calculation and aggregation
-6. **Debate History & Replay**: Class diagram, replay data flow
-7. **PDF Export**: Class diagram, PDF generation data flow
-8. **Core Backend Classes**: Main API structure and relationships
-9. **Complete System**: Full backend architecture overview
-
-All diagrams are based on actual code implementation and accurately represent the codebase structure.
