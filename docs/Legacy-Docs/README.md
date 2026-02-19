@@ -1,16 +1,20 @@
 # Legacy Documentation
 
-This folder contains older documentation files that have been superseded by the current documentation.
+This folder contains archived documentation from earlier phases of the MirrorMind AI project.
 
 ## Current Documentation (in `/docs`)
 
-- **TECHNICAL_DOCUMENTATION.md** - Complete technical documentation for the project
-- **feature-architecture-diagrams.md** - Architecture and data flow diagrams for all features
+- **FINAL_DOCUMENTATION.md** - Complete final technical documentation with all diagrams and implementation details
 
 ## Legacy Files (in this folder)
 
-- **agent-builder-architecture.md** - Old agent builder architecture notes
-- **class-diagram.md** - Old class diagrams (superseded by feature-architecture-diagrams.md)
-- **project-update-groq-integration.md** - Historical project update notes
+### Early Design Documents
+- **agent-builder-architecture.md** - Early architecture design for the custom agent builder feature
+- **class-diagram.md** - Initial class diagram documentation
+- **project-update-groq-integration.md** - Documentation of Groq API integration
+
+### Previous Documentation Versions
+- **TECHNICAL_DOCUMENTATION.md** - Previous version of technical documentation
+- **feature-architecture-diagrams.md** - Previous version of architecture and design diagrams
 
 These files are kept for reference but are no longer actively maintained.
