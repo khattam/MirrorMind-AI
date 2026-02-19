@@ -1,19 +1,21 @@
 # MirrorMind AI - Final Technical Documentation
 
 **Version:** 1.0  
-**Date:** February 10, 2026  
-**Author:** Medhansh Khattam  
-**Project:** Multi-Agent Ethical Debate Platform
+**Date:** February 18, 2026  
+**Author:** Medhansh Khattar  
+**Part of:** Organizational AI  
+**Instructor:** Dr. Stephen Chenoweth
 
 ---
 
 ## Executive Summary
 
-MirrorMind AI is a web-based platform enabling AI agents with distinct ethical frameworks to debate complex moral dilemmas in real-time. Users submit ethical scenarios, watch AI agents argue from philosophical perspectives (deontological, consequentialist, virtue ethics), and receive impartial judgments scored across five ethical dimensions.
+MirrorMind AI is a web-based platform enabling AI agents with distinct ethical frameworks to debate complex moral dilemmas in real-time. Users submit ethical scenarios, watch AI agents argue from philosophical perspectives (3 default agents + any custom agents created using the Agent Builder), and receive impartial judgments scored across five ethical dimensions.
 
 **Key Capabilities:**
-- Multi-agent debate system with 3 default philosophical agents + custom agent creation
-- GPT-4o powered agent enhancement pipeline
+- Multi-agent debate system with 3 default philosophical agents (deontological, consequentialist, virtue ethics)
+- Custom Agent Builder to create personalized AI agents that take part in debates
+- GPT-4o powered enhancement pipeline transforms simple descriptions into sophisticated ethical reasoning frameworks with quality scoring
 - Semantic deduplication for debate library (34+ templates)
 - 5-dimensional ethical scoring by impartial AI judge
 - Analytics dashboard with debate metrics
@@ -27,7 +29,7 @@ MirrorMind AI is a web-based platform enabling AI agents with distinct ethical f
 - **Storage:** JSON files (atomic writes)
 - **Deployment:** Vercel (frontend), Render (backend)
 
-**Live Demo:** [mirror-mind-ai.vercel.app](https://mirror-mind-ai.vercel.app)
+**Live Demo:** [mirrormind-ai.vercel.app](https://mirrormind-ai.vercel.app)
 
 ---
 
@@ -1750,30 +1752,14 @@ GROQ_MODEL=llama-3.3-70b-versatile
 
 MirrorMind AI successfully demonstrates the potential of multi-agent AI systems for ethical reasoning and philosophical debate. The platform combines cutting-edge AI models (Llama 3.3 70B, GPT-4o) with intuitive user interfaces to make complex ethical analysis accessible to everyone.
 
-**Key Achievements:**
-- ✅ Real-time multi-agent debates with distinct philosophical frameworks
-- ✅ GPT-4o powered agent enhancement with quality scoring
-- ✅ Semantic deduplication with instant results (no API calls)
-- ✅ 5-dimensional ethical scoring for comprehensive analysis
-- ✅ Full debate history with replay functionality
-- ✅ Professional PDF export
-- ✅ Production deployment on Vercel and Render
-
-**Technical Highlights:**
-- Robust JSON parsing with 4-level fallback
-- Atomic file writes prevent data corruption
-- Hash-based embeddings for instant similarity detection
-- Sequential agent processing prevents race conditions
-- Comprehensive error handling and retry logic
-
 **Impact:**
 MirrorMind AI democratizes access to philosophical debate and ethical analysis, enabling students, educators, researchers, and the general public to explore complex moral dilemmas from multiple perspectives simultaneously.
 
 ---
 
 **Project Repository:** [github.com/khattam/MirrorMind-AI](https://github.com/khattam/MirrorMind-AI)  
-**Live Demo:** [mirror-mind-ai.vercel.app](https://mirror-mind-ai.vercel.app)  
+**Live Demo:** [mirrormind-ai.vercel.app](https://mirrormind-ai.vercel.app)  
 **API Endpoint:** [mirrormind-ai.onrender.com](https://mirrormind-ai.onrender.com)
 
-**Contact:** Medhansh Khattam  
-**Date:** February 10, 2026
+**Author:** Medhansh Khattar  
+**Date:** February 18, 2026
